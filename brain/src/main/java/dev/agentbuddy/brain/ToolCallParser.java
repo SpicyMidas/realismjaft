@@ -64,14 +64,17 @@ public final class ToolCallParser {
             while (pm.find()) args.add(pm.group(1), scalar(pm.group(2)));
             return recovered(new RawCall(m.group(1), args));
         }
-        int brace = text.indexOf('{');
-        if (brace >= 0 && text.contains("\"name\"")) {
-            RawCall c = fromNameArgsJson(text.substring(brace, text.lastIndexOf('}') + 1));
-            if (c != null) return recovered(c);
+        // "name {json}" / "name(k=v)" for known tools; the earliest one in the text wins.
+        Matcher nm = null;
+        String tool = null;
+        for (String candidate : knownTools) {
+            Matcher m2 = Pattern.compile("\\b" + Pattern.quote(candidate) + "\\s*(\\{[^}]*\\}|\\(([^)]*)\\))").matcher(text);
+            if (m2.find() && (nm == null || m2.start() < nm.start())) {
+                nm = m2;
+                tool = candidate;
+            }
         }
-        for (String tool : knownTools) {
-            Matcher nm = Pattern.compile("\\b" + Pattern.quote(tool) + "\\s*(\\{[^}]*\\}|\\(([^)]*)\\))").matcher(text);
-            if (!nm.find()) continue;
+        if (nm != null) {
             if (nm.group(1).startsWith("{")) {
                 JsonObject args = parseArgs(nm.group(1));
                 if (args != null) return recovered(new RawCall(tool, args));
@@ -81,6 +84,12 @@ public final class ToolCallParser {
                 while (km.find()) args.add(km.group(1), scalar(unquote(km.group(2))));
                 return recovered(new RawCall(tool, args));
             }
+        }
+        // Bare {"name": ..., "arguments": ...}; the name must be a real tool, since {"name":"farm"} is often an argument.
+        int brace = text.indexOf('{');
+        if (brace >= 0 && text.contains("\"name\"")) {
+            RawCall c = fromNameArgsJson(text.substring(brace, text.lastIndexOf('}') + 1));
+            if (c != null && knownTools.contains(c.name())) return recovered(c);
         }
         if (text.contains("<tool_call") || text.contains("<function=")) {
             return new Parsed(List.of(), Source.MALFORMED, "tool call markup could not be parsed");

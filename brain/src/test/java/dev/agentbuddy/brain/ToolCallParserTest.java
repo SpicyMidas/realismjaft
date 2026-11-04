@@ -75,6 +75,19 @@ class ToolCallParserTest {
     }
 
     @Test
+    void fewShotStyleWithNameArgumentIsNotMistakenForBareJson() {
+        var p = ToolCallParser.parseText("set_waystone {\"name\":\"farm\"}", Set.of("set_waystone", "set_name"));
+        assertEquals(Source.RECOVERED, p.source());
+        assertEquals("set_waystone", p.calls().get(0).name());
+        assertEquals("farm", p.calls().get(0).args().get("name").getAsString());
+    }
+
+    @Test
+    void bareJsonWithUnknownNameIsIgnored() {
+        assertEquals(Source.NONE, text("{\"name\":\"farm\"}").source());
+    }
+
+    @Test
     void pythonStyleKwargs() {
         var p = text("find_ore(ore=\"emerald\")");
         assertEquals("emerald", p.calls().get(0).args().get("ore").getAsString());

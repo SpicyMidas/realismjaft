@@ -27,6 +27,8 @@ public final class Router {
 
     private static final Map<Category, List<Pattern>> KEYWORDS = new EnumMap<>(Category.class);
     private static final Pattern SMALL_TALK = p("^(thanks|thank you|thx|ty|cheers|nice|cool|great|ok|okay|lol|good job|well done)\\b");
+    // General-knowledge questions mention game words ("how does redstone work") but are not claims about the world.
+    private static final Pattern KNOWLEDGE = p("^(explain|how (do|does|can) (a|an|the)?\\s*\\w+ work|why (do|does|is|are)|tell me about|what (is|are) (a|an)\\b)");
 
     static {
         KEYWORDS.put(Category.WORLD, List.of(
@@ -70,7 +72,7 @@ public final class Router {
         }
         List<Category> cats = new ArrayList<>(scores.keySet());
         cats.sort(Comparator.comparing((Category c) -> -scores.get(c)).thenComparing(Enum::ordinal));
-        boolean toolExpected = !cats.isEmpty() && !SMALL_TALK.matcher(t).find();
+        boolean toolExpected = !cats.isEmpty() && !SMALL_TALK.matcher(t).find() && !KNOWLEDGE.matcher(t).find();
         return new Route(cats, toolExpected);
     }
 

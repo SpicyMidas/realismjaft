@@ -54,6 +54,9 @@ class RouterTest {
         assertFalse(router.route("I'm in the nether, right?").toolExpected());
         assertFalse(router.route("what's your name?").toolExpected());
         assertFalse(router.route("thanks for finding the iron").toolExpected());
+        assertFalse(router.route("explain in detail how redstone circuits work").toolExpected());
+        assertFalse(router.route("what is a diamond used for?").toolExpected());
+        assertTrue(router.route("where is the nearest diamond?").toolExpected());
     }
 
     @Test
