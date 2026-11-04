@@ -71,7 +71,8 @@ final class ModelRun {
     private LlmBackend backend;
     private OpenAiHttp http;
     private BufferedWriter jsonl;
-    private final Gson gson = new Gson();
+    private static final Gson GSON = new com.google.gson.GsonBuilder().disableHtmlEscaping().create();
+    private final Gson gson = GSON;
 
     ModelRun(String label, Path llmDir, LlmConfig config, String external) {
         this.label = label;
@@ -252,7 +253,7 @@ final class ModelRun {
 
     private static String tail(String s) {
         String t = s.length() > 40 ? s.substring(s.length() - 40) : s;
-        return new Gson().toJson(t);
+        return GSON.toJson(t);
     }
 
     private static String safe(String s) {
