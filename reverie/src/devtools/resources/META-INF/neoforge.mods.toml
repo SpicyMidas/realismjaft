@@ -1,0 +1,16 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="reveriedev"
+version="0.0.0"
+displayName="Reverie Dev Tools"
+description='''Dev-only automation for Reverie test runs. Not shipped.'''
+
+[[dependencies.reveriedev]]
+    modId="reverie"
+    type="required"
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"

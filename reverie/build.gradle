@@ -1,0 +1,169 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+    id 'idea'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+sourceSets {
+    // Dev-only helper mod (scripted commands, screenshots, auto-stop). Never part of the release jar.
+    devtools {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
+
+sourceSets.main.resources {
+    srcDir('src/generated/resources')
+    exclude('**/*.bbmodel')
+    exclude('src/generated/**/.cache')
+}
+
+repositories {
+    exclusiveContent {
+        forRepository { maven { name = 'Create'; url = 'https://maven.createmod.net' } }
+        filter {
+            includeGroup 'com.simibubi.create'
+            includeGroup 'net.createmod.ponder'
+            includeGroup 'dev.engine-room.flywheel'
+            includeGroup 'dev.engine-room.vanillin'
+        }
+    }
+    exclusiveContent {
+        forRepository { maven { name = 'Registrate'; url = 'https://maven.ithundxr.dev/snapshots' } }
+        filter { includeGroup 'com.tterrag.registrate' }
+    }
+    exclusiveContent {
+        forRepository { maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' } }
+        filter { includeGroup 'maven.modrinth' }
+    }
+}
+
+// none | create | all
+def compat = providers.gradleProperty('reverie.compat').getOrElse('all')
+if (!(compat in ['none', 'create', 'all'])) {
+    throw new GradleException("reverie.compat must be none, create or all (was '${compat}')")
+}
+logger.lifecycle("Reverie dev runtime compat set: ${compat}")
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    runs {
+        client {
+            client()
+            gameDirectory = project.file('run/client')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+        server {
+            server()
+            gameDirectory = project.file('run/server')
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+        gameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = project.file('run/gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+        configureEach {
+            // Pass -Preverie.dev.script=<file> to drive a run with the devtools mod.
+            def script = providers.gradleProperty('reverie.dev.script').getOrNull()
+            if (script != null) systemProperty 'reverie.dev.script', file(script).absolutePath
+            if (name != 'data') sourceSet = sourceSets.devtools
+            def quick = providers.gradleProperty('reverie.dev.world').getOrNull()
+            if (quick != null && name == 'client') programArguments.addAll '--quickPlaySingleplayer', quick
+            if (script != null && name == 'client') programArguments.addAll '--width', '1280', '--height', '720'
+            if (quick != null && name == 'server') programArguments.addAll '--world', quick
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.INFO
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+        reveriedev {
+            sourceSet(sourceSets.devtools)
+        }
+    }
+}
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    // Compile against the optional mods; never shipped, never required.
+    compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    compileOnly("net.createmod.ponder:ponder-neoforge:${ponder_version}") { transitive = false }
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}") { transitive = false }
+    compileOnly("com.tterrag.registrate:Registrate:${registrate_version}") { transitive = false }
+    compileOnly("maven.modrinth:farmers-delight:${farmersdelight_version}") { transitive = false }
+
+    if (compat == 'create' || compat == 'all') {
+        localRuntime("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+        localRuntime("net.createmod.ponder:ponder-neoforge:${ponder_version}") { transitive = false }
+        localRuntime("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}") { transitive = false }
+        localRuntime("dev.engine-room.vanillin:vanillin-neoforge-${minecraft_version}:${vanillin_version}") { transitive = false }
+        localRuntime("com.tterrag.registrate:Registrate:${registrate_version}") { transitive = false }
+    }
+    if (compat == 'all') {
+        localRuntime("maven.modrinth:farmers-delight:${farmersdelight_version}") { transitive = false }
+    }
+}
+
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:deprecation'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

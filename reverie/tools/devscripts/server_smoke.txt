@@ -1,0 +1,4 @@
+# Start, let the world tick, then stop.
+wait 100
+say smoke ok
+stop

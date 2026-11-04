@@ -1,0 +1,7 @@
+newworld smoke_${COMPAT} flat 1
+wait 40
+cmd time set noon
+wait 20
+screenshot smoke
+wait 10
+stop
