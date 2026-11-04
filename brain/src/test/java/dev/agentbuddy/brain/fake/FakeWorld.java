@@ -119,15 +119,18 @@ public final class FakeWorld {
                 .min(Comparator.comparingDouble(p -> p.distance(playerPos)));
     }
 
-    /** Resolves a model-provided item name to an id present in the world (handles plurals like "diamonds"). */
-    public Optional<String> resolveItem(String name) {
+    /**
+     * Resolves a model-provided item name ("diamonds") to an item id: one present in a visible container if possible,
+     * else a singular guess. Never looks inside ignored containers.
+     */
+    public String resolveItem(String name) {
         Set<String> known = new HashSet<>();
-        for (Container c : containers.values()) known.addAll(c.items.keySet());
+        for (Map.Entry<Pos, Container> e : visibleContainers(Integer.MAX_VALUE)) known.addAll(e.getValue().items.keySet());
         for (String candidate : List.of(name, name.replaceFirst("s$", ""), name.replaceFirst("es$", ""))) {
             String id = "minecraft:" + candidate;
-            if (known.contains(id)) return Optional.of(id);
+            if (known.contains(id)) return id;
         }
-        return Optional.empty();
+        return "minecraft:" + (name.endsWith("s") && !name.endsWith("ss") ? name.substring(0, name.length() - 1) : name);
     }
 
     public ContextBlock context() {

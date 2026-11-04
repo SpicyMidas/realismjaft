@@ -21,7 +21,7 @@ class RouterTest {
 
     @Test
     void lookAtIsAlwaysFirstAndAtMostEightTools() {
-        for (String s : List.of("hi", "find iron", "bring me 5 diamonds from the chest", "take me home", "follow me",
+        for (String s : List.of("find iron", "bring me 5 diamonds from the chest", "take me home", "follow me",
                 "pick up this chest and bring me back to where I died")) {
             List<String> t = tools(s);
             assertEquals("look_at", t.get(0), s);
@@ -57,7 +57,8 @@ class RouterTest {
     }
 
     @Test
-    void unmatchedDefaultsToWorldAndSettings() {
-        assertEquals(List.of("look_at", "find_ore", "ignore_block", "unignore_block", "set_name", "follow", "stay"), tools("hi"));
+    void unmatchedGetsNoTools() {
+        assertEquals(List.of(), tools("hi"));
+        assertEquals(List.of(), tools("I'm in the nether, right?"));
     }
 }

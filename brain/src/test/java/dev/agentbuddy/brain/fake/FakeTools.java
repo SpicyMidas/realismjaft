@@ -135,25 +135,25 @@ public final class FakeTools {
         String name = a.get("item").getAsString();
         List<Map.Entry<Pos, FakeWorld.Container>> visible = w.visibleContainers(spec.range());
         if (visible.isEmpty()) return fail("no_containers", data("item", name));
-        Optional<String> id = w.resolveItem(name);
+        String id = w.resolveItem(name);
         List<Map.Entry<Pos, FakeWorld.Container>> holding = new ArrayList<>();
-        if (id.isPresent()) for (var e : visible) if (e.getValue().items.getOrDefault(id.get(), 0) > 0) holding.add(e);
-        if (holding.isEmpty()) return fail(NOT_FOUND, data("item", id.orElse(name)));
-        holding.sort(Comparator.comparingInt((Map.Entry<Pos, FakeWorld.Container> e) -> -e.getValue().items.get(id.get())));
+        for (var e : visible) if (e.getValue().items.getOrDefault(id, 0) > 0) holding.add(e);
+        if (holding.isEmpty()) return fail(NOT_FOUND, data("item", id));
+        holding.sort(Comparator.comparingInt((Map.Entry<Pos, FakeWorld.Container> e) -> -e.getValue().items.get(id)));
         Map.Entry<Pos, FakeWorld.Container> best = holding.get(0);
         Pos p = best.getKey();
-        int have = best.getValue().items.get(id.get());
+        int have = best.getValue().items.get(id);
         if (!fetch) {
-            return ok(data("item", id.get(), "count", have, "container", best.getValue().type,
+            return ok(data("item", id, "count", have, "container", best.getValue().type,
                     "x", p.x(), "y", p.y(), "z", p.z(), "other_containers", holding.size() - 1));
         }
         if (w.carrying != null) return fail("carrying");
         if (w.inventoryFreeSlots <= 0) return fail("inventory_full");
         int want = a.has("count") ? a.get("count").getAsInt() : Math.min(have, 64);
         int take = Math.min(want, have);
-        best.getValue().items.merge(id.get(), -take, Integer::sum);
-        best.getValue().items.remove(id.get(), 0);
-        return ok(data("item", id.get(), "count", take, "container", best.getValue().type, "x", p.x(), "y", p.y(), "z", p.z()));
+        best.getValue().items.merge(id, -take, Integer::sum);
+        best.getValue().items.remove(id, 0);
+        return ok(data("item", id, "count", take, "container", best.getValue().type, "x", p.x(), "y", p.y(), "z", p.z()));
     }
 
     private static ToolResult pickup(FakeWorld w, ToolSpec spec) {

@@ -22,6 +22,16 @@ Run from the repo root. Windows: `gradlew.bat <task>`; Linux/macOS: `./gradlew <
 | Dev client (game dir `run/`) | `gradlew runClient` |
 | Dev server | `gradlew runServer` |
 | Game tests (headless, exits non-zero on failure) | `gradlew runGameTestServer` |
+| Brain unit tests (no LLM needed) | `gradlew :brain:test` |
+| Brain replay eval vs real llama-server (model from `run/localLLM/config.json`) | `gradlew :brain:replay` |
+| Replay every `*.gguf` in `run/localLLM/models/` | `gradlew :brain:replay -Pllm.model=all` |
+| Replay one model / some cases | `gradlew :brain:replay -Pllm.model=<file>.gguf -Pllm.cases=<id>,<id>` |
+| Replay against an already-running OpenAI-compatible server | `gradlew :brain:replay -Pllm.external=http://127.0.0.1:8080` |
+| Fetch llama-server + Qwen3.5-4B into `run/localLLM/` (Windows) | `scripts\setup-local-llm.cmd` (add `-Models both` for Gemma 4 E2B) |
+| Same, for a real install | `scripts\setup-local-llm.cmd -GameDir "%APPDATA%\.minecraft"` |
+
+Replay output: `brain/build/reports/replay/summary.md` (tables), plus per-case JSONL and llama-server logs in `run/localLLM/logs/`.
+Replay cases: `brain/src/test/resources/replay/cases.json`. `-Pllm.dir=<path>` points at a different `localLLM/`.
 
 Pinned versions: Minecraft 1.21.1, NeoForge 21.1.265, ModDevGradle 2.0.148, Gradle 9.2.1 (wrapper), Parchment 2024.11.17.
 Decompiled MC + NeoForge sources (read these, not memory): `build/moddev/artifacts/neoforge-21.1.265-sources.jar` after the first build.

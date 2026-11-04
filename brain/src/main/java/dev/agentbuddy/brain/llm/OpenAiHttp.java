@@ -70,6 +70,22 @@ public final class OpenAiHttp {
         }
     }
 
+    /** GET a JSON object (e.g. /props). */
+    public JsonObject getJson(String path) throws LlmException {
+        HttpRequest.Builder b = HttpRequest.newBuilder(baseUrl.resolve(path)).timeout(requestTimeout).GET();
+        if (apiKey != null && !apiKey.isEmpty()) b.header("Authorization", "Bearer " + apiKey);
+        try {
+            HttpResponse<String> resp = client.send(b.build(), HttpResponse.BodyHandlers.ofString());
+            if (resp.statusCode() / 100 != 2) throw new LlmException("LLM error.", "HTTP " + resp.statusCode() + " on " + path);
+            return JsonParser.parseString(resp.body()).getAsJsonObject();
+        } catch (IOException | RuntimeException e) {
+            throw new LlmException("LLM error.", "GET " + path + " failed: " + e.getMessage(), e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new LlmException("LLM request cancelled.", "interrupted", e);
+        }
+    }
+
     /** GET returning only the status code (used for /health). */
     public int getStatus(String path, Duration timeout) {
         try {

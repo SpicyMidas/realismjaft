@@ -39,6 +39,11 @@ public record LlmConfig(String model, int port, int gpuLayers, int ctxSize, doub
                 startOnWorldJoin, startTimeoutSeconds, requestTimeoutSeconds, reasoning, extraArgs);
     }
 
+    public LlmConfig withExtraArgs(List<String> args) {
+        return new LlmConfig(model, port, gpuLayers, ctxSize, temperature, maxTokens, idleTimeoutMinutes,
+                startOnWorldJoin, startTimeoutSeconds, requestTimeoutSeconds, reasoning, args);
+    }
+
     public LlmConfig withReasoning(String newReasoning) {
         return new LlmConfig(model, port, gpuLayers, ctxSize, temperature, maxTokens, idleTimeoutMinutes,
                 startOnWorldJoin, startTimeoutSeconds, requestTimeoutSeconds, newReasoning, extraArgs);

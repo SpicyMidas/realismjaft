@@ -14,7 +14,8 @@ import java.util.Set;
  */
 public final class ClaimMatcher {
     private static final Set<String> NOISE = Set.of("a", "an", "the", "this", "that", "it", "is", "block", "blocks",
-            "some", "kind", "of", "type", "minecraft", "right", "here", "there");
+            "some", "kind", "sort", "of", "type", "minecraft", "right", "here", "there", "just", "really", "actually",
+            "made", "out", "piece", "plain", "normal", "regular", "pure", "like", "looks", "definitely", "probably");
     // A claim word on the left is satisfied by any of these block/tag words.
     private static final Map<String, List<String>> ALIASES = Map.of(
             "wood", List.of("wood", "log", "plank", "stem", "hyphae"),

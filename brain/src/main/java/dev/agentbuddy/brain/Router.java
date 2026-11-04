@@ -74,9 +74,14 @@ public final class Router {
         return new Route(cats, toolExpected);
     }
 
-    /** look_at, then the tools of each matched category in order, capped at maxTools. Default: WORLD + SETTINGS. */
+    /**
+     * look_at, then the tools of each matched category in order, capped at maxTools. Nothing matched means no tools:
+     * small models call whatever they are offered ("hi" became "stay" in the M1 eval), so small talk and questions
+     * about the context block get a text-only request.
+     */
     public List<Tool> select(Route route) {
-        List<Category> cats = route.categories().isEmpty() ? List.of(Category.WORLD, Category.SETTINGS) : route.categories();
+        List<Category> cats = route.categories();
+        if (cats.isEmpty()) return List.of();
         Set<Tool> out = new LinkedHashSet<>();
         registry.get("look_at").ifPresent(out::add);
         for (Category c : cats) {
