@@ -34,6 +34,9 @@ base {
     archivesName = mod_id
 }
 
+// The mod reads the brain project's source set, so configure brain first.
+evaluationDependsOn(':brain')
+
 // Mojang ships Java 21 to end users in 1.21.1, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -103,6 +106,8 @@ neoForge {
         // multi mod projects should define one per mod
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            // The Minecraft-free brain module is part of this mod: its classes load as mod code in dev runs.
+            sourceSet(project(':brain').sourceSets.main)
         }
     }
 }
@@ -116,6 +121,8 @@ configurations {
 }
 
 dependencies {
+    // brain classes are compiled against here and merged into the mod jar (see tasks.jar below), not nested.
+    implementation project(':brain').sourceSets.main.output
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
@@ -137,6 +144,10 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+}
+
+tasks.named('jar', Jar) {
+    from(project(':brain').sourceSets.main.output)
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

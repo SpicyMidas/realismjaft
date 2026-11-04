@@ -2,11 +2,13 @@ package dev.agentbuddy.entity;
 
 import dev.agentbuddy.data.AgentStore;
 import dev.agentbuddy.item.AgentItem;
+import dev.agentbuddy.network.ModNetwork;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -124,14 +126,18 @@ public class AgentEntity extends PathfinderMob {
         return true;
     }
 
-    /** Shift + right-click by the owner: turn back into an item. Plain right-click opens the GUI (M3). */
+    /** Right-click by the owner opens the Agent screen; shift + right-click turns it back into an item. */
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (!player.isShiftKeyDown() || hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+        if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
         if (level().isClientSide) return InteractionResult.SUCCESS;
         if (agentId == null || !player.getUUID().equals(owner)) {
             player.displayClientMessage(Component.literal("Not your agent."), true);
             return InteractionResult.FAIL;
+        }
+        if (!player.isShiftKeyDown()) {
+            if (player instanceof ServerPlayer sp) ModNetwork.openScreen(sp, this, "");
+            return InteractionResult.CONSUME;
         }
         ItemStack stack = AgentItem.stackFor(agentId);
         if (!player.getInventory().add(stack)) player.drop(stack, false);

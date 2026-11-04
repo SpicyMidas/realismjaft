@@ -1,4 +1,6 @@
 {
   "item.agentbuddy.agent": "Agent",
-  "entity.agentbuddy.agent": "Agent"
+  "entity.agentbuddy.agent": "Agent",
+  "key.agentbuddy.open": "Open Agent",
+  "key.categories.agentbuddy": "Agent Buddy"
 }

@@ -16,6 +16,7 @@ public record ToolResult(boolean ok, String reason, Map<String, Object> data) {
     public static final String NOT_FOUND = "not_found";
     public static final String NOTHING_IN_SIGHT = "nothing_in_sight";
     public static final String OUT_OF_RANGE = "out_of_range";
+    public static final String NO_AGENT = "no_agent";
 
     public ToolResult {
         if (!ok && reason == null) throw new IllegalArgumentException("failed result needs a reason");

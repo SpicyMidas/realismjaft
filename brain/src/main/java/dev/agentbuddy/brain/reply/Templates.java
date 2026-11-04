@@ -2,6 +2,7 @@ package dev.agentbuddy.brain.reply;
 
 import static dev.agentbuddy.brain.tool.ToolResult.COOLDOWN;
 import static dev.agentbuddy.brain.tool.ToolResult.NOTHING_IN_SIGHT;
+import static dev.agentbuddy.brain.tool.ToolResult.NO_AGENT;
 import static dev.agentbuddy.brain.tool.ToolResult.NOT_FOUND;
 import static dev.agentbuddy.brain.tool.ToolResult.NO_CREDITS;
 import static dev.agentbuddy.brain.tool.ToolResult.OUT_OF_RANGE;
@@ -27,6 +28,7 @@ public final class Templates {
                 case COOLDOWN -> { return "Wait " + r.integer("seconds") + " s."; }
                 case NO_CREDITS -> { return "Need " + r.integer("need") + " credits, have " + r.integer("have") + "."; }
                 case OUT_OF_RANGE -> { return "Too far away."; }
+                case NO_AGENT -> { return "No agent nearby."; }
                 default -> { }
             }
         }
