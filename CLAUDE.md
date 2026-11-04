@@ -14,7 +14,17 @@ Project: local-LLM AI buddy mod for Minecraft. Read `AGENT_SPEC.md` before doing
 - Anything I cannot verify by running tests or builds, say so explicitly. You cannot see the game; I will playtest.
 
 ## Commands
-Fill in once the project is created (build, runClient, run game tests, run brain tests).
+Run from the repo root. Windows: `gradlew.bat <task>`; Linux/macOS: `./gradlew <task>`. Requires JDK 21.
+
+| What | Command |
+|---|---|
+| Build mod jar (`build/libs/agentbuddy-<ver>.jar`) | `gradlew build` |
+| Dev client (game dir `run/`) | `gradlew runClient` |
+| Dev server | `gradlew runServer` |
+| Game tests (headless, exits non-zero on failure) | `gradlew runGameTestServer` |
+
+Pinned versions: Minecraft 1.21.1, NeoForge 21.1.265, ModDevGradle 2.0.148, Gradle 9.2.1 (wrapper), Parchment 2024.11.17.
+Decompiled MC + NeoForge sources (read these, not memory): `build/moddev/artifacts/neoforge-21.1.265-sources.jar` after the first build.
 
 ## Style
 Small focused classes, no speculative abstractions, comments only where the reason is not obvious.
