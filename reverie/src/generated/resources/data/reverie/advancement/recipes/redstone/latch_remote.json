@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_linked_controller": {
+      "conditions": {
+        "items": [
+          {
+            "items": "create:linked_controller"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "reverie:latch_remote"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_linked_controller"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "reverie:latch_remote"
+    ]
+  }
+}

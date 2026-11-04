@@ -442,7 +442,81 @@ def gearshift_gui():
     save(img, "gui/gearshift")
 
 
-GROUPS = [tuff_alloy, gearshift_textures]
+def latch_remote():
+    pal = {
+        'o': (24, 26, 30), 'd': (44, 48, 54), 'b': (66, 72, 80), 'l': (92, 100, 110), 'h': (130, 138, 150),
+        'g': CASING_GREEN[2], 'G': CASING_GREEN[4], 'a': STEEL[2], 'A': STEEL[4], 'k': (30, 32, 36),
+        'y': GOLD[2], 'r': (90, 20, 18), 'R': (255, 70, 50), 'W': (255, 200, 180), 'c': (54, 58, 64),
+    }
+    base = [
+        "..........oA....",
+        "..........oa....",
+        ".........oa.....",
+        ".........oa.....",
+        "....oooooaoo....",
+        "...ohhhlllllo...",
+        "...ohlrrlllbo...",
+        "...olrLrlbbbo...",
+        "...olbrrbbbbo...",
+        "...oggggggggo...",
+        "...olkcklkckdo..",
+        "...olbbbbbbbdo..",
+        "...olkcklkckdo..",
+        "...olbbybbbbdo..",
+        "....odddddddo...",
+        ".....ooooooo....",
+    ]
+    base = [r[:16].ljust(16, '.') for r in base]
+    off = [r.replace('L', 'r') for r in base]
+    on = [r.replace('r', 'R').replace('L', 'W') for r in base]
+    save(grid(off, pal), "item/latch_remote")
+    save(grid(on, pal), "item/latch_remote_active")
+    latch_remote_gui()
+
+
+def mc_slot(img, x, y, ghost=False):
+    rect(img, x, y, x + 18, y + 18, (139, 139, 139) if not ghost else (120, 128, 140))
+    for i in range(18):
+        img.putpixel((x + i, y), rgba((55, 55, 55)))
+        img.putpixel((x, y + i), rgba((55, 55, 55)))
+        img.putpixel((x + i, y + 17), rgba((255, 255, 255)))
+        img.putpixel((x + 17, y + i), rgba((255, 255, 255)))
+
+
+def latch_remote_gui():
+    img = Image.new("RGBA", (256, 256), T)
+    W, H = 176, 166
+    rect(img, 0, 0, W, H, (198, 198, 198))
+    for i in range(W):
+        img.putpixel((i, 0), rgba((0, 0, 0)))
+        img.putpixel((i, H - 1), rgba((0, 0, 0)))
+        img.putpixel((i, 1), rgba((255, 255, 255)))
+        img.putpixel((i, H - 2), rgba((85, 85, 85)))
+    for j in range(H):
+        img.putpixel((0, j), rgba((0, 0, 0)))
+        img.putpixel((W - 1, j), rgba((0, 0, 0)))
+        img.putpixel((1, j), rgba((255, 255, 255)))
+        img.putpixel((W - 2, j), rgba((85, 85, 85)))
+    # ghost slots at (62,30) and (98,30) (item position; slot frame is 1px larger)
+    for gx in (61, 97):
+        mc_slot(img, gx, 29, ghost=True)
+    # signal waves between them
+    for k, r in enumerate((3, 6, 9)):
+        for a in range(-40, 41, 8):
+            ang = math.radians(a)
+            px = int(round(88 + r * math.sin(ang)))
+            py = int(round(46 - r * math.cos(ang)))
+            img.putpixel((px, py), rgba((80, 80, 80) if k else (200, 40, 30)))
+    rect(img, 87, 44, 90, 50, (60, 60, 60))
+    for row in range(3):
+        for col in range(9):
+            mc_slot(img, 7 + col * 18, 83 + row * 18)
+    for col in range(9):
+        mc_slot(img, 7 + col * 18, 141)
+    save(img, "gui/latch_remote")
+
+
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote]
 
 
 def contact_sheet(out_dir):

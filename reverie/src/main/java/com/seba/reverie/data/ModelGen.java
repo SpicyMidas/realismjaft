@@ -20,6 +20,7 @@ final class ModelGen {
         @Override
         protected void registerModels() {
             basicItem(ModItems.TUFF_ALLOY.get());
+            com.seba.reverie.compat.create.CreateDataGen.itemModels(this);
         }
     }
 

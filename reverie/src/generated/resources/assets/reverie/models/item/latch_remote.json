@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "reverie:item/latch_remote_active",
+      "predicate": {
+        "reverie:active": 1.0
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "reverie:item/latch_remote"
+  }
+}

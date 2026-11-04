@@ -174,6 +174,13 @@ final class ClientScript {
                 }
             }
             case "close" -> mc.setScreen(null);
+            case "logheld" -> {
+                var stack = mc.player.getMainHandItem();
+                var fn = net.minecraft.client.renderer.item.ItemProperties.getProperty(stack, net.minecraft.resources.ResourceLocation.parse(a[1]));
+                ReverieDevTools.LOG.info("[devscript] held {} components={} property {}={}", stack, stack.getComponents(), a[1],
+                        fn == null ? "unregistered" : fn.call(stack, mc.level, mc.player, 0));
+            }
+            case "sneak" -> mc.options.keyShift.setDown(a[1].equals("on"));
             case "hidegui" -> mc.options.hideGui = a[1].equals("on");
             case "gui" -> {
                 mc.options.guiScale().set(Integer.parseInt(a[1]));

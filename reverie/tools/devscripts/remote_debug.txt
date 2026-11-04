@@ -1,0 +1,16 @@
+newworld remote_dbg flat 9
+wait 20
+cmd give @s reverie:latch_remote
+wait 5
+logheld reverie:active
+useitem
+wait 10
+logheld reverie:active
+sneak on
+wait 5
+useitem
+wait 20
+screenshot remote_menu
+sneak off
+close
+stop

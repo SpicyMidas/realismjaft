@@ -32,6 +32,17 @@ final class Lang {
         s.add("reverie.gearshift.screen.out", "OUT", "ESCE");
         s.add("reverie.gearshift.screen.rpm", "rpm", "giri/min");
         s.add("reverie.gearshift.screen.redstone", "REDSTONE", "PIETRAROSSA");
+
+        // Create: latch remote
+        s.add("item.reverie.latch_remote", "Latch Remote", "Telecomando a Ritenuta");
+        s.add("reverie.latch_remote.on", "Remote ON", "Telecomando ACCESO");
+        s.add("reverie.latch_remote.off", "Remote OFF", "Telecomando SPENTO");
+        s.add("reverie.latch_remote.copied", "Frequency copied from the Redstone Link", "Frequenza copiata dal Collegamento di Pietrarossa");
+        s.add("reverie.latch_remote.tooltip.on", "Transmitting", "In trasmissione");
+        s.add("reverie.latch_remote.tooltip.off", "Idle", "Inattivo");
+        s.add("reverie.latch_remote.tooltip.frequency", "Frequency: %s + %s", "Frequenza: %s + %s");
+        s.add("reverie.latch_remote.tooltip.hint", "Right-click: on/off. Sneak: set frequency", "Clic destro: acceso/spento. Accovacciato: frequenza");
+        s.add("reverie.latch_remote.menu.hint", "Frequency pair", "Coppia di frequenza");
     }
 
     static String item(Supplier<? extends ItemLike> item) {

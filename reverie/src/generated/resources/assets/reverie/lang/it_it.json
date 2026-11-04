@@ -1,6 +1,7 @@
 {
   "block.reverie.sport_tuff_gearshift": "Cambio Sportivo di Tufo",
   "block.reverie.tuff_gearshift": "Cambio di Tufo",
+  "item.reverie.latch_remote": "Telecomando a Ritenuta",
   "item.reverie.tuff_alloy": "Lega di Tufo",
   "itemGroup.reverie": "Reverie",
   "reverie.gearshift.goggles.gear": "Marcia: %s (%s)",
@@ -11,5 +12,13 @@
   "reverie.gearshift.screen.out": "ESCE",
   "reverie.gearshift.screen.redstone": "PIETRAROSSA",
   "reverie.gearshift.screen.rpm": "giri/min",
-  "reverie.gearshift.screen.title": "Leva del cambio"
+  "reverie.gearshift.screen.title": "Leva del cambio",
+  "reverie.latch_remote.copied": "Frequenza copiata dal Collegamento di Pietrarossa",
+  "reverie.latch_remote.menu.hint": "Coppia di frequenza",
+  "reverie.latch_remote.off": "Telecomando SPENTO",
+  "reverie.latch_remote.on": "Telecomando ACCESO",
+  "reverie.latch_remote.tooltip.frequency": "Frequenza: %s + %s",
+  "reverie.latch_remote.tooltip.hint": "Clic destro: acceso/spento. Accovacciato: frequenza",
+  "reverie.latch_remote.tooltip.off": "Inattivo",
+  "reverie.latch_remote.tooltip.on": "In trasmissione"
 }

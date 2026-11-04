@@ -41,6 +41,18 @@ public final class CreateDataGen {
                 .requires(Tags.Items.DUSTS_REDSTONE)
                 .unlockedBy("has_tuff_gearshift", InventoryChangeTrigger.TriggerInstance.hasItems(CreateContent.TUFF_GEARSHIFT_ITEM.get()))
                 .save(create);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, CreateContent.LATCH_REMOTE.get())
+                .requires(com.simibubi.create.AllItems.LINKED_CONTROLLER.get())
+                .requires(ModTags.Items.INGOTS_TUFF_ALLOY)
+                .requires(Items.LEVER)
+                .unlockedBy("has_linked_controller", InventoryChangeTrigger.TriggerInstance.hasItems(com.simibubi.create.AllItems.LINKED_CONTROLLER.get()))
+                .save(create);
+    }
+
+    public static void itemModels(net.neoforged.neoforge.client.model.generators.ItemModelProvider p) {
+        var active = p.basicItem(com.seba.reverie.Reverie.id("latch_remote_active"));
+        p.basicItem(CreateContent.LATCH_REMOTE.get())
+                .override().predicate(com.seba.reverie.Reverie.id("active"), 1f).model(active).end();
     }
 
     public static void json(JsonGen gen) {

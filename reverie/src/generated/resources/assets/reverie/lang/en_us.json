@@ -1,6 +1,7 @@
 {
   "block.reverie.sport_tuff_gearshift": "Sport Tuff Gearshift",
   "block.reverie.tuff_gearshift": "Tuff Gearshift",
+  "item.reverie.latch_remote": "Latch Remote",
   "item.reverie.tuff_alloy": "Tuff Alloy",
   "itemGroup.reverie": "Reverie",
   "reverie.gearshift.goggles.gear": "Gear: %s (%s)",
@@ -11,5 +12,13 @@
   "reverie.gearshift.screen.out": "OUT",
   "reverie.gearshift.screen.redstone": "REDSTONE",
   "reverie.gearshift.screen.rpm": "rpm",
-  "reverie.gearshift.screen.title": "Gear Stick"
+  "reverie.gearshift.screen.title": "Gear Stick",
+  "reverie.latch_remote.copied": "Frequency copied from the Redstone Link",
+  "reverie.latch_remote.menu.hint": "Frequency pair",
+  "reverie.latch_remote.off": "Remote OFF",
+  "reverie.latch_remote.on": "Remote ON",
+  "reverie.latch_remote.tooltip.frequency": "Frequency: %s + %s",
+  "reverie.latch_remote.tooltip.hint": "Right-click: on/off. Sneak: set frequency",
+  "reverie.latch_remote.tooltip.off": "Idle",
+  "reverie.latch_remote.tooltip.on": "Transmitting"
 }

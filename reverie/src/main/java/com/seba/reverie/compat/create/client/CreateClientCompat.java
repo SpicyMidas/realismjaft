@@ -21,6 +21,7 @@ public final class CreateClientCompat {
         modBus.addListener(CreateClientCompat::renderers);
         modBus.addListener(CreateClientCompat::models);
         modBus.addListener(CreateClientCompat::setup);
+        modBus.addListener(CreateClientCompat::screens);
     }
 
     private static void renderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -33,8 +34,14 @@ public final class CreateClientCompat {
         event.register(TuffGearshiftRenderer.BOOT_UPPER);
     }
 
+    private static void screens(net.neoforged.neoforge.client.event.RegisterMenuScreensEvent event) {
+        event.register(CreateContent.LATCH_REMOTE_MENU.get(), LatchRemoteScreen::new);
+    }
+
     private static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            net.minecraft.client.renderer.item.ItemProperties.register(CreateContent.LATCH_REMOTE.get(), Reverie.id("active"),
+                    (stack, level, entity, seed) -> com.seba.reverie.compat.create.remote.LatchRemoteItem.isActive(stack) ? 1f : 0f);
             TuffGearshiftBlock.screenOpener = pos -> Minecraft.getInstance().setScreen(new TuffGearshiftScreen(pos));
             try {
                 // Same visual Create uses for its Gearshift; the renderer still runs for the stick.

@@ -16,5 +16,9 @@ public final class CreateCompat {
         modBus.addListener(CreateNetwork::register);
         ModCreativeTab.add(CreateContent.TUFF_GEARSHIFT_ITEM);
         ModCreativeTab.add(CreateContent.SPORT_TUFF_GEARSHIFT_ITEM);
+        ModCreativeTab.add(CreateContent.LATCH_REMOTE);
+        com.seba.reverie.compat.create.remote.LatchRemoteServer.init();
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGH,
+                com.seba.reverie.compat.create.remote.LatchRemoteEvents::onRightClickBlock);
     }
 }

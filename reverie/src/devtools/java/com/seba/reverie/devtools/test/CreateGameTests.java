@@ -38,7 +38,7 @@ public final class CreateGameTests {
     }
 
     /** Not in the player list, so no login events reach Create (its mock-player sync crashes the test server). */
-    private static net.minecraft.server.level.ServerPlayer fakePlayer(GameTestHelper h) {
+    static net.minecraft.server.level.ServerPlayer fakePlayer(GameTestHelper h) {
         return net.neoforged.neoforge.common.util.FakePlayerFactory.get(h.getLevel(),
                 new com.mojang.authlib.GameProfile(java.util.UUID.fromString("5e1f5a1e-0000-4000-8000-00000000ce11"), "reverie_test"));
     }

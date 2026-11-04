@@ -1,0 +1,28 @@
+newworld remote_vis flat 9
+wait 40
+cmd time set 18000
+cmd gamerule doDaylightCycle false
+cmd kill @e[type=!player]
+cmd setblock 0 -60 4 minecraft:redstone_lamp
+cmd setblock 0 -60 3 create:redstone_link[facing=north]
+wait 10
+cmd setblock 0 -60 3 create:redstone_link[facing=north,receiver=true]
+cmd give @s reverie:latch_remote
+cmd tp @s 0.5 -60 0.5 0 15
+wait 30
+screenshot remote_off
+useitem
+wait 30
+screenshot remote_on
+cmd clear @s reverie:latch_remote
+wait 45
+screenshot remote_dropped
+cmd give @s reverie:latch_remote
+wait 5
+sneak on
+useitem
+wait 20
+sneak off
+screenshot remote_menu
+close
+stop

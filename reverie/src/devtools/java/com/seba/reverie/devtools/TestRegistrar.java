@@ -9,5 +9,6 @@ final class TestRegistrar {
 
     static void create(RegisterGameTestsEvent event) {
         event.register(com.seba.reverie.devtools.test.CreateGameTests.class);
+        event.register(com.seba.reverie.devtools.test.RemoteGameTests.class);
     }
 }
