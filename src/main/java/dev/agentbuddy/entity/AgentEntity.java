@@ -22,25 +22,25 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.FlyingMoveControl;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 /**
- * The Agent: a flying camera-lens golem. Movement copies the Allay (flying move control and navigation, no ground
- * pathfinding, no fall damage). Its persistent data lives in {@link AgentStore} under {@link #agentId()}.
+ * The Agent: a small walking golem with a camera-lens face. It walks like a copper golem (ground pathfinding,
+ * idle wandering near its owner while following) and teleports to a safe spot by its owner when left behind.
+ * It takes no fall damage. Its persistent data lives in {@link AgentStore} under {@link #agentId()}.
  */
 public class AgentEntity extends PathfinderMob {
     private UUID agentId;
@@ -56,16 +56,14 @@ public class AgentEntity extends PathfinderMob {
 
     public AgentEntity(EntityType<? extends AgentEntity> type, Level level) {
         super(type, level);
-        this.moveControl = new FlyingMoveControl(this, 20, true);
-        setNoGravity(true);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return PathfinderMob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0)
-                .add(Attributes.FLYING_SPEED, 0.12F)
-                .add(Attributes.MOVEMENT_SPEED, 0.12F)
-                .add(Attributes.FOLLOW_RANGE, 48.0);
+                .add(Attributes.MOVEMENT_SPEED, 0.25)
+                .add(Attributes.FOLLOW_RANGE, 32.0)
+                .add(Attributes.STEP_HEIGHT, 1.0);
     }
 
     /** Called once when spawned from an item. */
@@ -137,31 +135,27 @@ public class AgentEntity extends PathfinderMob {
 
     @Override
     protected void registerGoals() {
-        goalSelector.addGoal(0, new FetchGoal(this));
-        goalSelector.addGoal(1, new FollowOwnerFlyingGoal(this, 1.6, 5.0F, 3.0F, 24.0F));
-        goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+        goalSelector.addGoal(0, new FloatGoal(this));
+        goalSelector.addGoal(1, new FetchGoal(this));
+        goalSelector.addGoal(2, new FollowOwnerGoal(this, 1.2, 5.0F, 2.5F, 16.0F));
+        // Pottering around near the owner, like a copper golem; never while told to stay.
+        goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.6) {
+            @Override
+            public boolean canUse() {
+                return isFollowing() && super.canUse();
+            }
+        });
+        goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        goalSelector.addGoal(5, new RandomLookAroundGoal(this));
     }
 
     @Override
     protected PathNavigation createNavigation(Level level) {
-        FlyingPathNavigation nav = new FlyingPathNavigation(this, level);
+        GroundPathNavigation nav = new GroundPathNavigation(this, level);
         nav.setCanOpenDoors(false);
         nav.setCanFloat(true);
         nav.setCanPassDoors(true);
         return nav;
-    }
-
-    // Same as Allay.travel: flying movement with drag, slower in liquids.
-    @Override
-    public void travel(Vec3 travelVector) {
-        if (isControlledByLocalInstance()) {
-            float drag = isInWater() ? 0.8F : isInLava() ? 0.5F : 0.91F;
-            moveRelative(isInWater() || isInLava() ? 0.02F : getSpeed(), travelVector);
-            move(MoverType.SELF, getDeltaMovement());
-            setDeltaMovement(getDeltaMovement().scale(drag));
-        }
-        calculateEntityAnimation(false);
     }
 
     @Override
@@ -239,6 +233,8 @@ public class AgentEntity extends PathfinderMob {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        // Agents saved by 0.2-0.4 (when it flew) carry NoGravity=1; it walks now.
+        setNoGravity(false);
         agentId = tag.hasUUID("AgentId") ? tag.getUUID("AgentId") : null;
         owner = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
         following = !tag.contains("Following") || tag.getBoolean("Following");

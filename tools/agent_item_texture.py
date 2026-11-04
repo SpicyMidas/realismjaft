@@ -3,11 +3,12 @@ from PIL import Image
 
 PAL = {
     '.': (0, 0, 0, 0),
-    'o': (38, 40, 46, 255),     # outline (iron, darkest)
-    'd': (88, 92, 100, 255),    # dark
-    'b': (132, 137, 145, 255),  # base
-    'l': (176, 181, 188, 255),  # light
-    'h': (214, 218, 224, 255),  # highlight
+    'o': (92, 94, 102, 255),    # outline (light-grey metal, darkest)
+    'd': (146, 148, 156, 255),  # dark
+    'b': (196, 198, 204, 255),  # base
+    'l': (222, 224, 228, 255),  # light
+    'h': (242, 243, 245, 255),  # highlight
+    'r': (196, 92, 52, 255),    # rust antenna tip
     'k': (24, 24, 30, 255),     # lens ring
     'g': (28, 62, 128, 255),    # glass dark
     'G': (52, 112, 196, 255),   # glass
@@ -17,7 +18,7 @@ PAL = {
 
 GRID = [
     "................",
-    "......oho.......",
+    "......oro.......",
     ".......o........",
     "..oooooooooooo..",
     ".ohhhllllllllbo.",

@@ -122,7 +122,8 @@ public class AgentGameTests {
             AgentEntity a = onlyAgent(h);
             UUID id = a.agentId();
             a.kill();
-            List<ItemEntity> drops = h.getEntities(EntityType.ITEM);
+            // Search around the agent, not the structure box: a walking agent can stand just below it.
+            List<ItemEntity> drops = h.getLevel().getEntities(EntityType.ITEM, a.getBoundingBox().inflate(4), e -> true);
             h.assertTrue(drops.stream().anyMatch(e -> id.equals(e.getItem().get(ModRegistries.AGENT_ID.get()))), "agent item should drop");
             h.assertFalse(store(h).get(id).deployed(), "record should be freed for redeploy");
         } finally {
@@ -132,27 +133,42 @@ public class AgentGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 100)
-    public static void agentHoversInsteadOfFalling(GameTestHelper h) {
-        AgentEntity a = h.spawn(ModRegistries.AGENT.get(), new Vec3(1.5, 2.0, 1.5));
-        double startY = a.getY();
-        h.runAfterDelay(60, () -> {
-            h.assertTrue(a.getY() > startY - 0.3, "agent fell from " + startY + " to " + a.getY());
-            h.succeed();
+    public static void agentWalksOnTheGroundAndTakesNoFallDamage(GameTestHelper h) {
+        AgentEntity a = h.spawn(ModRegistries.AGENT.get(), new Vec3(1.5, 2.9, 1.5));
+        h.succeedWhen(() -> {
+            h.assertTrue(a.onGround(), "agent should have landed (y=" + a.getY() + ")");
+            h.assertValueEqual(a.getHealth(), a.getMaxHealth(), "no fall damage");
         });
     }
 
     // Test areas are walled with barriers, so the owner must be inside the (5x6x20) template.
     @GameTest(template = "corridor", timeoutTicks = 300)
-    public static void agentFliesToOwner(GameTestHelper h) {
+    public static void agentWalksToOwner(GameTestHelper h) {
         @SuppressWarnings("removal")
         ServerPlayer p = h.makeMockServerPlayerInLevel();
-        BlockPos far = h.absolutePos(new BlockPos(2, 1, 17));
+        BlockPos far = h.absolutePos(new BlockPos(2, 0, 13));
         p.moveTo(far.getX() + 0.5, far.getY(), far.getZ() + 0.5);
-        useItemOn(h, p, new ItemStack(ModRegistries.AGENT_ITEM.get()), new BlockPos(2, 0, 2));
+        useItemOn(h, p, new ItemStack(ModRegistries.AGENT_ITEM.get()), new BlockPos(2, -1, 2));
         AgentEntity a = onlyAgent(h);
         double start = a.distanceTo(p);
         h.succeedWhen(() -> {
-            h.assertTrue(a.distanceTo(p) < 6.0, "still " + a.distanceTo(p) + " blocks away (started " + start + ")");
+            h.assertTrue(a.distanceTo(p) < 4.0, "still " + a.distanceTo(p) + " blocks away (started " + start + ")");
+            h.assertTrue(a.onGround(), "walking, not flying");
+            h.getLevel().getServer().getPlayerList().remove(p);
+        });
+    }
+
+    @GameTest(template = "corridor", timeoutTicks = 40)
+    public static void agentTeleportsWhenLeftFarBehind(GameTestHelper h) {
+        @SuppressWarnings("removal")
+        ServerPlayer p = h.makeMockServerPlayerInLevel();
+        BlockPos far = h.absolutePos(new BlockPos(2, 0, 18));
+        p.moveTo(far.getX() + 0.5, far.getY(), far.getZ() + 0.5);
+        useItemOn(h, p, new ItemStack(ModRegistries.AGENT_ITEM.get()), new BlockPos(2, -1, 0));
+        AgentEntity a = onlyAgent(h);
+        // 17+ blocks: walking there would take ~70 ticks; the 40-tick timeout only passes via teleport.
+        h.succeedWhen(() -> {
+            h.assertTrue(a.distanceTo(p) < 4.0, "not teleported yet, " + a.distanceTo(p) + " blocks away");
             h.getLevel().getServer().getPlayerList().remove(p);
         });
     }

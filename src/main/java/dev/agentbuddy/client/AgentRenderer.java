@@ -10,7 +10,7 @@ public class AgentRenderer extends MobRenderer<AgentEntity, AgentModel> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(AgentBuddy.MODID, "textures/entity/agent.png");
 
     public AgentRenderer(EntityRendererProvider.Context context) {
-        super(context, new AgentModel(context.bakeLayer(AgentModel.LAYER)), 0.35F);
+        super(context, new AgentModel(context.bakeLayer(AgentModel.LAYER)), 0.3F);
     }
 
     @Override

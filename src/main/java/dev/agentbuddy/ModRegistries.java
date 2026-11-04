@@ -21,8 +21,8 @@ public final class ModRegistries {
 
     public static final DeferredHolder<EntityType<?>, EntityType<AgentEntity>> AGENT = ENTITY_TYPES.register("agent",
             () -> EntityType.Builder.of(AgentEntity::new, MobCategory.MISC)
-                    .sized(0.75F, 1.3F)
-                    .eyeHeight(0.97F)
+                    .sized(0.6F, 1.0F)
+                    .eyeHeight(0.75F)
                     .clientTrackingRange(10)
                     .build("agent"));
 

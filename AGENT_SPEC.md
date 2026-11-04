@@ -108,7 +108,7 @@ Rules:
 - System prompt (short, 6–8 lines) restates these rules and includes 6–8 few-shot examples of terse, factual replies and false-premise corrections.
 
 ## 6. Entity, item, GUI
-- Custom flying entity (Allay-like movement, so no ground pathfinding). Golem-style body with a large camera lens as the face. Model/texture made in Blockbench.
+- Custom walking entity with copper-golem-like movement: ground pathfinding, a walking animation, idle wandering near its owner while following, and a teleport to a safe spot by the owner when far behind or stuck. Golem-style body with a large camera lens as the face, light-grey/white look per the owner's reference image. Model/texture made in Blockbench. *(Changed by the owner on 2026-11-04; was a flying, Allay-like entity.)*
 - Shift + right-click: pick up as an item. Entity data (name, waystones, ignore list, credits) is stored server-side under a UUID; the item holds only the UUID reference. Placing the item restores the entity.
 - Right-click on the entity or the C key opens the GUI. The GUI covers: waystone list and teleport, ignore list, rename, credit balance, container search, and a chat/command box. Every action is a packet that calls a tool directly.
 - Credits: earned from XP collection. Stored per player (server data).

@@ -1,6 +1,6 @@
 # Installing Agent Buddy (Windows)
 
-Current build: **0.4.0 = milestone M4**. The Agent can be crafted, placed, picked up again, follows you, and has a GUI:
+Current build: **0.4.1 = milestone M4 + walking golem**. The Agent can be crafted, placed, picked up again, follows you, and has a GUI:
 rename, follow/stay, "what am I looking at?", find/fetch items from your chests, container snapshots, and an ignore list.
 Talking to it with `@agent ...` comes in M7, so the local LLM is not used yet.
 
@@ -12,7 +12,7 @@ Talking to it with `@agent ...` comes in M7, so the local LLM is not used yet.
 4. In the launcher, the profile **NeoForge 21.1.265** now exists. Under Edit → More options → JVM arguments, set `-Xmx4G` (the spec keeps the game heap at about 4 GB, so the model gets the VRAM).
 
 ## 2. The mod
-Copy `agentbuddy-0.4.0.jar` into `%APPDATA%\.minecraft\mods\` (create the folder if needed) and start the NeoForge profile. **Mods** on the title screen should list "Agent Buddy 0.4.0".
+Copy `agentbuddy-0.4.1.jar` into `%APPDATA%\.minecraft\mods\` (create the folder if needed) and start the NeoForge profile. **Mods** on the title screen should list "Agent Buddy 0.4.1".
 
 To build the jar yourself, run `gradlew.bat build` in the repo. Output: `build\libs\agentbuddy-<version>.jar`.
 
@@ -25,7 +25,7 @@ To build the jar yourself, run `gradlew.bat build` in the repo. Output: `build\l
   ```
 - **Place:** right-click a block with the item. The Agent belongs to whoever places a fresh item.
 - **Pick up:** sneak (Shift) + right-click the Agent. Only its owner can. It becomes the item again, keeping its identity (name and, later, waystones and ignore list).
-- **Follows you**, flying, and teleports to you if you get more than 24 blocks away. It doesn't despawn.
+- **Follows you on foot** (like a copper golem: it walks, pathfinds and potters around near you), and teleports to a safe spot next to you if it falls more than 16 blocks behind or gets stuck. It takes no fall damage and doesn't despawn.
 - If it dies, it drops its item, so it is never lost.
 - **GUI:** right-click your Agent, or press **C** near it (within 64 blocks). It shows its name, your credits and its mode, and has buttons for Rename, Follow, Stay and "What am I looking at?". The game keeps running while it is open.
   Vanilla also uses C (save hotbar, creative only). Options → Controls shows both in red; rebind "Open Agent" under Agent Buddy if that bothers you.
@@ -47,8 +47,8 @@ scripts\setup-local-llm.cmd -GameDir "%APPDATA%\.minecraft"
 
 This creates `%APPDATA%\.minecraft\localLLM\{bin,models,logs}`, installs llama-server b12110 (CUDA 12 build on an NVIDIA GPU), and downloads Qwen3.5-4B Q4_K_M (2.55 GB, asks first). Every file is checked by size and sha256.
 
-## Known limitations of 0.4.0
+## Known limitations of 0.4.1
 - Items inside shulker boxes that sit inside a chest are not searched yet.
-- The model and texture are placeholders defined in code, not a Blockbench model.
+- The model is defined in code (not a Blockbench model). The texture follows your reference image by eye; drop the real PNG into the repo for an exact match.
 - Agents created with `/summon` have no owner and cannot be picked up.
 - Only tested in the dev environment (`gradlew runClient`, game tests), not through the real launcher. If the profile fails to start, send `%APPDATA%\.minecraft\logs\latest.log`.

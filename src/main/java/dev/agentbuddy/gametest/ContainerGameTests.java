@@ -217,8 +217,9 @@ public class ContainerGameTests {
         h.startSequence()
                 .thenWaitUntil(() -> h.assertFalse(a.carriedItems().isEmpty(), "not carrying yet"))
                 .thenExecute(a::kill)
-                .thenExecuteAfter(1, () -> h.assertTrue(h.getEntities(EntityType.ITEM).stream()
-                        .anyMatch(e -> e.getItem().is(Items.GOLD_INGOT) && e.getItem().getCount() == 12), "carried gold dropped"))
+                // Search around the agent: it walks one block below the structure's bounding box.
+                .thenExecuteAfter(1, () -> h.assertTrue(h.getLevel().getEntities(EntityType.ITEM, a.getBoundingBox().inflate(4), e -> true)
+                        .stream().anyMatch(e -> e.getItem().is(Items.GOLD_INGOT) && e.getItem().getCount() == 12), "carried gold dropped"))
                 .thenExecute(() -> h.getLevel().getServer().getPlayerList().remove(p))
                 .thenSucceed();
     }
