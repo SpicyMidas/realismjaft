@@ -128,7 +128,12 @@ public final class Templates {
     }
 
     private static String noWaystone(ToolResult r) {
-        return NOT_FOUND.equals(r.reason()) ? "No waystone named " + r.str("name") + "." : fallback(r);
+        return switch (r.reason()) {
+            case NOT_FOUND -> "No waystone named " + r.str("name") + ".";
+            case "other_dimension" -> "Waystone " + r.str("name") + " is in another dimension.";
+            case "no_safe_spot" -> "No safe spot at waystone " + r.str("name") + ".";
+            default -> fallback(r);
+        };
     }
 
     private static String fallback(ToolResult r) {

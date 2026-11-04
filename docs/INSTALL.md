@@ -1,7 +1,8 @@
 # Installing Agent Buddy (Windows)
 
-Current build: **0.4.1 = milestone M4 + walking golem**. The Agent can be crafted, placed, picked up again, follows you, and has a GUI:
-rename, follow/stay, "what am I looking at?", find/fetch items from your chests, container snapshots, and an ignore list.
+Current build: **0.5.0 = milestone M5**. The Agent can be crafted, placed, picked up again, walks after you, and has a GUI:
+rename, follow/stay, "what am I looking at?", find/fetch items from your chests, container snapshots, an ignore list,
+waystones with teleport, and a once-per-death return. Ore search is a tool (used by chat in M7).
 Talking to it with `@agent ...` comes in M7, so the local LLM is not used yet.
 
 ## 1. Minecraft 1.21.1 + NeoForge
@@ -12,11 +13,11 @@ Talking to it with `@agent ...` comes in M7, so the local LLM is not used yet.
 4. In the launcher, the profile **NeoForge 21.1.265** now exists. Under Edit → More options → JVM arguments, set `-Xmx4G` (the spec keeps the game heap at about 4 GB, so the model gets the VRAM).
 
 ## 2. The mod
-Copy `agentbuddy-0.4.1.jar` into `%APPDATA%\.minecraft\mods\` (create the folder if needed) and start the NeoForge profile. **Mods** on the title screen should list "Agent Buddy 0.4.1".
+Copy `agentbuddy-0.5.0.jar` into `%APPDATA%\.minecraft\mods\` (create the folder if needed) and start the NeoForge profile. **Mods** on the title screen should list "Agent Buddy 0.5.0".
 
 To build the jar yourself, run `gradlew.bat build` in the repo. Output: `build\libs\agentbuddy-<version>.jar`.
 
-## 3. In game (M4)
+## 3. In game (M5)
 - **Get the Agent:** Creative inventory → Tools & Utilities, or craft it:
   ```
   .  S  .      S = spyglass
@@ -37,6 +38,12 @@ To build the jar yourself, run `gradlew.bat build` in the repo. Output: `build\l
   - *Ignore*: look at a block or container and press Ignore. From then on it does not exist for the Agent (find, fetch, look, snapshot). The GUI lists ignored blocks with Unignore buttons.
   - Unopened loot chests (dungeons etc.) show as "Contents unknown until opened." and are never opened by the Agent.
   - Credits and cooldowns are only charged when the tool succeeds.
+- **Waystones** (GUI → Waystones...): up to 5 named spots. *Set here* saves where you stand; *Go* teleports you there
+  (1 credit + 1 per 100 blocks, 60 s cooldown, same dimension only); *X* removes it. Your Agent comes along if it is following you.
+- **Back to death spot** (10 credits, once per death): teleports you to a safe spot near where you last died, in any
+  dimension, even if your Agent is not with you. Falling into the void puts you on the surface above that point.
+- **Ore search** (`find_ore`, 1 credit, 5 s): nearest ore of a type within 64 blocks in loaded chunks (modded ores with
+  `c:ores/...` tags count). No GUI button; you'll use it by chat in M7 ("where's the nearest iron?").
 
 ## 4. Local LLM (needed from M7 on; you can set it up now)
 From the repo folder, put the LLM next to your real game install:
@@ -47,7 +54,7 @@ scripts\setup-local-llm.cmd -GameDir "%APPDATA%\.minecraft"
 
 This creates `%APPDATA%\.minecraft\localLLM\{bin,models,logs}`, installs llama-server b12110 (CUDA 12 build on an NVIDIA GPU), and downloads Qwen3.5-4B Q4_K_M (2.55 GB, asks first). Every file is checked by size and sha256.
 
-## Known limitations of 0.4.1
+## Known limitations of 0.5.0
 - Items inside shulker boxes that sit inside a chest are not searched yet.
 - The model is defined in code (not a Blockbench model). The texture follows your reference image by eye; drop the real PNG into the repo for an exact match.
 - Agents created with `/summon` have no owner and cannot be picked up.

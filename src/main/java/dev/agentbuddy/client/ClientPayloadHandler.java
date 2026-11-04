@@ -12,7 +12,7 @@ public final class ClientPayloadHandler {
     public static void onScreenData(AgentScreenData data) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.screen instanceof SnapshotScreen) return; // a snapshot just opened; don't cover it with the refresh
-        if (mc.screen instanceof AgentScreen screen && screen.agentId().equals(data.agentId())) {
+        if (mc.screen instanceof AgentDataScreen screen && screen.agentId().equals(data.agentId())) {
             screen.update(data);
         } else {
             mc.setScreen(new AgentScreen(data));

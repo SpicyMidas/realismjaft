@@ -1,8 +1,10 @@
 package dev.agentbuddy.data;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -25,6 +27,14 @@ public final class AgentStore extends SavedData {
     private static final String FILE = "agentbuddy_agents";
     private static final SavedData.Factory<AgentStore> FACTORY = new SavedData.Factory<>(AgentStore::new, AgentStore::load);
 
+    public static final int MAX_WAYSTONES = 5;
+
+    /** A saved teleport target: where the player stood, facing {@code yaw}. */
+    public record Waystone(String name, GlobalPos pos, float yaw) {
+    }
+
+    public enum AddResult { OK, EXISTS, LIMIT }
+
     public static final class Record {
         public final UUID owner;
         private String name;
@@ -32,6 +42,8 @@ public final class AgentStore extends SavedData {
         private boolean deployed;
         // Blocks this agent must not perceive (canonical position; a double chest is stored once).
         private final Set<GlobalPos> ignored = new LinkedHashSet<>();
+        // Keyed by lower-case name; the Waystone keeps the name as typed.
+        private final Map<String, Waystone> waystones = new LinkedHashMap<>();
 
         Record(UUID owner, String name, boolean deployed) {
             this.owner = owner;
@@ -54,6 +66,36 @@ public final class AgentStore extends SavedData {
         public boolean isIgnored(GlobalPos pos) {
             return ignored.contains(pos);
         }
+
+        public Optional<Waystone> waystone(String name) {
+            return Optional.ofNullable(waystones.get(key(name)));
+        }
+
+        public java.util.List<Waystone> waystones() {
+            return java.util.List.copyOf(waystones.values());
+        }
+    }
+
+    private static String key(String name) {
+        return name.trim().toLowerCase(java.util.Locale.ROOT);
+    }
+
+    public AddResult addWaystone(UUID agentId, Waystone w) {
+        Record r = records.get(agentId);
+        if (r == null) return AddResult.LIMIT;
+        if (r.waystones.containsKey(key(w.name()))) return AddResult.EXISTS;
+        if (r.waystones.size() >= MAX_WAYSTONES) return AddResult.LIMIT;
+        r.waystones.put(key(w.name()), w);
+        setDirty();
+        return AddResult.OK;
+    }
+
+    /** Returns the removed waystone, if there was one with that name. */
+    public Optional<Waystone> removeWaystone(UUID agentId, String name) {
+        Record r = records.get(agentId);
+        Waystone w = r == null ? null : r.waystones.remove(key(name));
+        if (w != null) setDirty();
+        return Optional.ofNullable(w);
     }
 
     private final Map<UUID, Record> records = new HashMap<>();
@@ -64,6 +106,11 @@ public final class AgentStore extends SavedData {
 
     public Record get(UUID agentId) {
         return records.get(agentId);
+    }
+
+    /** Some agent id owned by this player, or null (used when no agent entity is loaded nearby). */
+    public UUID anyOwnedBy(UUID owner) {
+        return records.entrySet().stream().filter(e -> e.getValue().owner.equals(owner)).map(Map.Entry::getKey).findFirst().orElse(null);
     }
 
     public Record create(UUID agentId, UUID owner) {
@@ -122,6 +169,16 @@ public final class AgentStore extends SavedData {
                 ignored.add(it);
             }
             t.put("Ignored", ignored);
+            ListTag ways = new ListTag();
+            for (Waystone w : e.getValue().waystones.values()) {
+                CompoundTag wt = new CompoundTag();
+                wt.putString("Name", w.name());
+                wt.putString("Dim", w.pos().dimension().location().toString());
+                wt.putLong("Pos", w.pos().pos().asLong());
+                wt.putFloat("Yaw", w.yaw());
+                ways.add(wt);
+            }
+            t.put("Waystones", ways);
             list.add(t);
         }
         tag.put("Agents", list);
@@ -137,6 +194,12 @@ public final class AgentStore extends SavedData {
                 CompoundTag ic = (CompoundTag) it;
                 ResourceKey<net.minecraft.world.level.Level> dim = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(ic.getString("Dim")));
                 r.ignored.add(GlobalPos.of(dim, BlockPos.of(ic.getLong("Pos"))));
+            }
+            for (Tag wt : c.getList("Waystones", Tag.TAG_COMPOUND)) {
+                CompoundTag w = (CompoundTag) wt;
+                ResourceKey<net.minecraft.world.level.Level> dim = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(w.getString("Dim")));
+                Waystone way = new Waystone(w.getString("Name"), GlobalPos.of(dim, BlockPos.of(w.getLong("Pos"))), w.getFloat("Yaw"));
+                r.waystones.put(key(way.name()), way);
             }
             s.records.put(c.getUUID("Id"), r);
         }

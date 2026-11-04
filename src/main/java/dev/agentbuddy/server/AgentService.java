@@ -13,7 +13,9 @@ import dev.agentbuddy.data.AgentStore;
 import dev.agentbuddy.data.CreditStore;
 import dev.agentbuddy.entity.AgentEntity;
 import dev.agentbuddy.network.AgentScreenData;
+import dev.agentbuddy.tool.DeathReturnTool;
 import dev.agentbuddy.tool.FetchItemTool;
+import dev.agentbuddy.tool.FindOreTool;
 import dev.agentbuddy.tool.FindItemTool;
 import dev.agentbuddy.tool.IgnoreTool;
 import dev.agentbuddy.tool.ListContainerTool;
@@ -22,6 +24,7 @@ import dev.agentbuddy.tool.ModeTool;
 import dev.agentbuddy.tool.SetNameTool;
 import dev.agentbuddy.tool.SnapshotTool;
 import dev.agentbuddy.tool.UnignoreTool;
+import dev.agentbuddy.tool.WaystoneTools;
 import java.time.Clock;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -57,9 +60,10 @@ public final class AgentService {
         this.server = server;
         this.credits = CreditStore.get(server).credits();
         // Registration order matters for routing (see brain Router); it follows ToolSpecs.ALL.
-        List<Tool> tools = List.of(new LookAtTool(this), new IgnoreTool(this), new UnignoreTool(this),
+        List<Tool> tools = List.of(new LookAtTool(this), new FindOreTool(this), new IgnoreTool(this), new UnignoreTool(this),
                 new ListContainerTool(this), new FindItemTool(this), new FetchItemTool(this), new SnapshotTool(this),
-                new SetNameTool(this), new ModeTool(this, true), new ModeTool(this, false));
+                new WaystoneTools.Set(this), new WaystoneTools.Teleport(this), new WaystoneTools.Remove(this),
+                new DeathReturnTool(this), new SetNameTool(this), new ModeTool(this, true), new ModeTool(this, false));
         this.runner = new ToolRunner(new ToolRegistry(tools), credits, new Cooldowns(Clock.systemUTC()));
     }
 
@@ -117,6 +121,36 @@ public final class AgentService {
         return a == null ? null : new Controlled(p, a);
     }
 
+    /**
+     * The agent record a player's virtual features (waystones) use: the loaded agent if there is one, else the
+     * last selected agent, else any agent they own. Null if they have none.
+     */
+    public UUID agentIdFor(ServerPlayer player) {
+        AgentEntity loaded = agentFor(player);
+        if (loaded != null && loaded.agentId() != null) return loaded.agentId();
+        UUID selected = selectedAgent.get(player.getUUID());
+        AgentStore store = AgentStore.get(server);
+        if (selected != null && store.get(selected) != null && store.get(selected).owner.equals(player.getUUID())) return selected;
+        return store.anyOwnedBy(player.getUUID());
+    }
+
+    /**
+     * Teleports the player; a following agent next to them comes along if the destination is in the same
+     * dimension (one in another dimension stays where it is).
+     */
+    public void teleport(ServerPlayer player, ServerLevel dest, BlockPos feet, float yaw) {
+        AgentEntity agent = agentFor(player);
+        boolean bring = agent != null && agent.isFollowing() && agent.level() == dest && agent.distanceTo(player) < 24;
+        player.teleportTo(dest, feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5, yaw, player.getXRot());
+        if (bring) {
+            BlockPos spot = dev.agentbuddy.world.SafeSpot.find(dest, feet, 3, 1.5);
+            if (spot != null) {
+                agent.getNavigation().stop();
+                agent.moveTo(spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, agent.getYRot(), agent.getXRot());
+            }
+        }
+    }
+
     public AgentStore.Record record(AgentEntity agent) {
         return agent.agentId() == null ? null : AgentStore.get(server).get(agent.agentId());
     }
@@ -156,6 +190,13 @@ public final class AgentService {
         List<BlockPos> ignored = r == null ? List.of() : r.ignored().stream()
                 .filter(g -> g.dimension().equals(player.level().dimension()))
                 .map(GlobalPos::pos).limit(AgentScreenData.MAX_IGNORED).toList();
-        return new AgentScreenData(agent.agentId(), name, agent.isFollowing(), credits(player), message, ignored);
+        List<AgentScreenData.WaystoneInfo> waystones = r == null ? List.of() : r.waystones().stream()
+                .map(w -> new AgentScreenData.WaystoneInfo(w.name(), w.pos().dimension().equals(player.level().dimension())
+                        ? (int) Math.round(player.position().distanceTo(w.pos().pos().getCenter())) : -1))
+                .toList();
+        boolean canReturn = player.getLastDeathLocation()
+                .map(d -> !dev.agentbuddy.data.DeathReturnStore.get(server).usedFor(player.getUUID(), d)).orElse(false);
+        return new AgentScreenData(agent.agentId(), name, agent.isFollowing(), credits(player), message,
+                new AgentScreenData.Lists(ignored, waystones, canReturn));
     }
 }
