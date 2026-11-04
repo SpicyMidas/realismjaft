@@ -3,3 +3,7 @@
 # are changed when only line endings change.
 src/generated/**/.cache/* text eol=lf
 src/generated/**/*.json text eol=lf
+
+# cmd.exe can misparse labels in LF-only batch files
+*.bat text eol=crlf
+*.cmd text eol=crlf
