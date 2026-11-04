@@ -1,0 +1,49 @@
+newworld gearshift_vis flat 7
+wait 40
+cmd time set noon
+cmd gamerule doDaylightCycle false
+cmd gamerule doMobSpawning false
+cmd kill @e[type=!player]
+cmd tp @s 0.5 -59 -2.5 0 25
+cmd setblock -4 -60 2 create:creative_motor[facing=east]
+cmd setblock -3 -60 2 reverie:tuff_gearshift[axis=x]
+cmd setblock -2 -60 2 create:shaft[axis=x]
+cmd setblock -1 -60 2 create:shaft[axis=x]
+cmd setblock 1 -60 2 reverie:sport_tuff_gearshift[axis=z,gear=5]
+cmd setblock 1 -60 3 create:shaft[axis=z]
+cmd setblock 3 -60 2 reverie:sport_tuff_gearshift[axis=y,gear=7,powered=true]
+cmd setblock 3 -59 2 create:shaft[axis=y]
+cmd setblock 5 -60 2 reverie:tuff_gearshift[axis=z,gear=2]
+wait 60
+hidegui on
+screenshot gs_overview
+cmd tp @s 0.5 -59.2 0.2 0 35
+wait 20
+screenshot gs_close
+cmd tp @s -1.6 -59.0 0.6 -30 40
+wait 20
+screenshot gs_regular_close
+cmd tp @s 3.5 -59.1 0.4 15 35
+wait 20
+screenshot gs_vertical
+hidegui off
+cmd tp @s -3.5 -58.6 0.3 0 50
+wait 10
+use -3 -60 2 up
+wait 20
+screenshot gs_gui_open
+mouse down 266 186
+mouse drag 266 175
+mouse drag 266 160
+mouse drag 266 150
+mouse drag 266 141
+wait 15
+screenshot gs_gui_gear3
+mouse up 266 141
+wait 30
+close
+wait 10
+hidegui on
+wait 20
+screenshot gs_after_gear3
+stop

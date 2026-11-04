@@ -37,6 +37,7 @@ public final class ReverieDevTools {
     static final Logger LOG = LogUtils.getLogger();
 
     public ReverieDevTools(IEventBus modBus) {
+        modBus.addListener(ReverieDevTools::registerTests);
         List<String> script = loadScript();
         if (script == null) return;
         if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -46,6 +47,12 @@ public final class ReverieDevTools {
             NeoForge.EVENT_BUS.addListener((ServerStartedEvent e) -> runner.server = e.getServer());
             NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post e) -> runner.tick());
         }
+    }
+
+    private static void registerTests(net.neoforged.neoforge.event.RegisterGameTestsEvent event) {
+        event.register(com.seba.reverie.devtools.test.CoreGameTests.class);
+        // Optional-mod tests reference those mods' classes, so they are only registered when present.
+        if (com.seba.reverie.compat.Compat.create()) TestRegistrar.create(event);
     }
 
     static List<String> loadScript() {

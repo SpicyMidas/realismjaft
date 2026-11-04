@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "reverie:tuff_gearshift"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tuff_alloy": {
+      "conditions": {
+        "items": [
+          {
+            "items": "reverie:tuff_alloy"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tuff_alloy"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "reverie:tuff_gearshift"
+    ]
+  }
+}

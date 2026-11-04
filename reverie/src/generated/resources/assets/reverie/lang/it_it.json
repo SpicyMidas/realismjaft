@@ -1,4 +1,15 @@
 {
+  "block.reverie.sport_tuff_gearshift": "Cambio Sportivo di Tufo",
+  "block.reverie.tuff_gearshift": "Cambio di Tufo",
   "item.reverie.tuff_alloy": "Lega di Tufo",
-  "itemGroup.reverie": "Reverie"
+  "itemGroup.reverie": "Reverie",
+  "reverie.gearshift.goggles.gear": "Marcia: %s (%s)",
+  "reverie.gearshift.goggles.locked": "Bloccato in R dalla pietrarossa",
+  "reverie.gearshift.goggles.selected": "Marcia memorizzata: %s",
+  "reverie.gearshift.goggles.speed": "Entrata %s RPM → Uscita %s RPM",
+  "reverie.gearshift.screen.in": "ENTRA",
+  "reverie.gearshift.screen.out": "ESCE",
+  "reverie.gearshift.screen.redstone": "PIETRAROSSA",
+  "reverie.gearshift.screen.rpm": "giri/min",
+  "reverie.gearshift.screen.title": "Leva del cambio"
 }

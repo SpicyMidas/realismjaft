@@ -3,6 +3,7 @@ package com.seba.reverie.data;
 import java.util.concurrent.CompletableFuture;
 
 import com.seba.reverie.Reverie;
+import com.seba.reverie.compat.create.CreateDataGen;
 import com.seba.reverie.registry.ModItems;
 import com.seba.reverie.registry.ModTags;
 
@@ -24,6 +25,7 @@ final class TagGen {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
+            CreateDataGen.blockTags(this::getOrCreateRawBuilder);
         }
     }
 

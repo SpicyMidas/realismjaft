@@ -1,4 +1,15 @@
 {
+  "block.reverie.sport_tuff_gearshift": "Sport Tuff Gearshift",
+  "block.reverie.tuff_gearshift": "Tuff Gearshift",
   "item.reverie.tuff_alloy": "Tuff Alloy",
-  "itemGroup.reverie": "Reverie"
+  "itemGroup.reverie": "Reverie",
+  "reverie.gearshift.goggles.gear": "Gear: %s (%s)",
+  "reverie.gearshift.goggles.locked": "Locked in R by redstone",
+  "reverie.gearshift.goggles.selected": "Remembered gear: %s",
+  "reverie.gearshift.goggles.speed": "In %s RPM → Out %s RPM",
+  "reverie.gearshift.screen.in": "IN",
+  "reverie.gearshift.screen.out": "OUT",
+  "reverie.gearshift.screen.redstone": "REDSTONE",
+  "reverie.gearshift.screen.rpm": "rpm",
+  "reverie.gearshift.screen.title": "Gear Stick"
 }

@@ -1,0 +1,70 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "glyph": "reverie:block/gearshift/gear_1",
+    "particle": "reverie:block/gearshift/window_frame"
+  },
+  "elements": [
+    {
+      "from": [
+        15.05,
+        6,
+        6
+      ],
+      "to": [
+        15.1,
+        10,
+        10
+      ],
+      "faces": {
+        "east": {
+          "texture": "#glyph",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 270
+        }
+      },
+      "name": "glyph",
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "from": [
+        0.9,
+        6,
+        6
+      ],
+      "to": [
+        0.95,
+        10,
+        10
+      ],
+      "faces": {
+        "west": {
+          "texture": "#glyph",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
+        }
+      },
+      "name": "glyph",
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ]
+}

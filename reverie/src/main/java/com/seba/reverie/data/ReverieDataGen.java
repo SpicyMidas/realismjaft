@@ -31,6 +31,9 @@ public final class ReverieDataGen {
         gen.addProvider(event.includeClient(), new ModelGen.BlockStates(out, files));
 
         gen.addProvider(event.includeServer(), new RecipeGen(out, lookup));
+        gen.addProvider(event.includeServer(), new JsonGen(out, "compat", json -> {
+            com.seba.reverie.compat.create.CreateDataGen.json(json);
+        }));
         BlockTagsProvider blockTags = new TagGen.Blocks(out, lookup, files);
         gen.addProvider(event.includeServer(), blockTags);
         gen.addProvider(event.includeServer(), new TagGen.Items(out, lookup, blockTags.contentsGetter(), files));

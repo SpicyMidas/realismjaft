@@ -1,0 +1,262 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "reverie:block/gearshift/rod",
+    "rod": "reverie:block/gearshift/rod",
+    "collar": "reverie:block/gearshift/gold_inlay",
+    "knob": "reverie:block/gearshift/knob",
+    "leather": "reverie:block/gearshift/leather"
+  },
+  "elements": [
+    {
+      "from": [
+        7.25,
+        15.5,
+        7.25
+      ],
+      "to": [
+        8.75,
+        21,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rod",
+          "uv": [
+            7.25,
+            0,
+            8.75,
+            5.5
+          ]
+        },
+        "south": {
+          "texture": "#rod",
+          "uv": [
+            7.25,
+            0,
+            8.75,
+            5.5
+          ]
+        },
+        "east": {
+          "texture": "#rod",
+          "uv": [
+            7.25,
+            0,
+            8.75,
+            5.5
+          ]
+        },
+        "west": {
+          "texture": "#rod",
+          "uv": [
+            7.25,
+            0,
+            8.75,
+            5.5
+          ]
+        }
+      },
+      "name": "rod"
+    },
+    {
+      "from": [
+        7.25,
+        15.5,
+        7.25
+      ],
+      "to": [
+        8.75,
+        21,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rod",
+          "uv": [
+            7.25,
+            0,
+            8.75,
+            5.5
+          ]
+        },
+        "south": {
+          "texture": "#rod",
+          "uv": [
+            7.25,
+            0,
+            8.75,
+            5.5
+          ]
+        },
+        "east": {
+          "texture": "#rod",
+          "uv": [
+            7.25,
+            0,
+            8.75,
+            5.5
+          ]
+        },
+        "west": {
+          "texture": "#rod",
+          "uv": [
+            7.25,
+            0,
+            8.75,
+            5.5
+          ]
+        }
+      },
+      "name": "rod",
+      "rotation": {
+        "origin": [
+          8,
+          18.25,
+          8
+        ],
+        "axis": "y",
+        "angle": 45
+      }
+    },
+    {
+      "from": [
+        6.75,
+        20.5,
+        6.75
+      ],
+      "to": [
+        9.25,
+        21,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#collar",
+          "uv": [
+            6.75,
+            0,
+            9.25,
+            0.5
+          ]
+        },
+        "south": {
+          "texture": "#collar",
+          "uv": [
+            6.75,
+            0,
+            9.25,
+            0.5
+          ]
+        },
+        "east": {
+          "texture": "#collar",
+          "uv": [
+            6.75,
+            0,
+            9.25,
+            0.5
+          ]
+        },
+        "west": {
+          "texture": "#collar",
+          "uv": [
+            6.75,
+            0,
+            9.25,
+            0.5
+          ]
+        },
+        "up": {
+          "texture": "#collar",
+          "uv": [
+            6.75,
+            6.75,
+            9.25,
+            9.25
+          ]
+        },
+        "down": {
+          "texture": "#collar",
+          "uv": [
+            6.75,
+            6.75,
+            9.25,
+            9.25
+          ]
+        }
+      },
+      "name": "knob_collar"
+    },
+    {
+      "from": [
+        6.5,
+        21,
+        6.5
+      ],
+      "to": [
+        9.5,
+        24,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#knob",
+          "uv": [
+            0,
+            0,
+            16,
+            10
+          ]
+        },
+        "south": {
+          "texture": "#knob",
+          "uv": [
+            0,
+            0,
+            16,
+            10
+          ]
+        },
+        "east": {
+          "texture": "#knob",
+          "uv": [
+            0,
+            0,
+            16,
+            10
+          ]
+        },
+        "west": {
+          "texture": "#knob",
+          "uv": [
+            0,
+            0,
+            16,
+            10
+          ]
+        },
+        "up": {
+          "texture": "#knob",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#knob",
+          "uv": [
+            6.5,
+            6.5,
+            9.5,
+            9.5
+          ]
+        }
+      },
+      "name": "knob"
+    }
+  ]
+}

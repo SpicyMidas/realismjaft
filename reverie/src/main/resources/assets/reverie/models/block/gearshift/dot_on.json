@@ -1,0 +1,86 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "dot": "reverie:block/gearshift/dot_on",
+    "particle": "reverie:block/gearshift/window_frame"
+  },
+  "elements": [
+    {
+      "from": [
+        15,
+        11.5,
+        10.5
+      ],
+      "to": [
+        15.5,
+        12.5,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dot"
+        },
+        "south": {
+          "texture": "#dot"
+        },
+        "east": {
+          "texture": "#dot"
+        },
+        "west": {
+          "texture": "#dot"
+        },
+        "up": {
+          "texture": "#dot"
+        },
+        "down": {
+          "texture": "#dot"
+        }
+      },
+      "name": "powered_dot",
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "from": [
+        0.5,
+        11.5,
+        4.5
+      ],
+      "to": [
+        1,
+        12.5,
+        5.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dot"
+        },
+        "south": {
+          "texture": "#dot"
+        },
+        "east": {
+          "texture": "#dot"
+        },
+        "west": {
+          "texture": "#dot"
+        },
+        "up": {
+          "texture": "#dot"
+        },
+        "down": {
+          "texture": "#dot"
+        }
+      },
+      "name": "powered_dot",
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ]
+}

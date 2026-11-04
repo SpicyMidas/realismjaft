@@ -2,6 +2,7 @@ package com.seba.reverie.data;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.seba.reverie.compat.create.CreateDataGen;
 import com.seba.reverie.registry.ModItems;
 
 import net.minecraft.core.HolderLookup;
@@ -23,5 +24,6 @@ final class RecipeGen extends RecipeProvider {
                 .requires(Items.TUFF).requires(Items.IRON_NUGGET).requires(Items.GOLD_NUGGET)
                 .unlockedBy("has_tuff", has(Items.TUFF))
                 .save(out);
+        CreateDataGen.recipes(out);
     }
 }

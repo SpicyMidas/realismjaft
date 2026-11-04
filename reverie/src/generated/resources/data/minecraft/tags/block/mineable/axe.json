@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "reverie:tuff_gearshift",
+      "required": false
+    },
+    {
+      "id": "reverie:sport_tuff_gearshift",
+      "required": false
+    }
+  ]
+}

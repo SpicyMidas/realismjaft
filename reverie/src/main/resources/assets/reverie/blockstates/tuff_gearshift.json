@@ -1,0 +1,320 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "axis": "z"
+      },
+      "apply": {
+        "model": "reverie:block/tuff_gearshift/casing"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "gear": "0"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_n"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "gear": "1"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "gear": "2"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_2"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "gear": "3"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_3"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "gear": "4"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_4"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "gear": "5"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_5"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "gear": "6"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_6"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "gear": "7"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_r"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/dot_off"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/dot_on"
+      }
+    },
+    {
+      "when": {
+        "axis": "x"
+      },
+      "apply": {
+        "model": "reverie:block/tuff_gearshift/casing",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "gear": "0"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_n",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "gear": "1"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "gear": "2"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "gear": "3"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "gear": "4"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "gear": "5"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "gear": "6"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "gear": "7"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_r",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/dot_off",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/dot_on",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y"
+      },
+      "apply": {
+        "model": "reverie:block/tuff_gearshift/casing",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "gear": "0"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_n_vertical",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "gear": "1"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_1_vertical",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "gear": "2"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_2_vertical",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "gear": "3"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_3_vertical",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "gear": "4"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_4_vertical",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "gear": "5"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_5_vertical",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "gear": "6"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_6_vertical",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "gear": "7"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/window_r_vertical",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/dot_off",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "y",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "reverie:block/gearshift/dot_on",
+        "x": 90
+      }
+    }
+  ]
+}
