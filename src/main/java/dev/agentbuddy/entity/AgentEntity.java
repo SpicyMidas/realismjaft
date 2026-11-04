@@ -1,11 +1,20 @@
 package dev.agentbuddy.entity;
 
+import dev.agentbuddy.brain.reply.Names;
 import dev.agentbuddy.data.AgentStore;
 import dev.agentbuddy.item.AgentItem;
 import dev.agentbuddy.network.ModNetwork;
+import dev.agentbuddy.world.Containers;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,6 +32,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,6 +46,13 @@ public class AgentEntity extends PathfinderMob {
     private UUID agentId;
     private UUID owner;
     private boolean following = true;
+    private FetchTask fetch;
+    // Items taken from a container and not yet handed over; saved with the entity and dropped on death.
+    private final List<ItemStack> carried = new ArrayList<>();
+
+    /** An item run: go to {@code container}, take {@code count} of {@code item}, bring them back. */
+    public record FetchTask(BlockPos container, Item item, int count, boolean returning) {
+    }
 
     public AgentEntity(EntityType<? extends AgentEntity> type, Level level) {
         super(type, level);
@@ -75,12 +92,52 @@ public class AgentEntity extends PathfinderMob {
         this.following = following;
     }
 
+    public boolean isFetching() {
+        return fetch != null;
+    }
+
+    FetchTask fetchTask() {
+        return fetch;
+    }
+
+    public void startFetch(BlockPos container, Item item, int count) {
+        fetch = new FetchTask(container, item, count, false);
+    }
+
+    /** At the container: move the real stacks into the agent (components such as enchantments stay intact). */
+    void takeFetchedItems() {
+        if (!(level() instanceof ServerLevel server)) return;
+        AgentStore.Record rec = agentId == null ? null : AgentStore.get(server.getServer()).get(agentId);
+        boolean ignored = rec != null && rec.isIgnored(GlobalPos.of(server.dimension(), fetch.container()));
+        List<ItemStack> taken = ignored ? List.of() : Containers.withdraw(server, fetch.container(), fetch.item(), fetch.count());
+        carried.addAll(taken);
+        fetch = new FetchTask(fetch.container(), fetch.item(), fetch.count(), true);
+    }
+
+    /** At the owner: hand everything over (drops at their feet if the inventory is full). */
+    void deliverFetchedItems(Player to) {
+        int total = carried.stream().mapToInt(ItemStack::getCount).sum();
+        Item item = fetch.item();
+        for (ItemStack s : carried) {
+            if (!to.getInventory().add(s)) to.drop(s, false);
+        }
+        carried.clear();
+        fetch = null;
+        to.displayClientMessage(Component.literal(total == 0 ? "Nothing to bring."
+                : "Here: " + Names.count(total, BuiltInRegistries.ITEM.getKey(item).toString()) + "."), true);
+    }
+
+    public List<ItemStack> carriedItems() {
+        return List.copyOf(carried);
+    }
+
     Player ownerInLevel() {
         return owner == null ? null : level().getPlayerByUUID(owner);
     }
 
     @Override
     protected void registerGoals() {
+        goalSelector.addGoal(0, new FetchGoal(this));
         goalSelector.addGoal(1, new FollowOwnerFlyingGoal(this, 1.6, 5.0F, 3.0F, 24.0F));
         goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
         goalSelector.addGoal(3, new RandomLookAroundGoal(this));
@@ -151,6 +208,8 @@ public class AgentEntity extends PathfinderMob {
     protected void dropEquipment() {
         super.dropEquipment();
         if (agentId != null && level() instanceof ServerLevel server) {
+            carried.forEach(this::spawnAtLocation);
+            carried.clear();
             spawnAtLocation(AgentItem.stackFor(agentId));
             AgentStore.get(server.getServer()).setDeployed(agentId, false);
         }
@@ -162,6 +221,19 @@ public class AgentEntity extends PathfinderMob {
         if (agentId != null) tag.putUUID("AgentId", agentId);
         if (owner != null) tag.putUUID("Owner", owner);
         tag.putBoolean("Following", following);
+        if (!carried.isEmpty()) {
+            ListTag items = new ListTag();
+            for (ItemStack s : carried) items.add(s.save(registryAccess()));
+            tag.put("Carried", items);
+        }
+        if (fetch != null) {
+            CompoundTag f = new CompoundTag();
+            f.putLong("Container", fetch.container().asLong());
+            f.putString("Item", BuiltInRegistries.ITEM.getKey(fetch.item()).toString());
+            f.putInt("Count", fetch.count());
+            f.putBoolean("Returning", fetch.returning());
+            tag.put("Fetch", f);
+        }
     }
 
     @Override
@@ -170,5 +242,15 @@ public class AgentEntity extends PathfinderMob {
         agentId = tag.hasUUID("AgentId") ? tag.getUUID("AgentId") : null;
         owner = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
         following = !tag.contains("Following") || tag.getBoolean("Following");
+        carried.clear();
+        for (Tag t : tag.getList("Carried", Tag.TAG_COMPOUND)) {
+            ItemStack.parse(registryAccess(), t).ifPresent(carried::add);
+        }
+        fetch = null;
+        if (tag.contains("Fetch")) {
+            CompoundTag f = tag.getCompound("Fetch");
+            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(f.getString("Item")));
+            fetch = new FetchTask(BlockPos.of(f.getLong("Container")), item, f.getInt("Count"), f.getBoolean("Returning"));
+        }
     }
 }

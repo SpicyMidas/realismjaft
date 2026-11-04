@@ -42,7 +42,7 @@ public final class FakeTools {
                 w.ignored.add(pos);
                 return ok(data("block", w.rawBlockAt(pos), "x", pos.x(), "y", pos.y(), "z", pos.z()));
             }).orElse(fail(NOTHING_IN_SIGHT)));
-            case "unignore_block" -> tool(spec, (p, a) -> unignore(w));
+            case "unignore_block" -> tool(spec, (p, a) -> unignore(w, a));
             case "list_container" -> tool(spec, (p, a) -> listContainer(w, spec, a, false));
             case "snapshot_container" -> tool(spec, (p, a) -> listContainer(w, spec, a, true));
             case "find_item" -> tool(spec, (p, a) -> findItem(w, spec, a, false));
@@ -99,9 +99,10 @@ public final class FakeTools {
                 .orElse(fail(NOT_FOUND, data("ore", ore, "range", spec.range())));
     }
 
-    private static ToolResult unignore(FakeWorld w) {
-        // The only tool that can see an ignored block, and only the one the player points at.
-        Pos p = w.lookingAt;
+    private static ToolResult unignore(FakeWorld w, JsonObject a) {
+        // The only tool that can see an ignored block: the one the player points at, or given coordinates.
+        Pos p = a.has("x") && a.has("y") && a.has("z")
+                ? new Pos(a.get("x").getAsInt(), a.get("y").getAsInt(), a.get("z").getAsInt()) : w.lookingAt;
         if (p == null || w.rawBlockAt(p) == null) return fail(NOTHING_IN_SIGHT);
         if (!w.ignored.remove(p)) return fail(NOT_FOUND);
         return ok(data("block", w.rawBlockAt(p), "x", p.x(), "y", p.y(), "z", p.z()));

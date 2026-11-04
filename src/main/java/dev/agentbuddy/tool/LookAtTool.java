@@ -6,7 +6,9 @@ import dev.agentbuddy.brain.tool.Tool;
 import dev.agentbuddy.brain.tool.ToolResult;
 import dev.agentbuddy.brain.tool.ToolSpec;
 import dev.agentbuddy.brain.tool.ToolSpecs;
+import dev.agentbuddy.entity.AgentEntity;
 import dev.agentbuddy.server.AgentService;
+import dev.agentbuddy.world.Containers;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -58,6 +60,11 @@ public final class LookAtTool implements Tool {
             return result(BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).toString(), List.of(), e.blockPosition(), claim);
         }
         if (block instanceof BlockHitResult bh && bh.getType() == HitResult.Type.BLOCK) {
+            AgentEntity agent = service.agentFor(p);
+            BlockPos canonical = Containers.canonical(p.serverLevel(), bh.getBlockPos());
+            if (agent != null && service.ignoredBy(agent, p.serverLevel()).test(canonical)) {
+                return ToolResult.fail(ToolResult.NOTHING_IN_SIGHT); // ignored blocks do not exist for the agent
+            }
             BlockState state = p.serverLevel().getBlockState(bh.getBlockPos());
             List<String> tags = state.getTags().map(t -> t.location().toString()).toList();
             return result(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString(), tags, bh.getBlockPos(), claim);

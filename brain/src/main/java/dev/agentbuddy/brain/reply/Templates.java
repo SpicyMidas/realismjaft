@@ -102,7 +102,8 @@ public final class Templates {
             return Names.count(r.integer("count"), r.str("item")) + " in " + Names.display(r.str("container")) + " at " + pos(r) + tail + ".";
         }
         if ("no_containers".equals(r.reason())) return "I don't see any containers.";
-        return "No " + Names.display(r.str("item")) + " in known containers.";
+        if (NOT_FOUND.equals(r.reason())) return "No " + Names.display(r.str("item")) + " in known containers.";
+        return fallback(r);
     }
 
     private static String fetchItem(ToolResult r) {
@@ -111,7 +112,9 @@ public final class Templates {
             case "no_containers" -> "I don't see that chest.";
             case "inventory_full" -> "Your inventory is full.";
             case "carrying" -> "Busy carrying a container.";
-            default -> "No " + Names.display(r.str("item")) + " in known containers.";
+            case "busy" -> "Still fetching.";
+            case NOT_FOUND -> "No " + Names.display(r.str("item")) + " in known containers.";
+            default -> fallback(r);
         };
     }
 
@@ -119,6 +122,7 @@ public final class Templates {
         return switch (r.reason()) {
             case NOTHING_IN_SIGHT -> "Not looking at a container.";
             case NOT_FOUND -> "No container there.";
+            case "loot_unknown" -> "Contents unknown until opened.";
             default -> fallback(r);
         };
     }

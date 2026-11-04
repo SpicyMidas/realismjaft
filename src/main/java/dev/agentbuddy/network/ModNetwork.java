@@ -23,6 +23,7 @@ public final class ModNetwork {
         r.playToServer(ToolRequest.TYPE, ToolRequest.STREAM_CODEC, ModNetwork::onToolRequest);
         // The lambda body only links ClientPayloadHandler when a packet actually arrives, i.e. on a client.
         r.playToClient(AgentScreenData.TYPE, AgentScreenData.STREAM_CODEC, (data, ctx) -> ClientPayloadHandler.onScreenData(data));
+        r.playToClient(ContainerSnapshot.TYPE, ContainerSnapshot.STREAM_CODEC, (snap, ctx) -> ClientPayloadHandler.onSnapshot(snap));
     }
 
     private static void onOpenScreen(OpenAgentScreenRequest req, IPayloadContext ctx) {

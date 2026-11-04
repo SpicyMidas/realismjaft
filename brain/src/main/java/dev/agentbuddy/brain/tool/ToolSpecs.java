@@ -29,7 +29,7 @@ public final class ToolSpecs {
     public static final ToolSpec IGNORE_BLOCK = spec("ignore_block",
             "Hide the block or container the player is looking at from the Agent.", Category.WORLD, props(), List.of(), 0, 0, 0);
     public static final ToolSpec UNIGNORE_BLOCK = spec("unignore_block",
-            "Stop hiding the block the player is looking at.", Category.WORLD, props(), List.of(), 0, 0, 0);
+            "Stop hiding the block the player is looking at, or the one at x,y,z.", Category.WORLD, coords(), List.of(), 0, 0, 0);
 
     public static final ToolSpec LIST_CONTAINER = spec("list_container",
             "List the contents of the container the player is looking at, or the one at x,y,z.",
