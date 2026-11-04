@@ -92,6 +92,17 @@ public final class Brain {
                 continue;
             }
 
+            if (!parsed.calls().isEmpty() && tools.isEmpty()) {
+                // Text-only request (small talk / context question), but the model wrote a call as text, copying the
+                // few-shot format. Running it would answer a different question ("holding a bow?" -> "That's stone.").
+                String error = "no tool is available for this message";
+                steps.add(new Reply.Step(toolChoice, response, parsed.source(), error));
+                if (corrected) return finish(player, text, Templates.DIDNT_UNDERSTAND, null, null, steps, error);
+                corrected = true;
+                correction = "No tool is available for this. Answer in one short sentence using only the context.";
+                continue;
+            }
+
             if (!parsed.calls().isEmpty()) {
                 ToolCallParser.RawCall call = parsed.calls().get(0);
                 ToolRunner.Validation v = runner.validate(call.name(), call.args());

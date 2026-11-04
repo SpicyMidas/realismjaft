@@ -119,6 +119,17 @@ class BrainTest {
     }
 
     @Test
+    void textCallInTextOnlyRequestIsNotRunButAnsweredFromContext() {
+        llm.text("look_at {\"claim\":\"bow\"}").text("No, you're holding a stone pickaxe.");
+        Reply r = say("I'm holding a bow, right?");
+        assertEquals("No, you're holding a stone pickaxe.", r.text());
+        assertNull(r.tool());
+        assertTrue(llm.requests.get(0).tools().isEmpty());
+        String retryUser = llm.requests.get(1).messages().get(llm.requests.get(1).messages().size() - 1).content();
+        assertTrue(retryUser.endsWith("Answer in one short sentence using only the context."), retryUser);
+    }
+
+    @Test
     void llmUnavailableGivesOneShortLine() {
         llm.fail(new LlmException("LLM model missing.", "model not found at /x"));
         Reply r = say("find iron");
