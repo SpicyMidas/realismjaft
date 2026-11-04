@@ -1,0 +1,63 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'dev.agentbuddy'
+version = rootProject.version
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Same versions Minecraft 1.21.1 ships, so the mod can use brain without bundling extra jars.
+    api 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+
+    testImplementation platform('org.junit:junit-bom:5.14.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.9'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:all,-serial'
+}
+
+// Unit tests: no llama-server needed.
+tasks.named('test', Test) {
+    useJUnitPlatform { excludeTags 'replay' }
+}
+
+// Replay eval against a real llama-server. Properties:
+//   -Pllm.dir=<path to localLLM>   (default: <repo>/run/localLLM)
+//   -Pllm.model=<file.gguf>|all    (default: model from config.json)
+//   -Pllm.external=<base url>      (use an already-running OpenAI-compatible server instead)
+//   -Pllm.cases=<id,id,...>        (run only these case ids)
+def llmDir = providers.gradleProperty('llm.dir').orElse(rootProject.layout.projectDirectory.dir('run/localLLM').asFile.absolutePath)
+def llmModel = providers.gradleProperty('llm.model').orElse('')
+def llmExternal = providers.gradleProperty('llm.external').orElse('')
+def llmCases = providers.gradleProperty('llm.cases').orElse('')
+def replayReportDir = layout.buildDirectory.dir('reports/replay')
+
+tasks.register('replay', Test) {
+    description = 'Runs the brain replay suite against a real llama-server.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform { includeTags 'replay' }
+    systemProperty 'llm.dir', llmDir.get()
+    systemProperty 'llm.model', llmModel.get()
+    systemProperty 'llm.external', llmExternal.get()
+    systemProperty 'llm.cases', llmCases.get()
+    systemProperty 'replay.reportDir', replayReportDir.get().asFile.absolutePath
+    outputs.upToDateWhen { false }
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat 'short'
+        showStandardStreams = false
+    }
+}

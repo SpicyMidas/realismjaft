@@ -7,3 +7,6 @@ pluginManagement {
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
+
+// Minecraft-free LLM brain (tool layer, backends, replay eval). See AGENT_SPEC.md M1.
+include 'brain'
