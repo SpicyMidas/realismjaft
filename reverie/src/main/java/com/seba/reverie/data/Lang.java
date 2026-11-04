@@ -20,6 +20,26 @@ final class Lang {
         s.add("itemGroup.reverie", "Reverie", "Reverie");
         s.add("item.reverie.tuff_alloy", "Tuff Alloy", "Lega di Tufo");
 
+        // Melatonia
+        s.add("block.reverie.melatonia", "Melatonia Bloom", "Fioritura di Melatonia");
+        s.add("block.reverie.wild_melatonia", "Wild Melatonia", "Melatonia Selvatica");
+        s.add("item.reverie.melatonia_seeds", "Melatonia Seeds", "Semi di Melatonia");
+        s.add("item.reverie.melatonia_petals", "Melatonia Petals", "Petali di Melatonia");
+        s.add("item.reverie.melatonia_extract", "Melatonia Extract", "Estratto di Melatonia");
+        s.add("item.reverie.melatonia_extract.desc", "The room tilts, gently.", "La stanza si inclina, dolcemente.");
+        s.add("item.reverie.concentrated_melatonia_extract", "Concentrated Melatonia Extract", "Estratto Concentrato di Melatonia");
+        s.add("item.reverie.concentrated_melatonia_extract.desc", "Sleep comes whenever you ask it to.", "Il sonno arriva quando lo chiami.");
+        s.add("item.reverie.melatonia_cookie", "Melatonia Cookie", "Biscotto alla Melatonia");
+        s.add("item.reverie.melatonia_cookie.desc", "Sometimes the floor moves.", "A volte il pavimento si muove.");
+        s.add("item.reverie.drowsy_tea", "Drowsy Tea", "Tisana Sonnolenta");
+        s.add("item.reverie.drowsy_tea.desc", "Warm, and a little dizzy.", "Calda, e un po' vertiginosa.");
+        s.add("item.reverie.sleepy_stew", "Sleepy Stew", "Stufato Assonnato");
+        s.add("item.reverie.sleepy_stew.desc", "Heavy eyelids, full belly.", "Palpebre pesanti, pancia piena.");
+        s.add("effect.reverie.dizziness", "Dizziness", "Vertigine");
+        s.add("effect.reverie.sleepyness", "Sleepyness", "Sonnolenza");
+        s.add("reverie.laced.normal", "Laced with Melatonia", "Corretto con Melatonia");
+        s.add("reverie.laced.strong", "Strongly laced", "Fortemente corretto");
+
         // Create: gearshifts
         s.add("block.reverie.tuff_gearshift", "Tuff Gearshift", "Cambio di Tufo");
         s.add("block.reverie.sport_tuff_gearshift", "Sport Tuff Gearshift", "Cambio Sportivo di Tufo");

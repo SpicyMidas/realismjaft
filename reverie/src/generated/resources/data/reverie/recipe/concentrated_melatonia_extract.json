@@ -1,0 +1,22 @@
+{
+  "type": "reverie:bottle_returning_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "reverie:melatonia_extract"
+    },
+    {
+      "item": "reverie:melatonia_extract"
+    },
+    {
+      "item": "reverie:melatonia_extract"
+    },
+    {
+      "tag": "c:dusts/glowstone"
+    }
+  ],
+  "result": {
+    "id": "reverie:concentrated_melatonia_extract"
+  },
+  "returned_bottles": 2
+}

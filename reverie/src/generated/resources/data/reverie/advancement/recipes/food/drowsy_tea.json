@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_extract": {
+      "conditions": {
+        "items": [
+          {
+            "items": "reverie:melatonia_extract"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "reverie:drowsy_tea"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_extract"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "reverie:drowsy_tea"
+    ]
+  }
+}

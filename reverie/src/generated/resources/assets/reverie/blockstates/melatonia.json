@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "reverie:block/melatonia_stage0"
+    },
+    "age=1": {
+      "model": "reverie:block/melatonia_stage1"
+    },
+    "age=2": {
+      "model": "reverie:block/melatonia_stage2"
+    },
+    "age=3": {
+      "model": "reverie:block/melatonia_stage3"
+    }
+  }
+}

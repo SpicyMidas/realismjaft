@@ -7,8 +7,15 @@ import com.seba.reverie.compat.Compat;
 import com.seba.reverie.compat.create.CreateCompat;
 import com.seba.reverie.compat.fd.FdCompat;
 import com.seba.reverie.data.ReverieDataGen;
+import com.seba.reverie.content.melatonia.Lacing;
+import com.seba.reverie.registry.ModBlocks;
+import com.seba.reverie.registry.ModComponents;
 import com.seba.reverie.registry.ModCreativeTab;
+import com.seba.reverie.registry.ModEffects;
 import com.seba.reverie.registry.ModItems;
+import com.seba.reverie.registry.ModRecipes;
+import com.seba.reverie.registry.ModWorldgen;
+import net.neoforged.neoforge.common.NeoForge;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
@@ -25,9 +32,24 @@ public final class Reverie {
         container.registerConfig(ModConfig.Type.COMMON, ReverieConfig.COMMON_SPEC);
         container.registerConfig(ModConfig.Type.CLIENT, ReverieConfig.CLIENT_SPEC);
 
+        ModBlocks.BLOCKS.register(modBus);
         ModItems.ITEMS.register(modBus);
+        ModEffects.EFFECTS.register(modBus);
+        ModComponents.COMPONENTS.register(modBus);
+        ModRecipes.SERIALIZERS.register(modBus);
+        ModWorldgen.PLACEMENT_MODIFIERS.register(modBus);
         ModCreativeTab.TABS.register(modBus);
         ModCreativeTab.add(ModItems.TUFF_ALLOY);
+        ModCreativeTab.add(ModItems.WILD_MELATONIA);
+        ModCreativeTab.add(ModItems.MELATONIA_SEEDS);
+        ModCreativeTab.add(ModItems.MELATONIA_PETALS);
+        ModCreativeTab.add(ModItems.MELATONIA_EXTRACT);
+        ModCreativeTab.add(ModItems.CONCENTRATED_MELATONIA_EXTRACT);
+        ModCreativeTab.add(ModItems.MELATONIA_COOKIE);
+        ModCreativeTab.add(ModItems.DROWSY_TEA);
+        ModCreativeTab.add(ModItems.SLEEPY_STEW);
+
+        NeoForge.EVENT_BUS.addListener(Lacing::onFinishUsing);
         modBus.addListener(ReverieDataGen::gather);
 
         // Optional integrations: their classes are only touched behind these checks.

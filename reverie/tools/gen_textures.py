@@ -516,7 +516,122 @@ def latch_remote_gui():
     save(img, "gui/latch_remote")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote]
+# ---------------------------------------------------------------- melatonia
+STEM = {'s': (46, 92, 52), 'S': (70, 128, 70), 'k': (30, 64, 40), 'e': (94, 156, 88)}
+BLOOM = {'p': (88, 70, 168), 'P': (128, 110, 214), 'q': (170, 156, 240), 'w': (226, 220, 255), 'y': (250, 236, 160),
+         'v': (60, 46, 120), 'b': (104, 132, 220)}
+
+
+def plant(rows, extra=None):
+    pal = dict(STEM)
+    pal.update(BLOOM)
+    if extra:
+        pal.update(extra)
+    return grid(rows, pal)
+
+
+def melatonia_textures():
+    stage0 = [
+        "................", "................", "................", "................",
+        "................", "................", "................", "................",
+        "................", "................", "................", "......e.........",
+        ".....eSe..e.....", "......S..eS.....", "......s..s......", "......s..s......"]
+    stage1 = [
+        "................", "................", "................", "................",
+        "................", "................", "........e.......", "...e...eS.......",
+        "...Se...S..e....", "....S..sk.eS....", "....s.Ss..S.....", "..e.ss.s..s.....",
+        "..SSs..s.Ss..e..", "...ks..s.s..eS..", "....s..s.s...s..", "....s..s.s...s.."]
+    stage2 = [
+        "................", "................", "................", "........v.......",
+        "...v...vpv......", "..vpv...S...v...", "...S....s..vpv..", "...s...eS...S...",
+        "..eS..eSs...s...", "...s...ks..eS...", "...sS..s..Ss....", "...s...s...s.e..",
+        "..Ss..Ss...sSe..", "...k..s.e..s....", "...s..s.S..s....", "...s..s.s..s...."]
+    stage3 = [
+        "................", "..q.....P.......", ".qPq...PwP...q..", "qPyPq.PwywP.qPq.",
+        ".qPq...PwP..PyP.", "..pS....S...qPq.", "...s...pS....S..", "..eS....s...eS..",
+        ".eSs..eSs....s..", "...s...ks..eSs..", "...sS..s....s...", "...s...s...Ss.e.",
+        "..Ss..Ss....sSe.", "...k..s.e...s...", "...s..s.S...s...", "...s..s.s...s..."]
+    for i, rows in enumerate((stage0, stage1, stage2, stage3)):
+        save(plant(rows), f"block/melatonia_stage{i}")
+    wild = [
+        "................", ".......q........", "......qPq.......", ".....qPwPq...q..",
+        "..q...PyP...qPq.", ".qPq...S...qPwPq", "qPwPq..s....PyP.", ".PyP...s.....S..",
+        "..S..e.s.....s..", "..s.eS.s..e..s..", "..sSs..s.eS.Ss..", "...s...sSs...s..",
+        ".e.s...s.s..Ss..", ".SSs..Ss..s.s...", "..ks...s..sks...", "...s...s...s...."]
+    save(plant(wild), "block/wild_melatonia")
+
+    seeds = [
+        "................", "................", "................", "................",
+        "................", "......o.........", ".....oxo...o....", "......o...oxo...",
+        "...o.......o....", "..oxo...o.......", "...o...oxo..o...", ".......wo..oxo..",
+        "............o...", "................", "................", "................"]
+    save(grid(seeds, {'o': (52, 44, 88), 'x': (110, 96, 170), 'w': (230, 226, 255)}), "item/melatonia_seeds")
+    petals = [
+        "................", "................", "................", "................",
+        "......vv........", ".....vPPv..vv...", "....vPqqPvvPPv..", "....vPqwqPPqqPv.",
+        ".....vPqPvPqwqv.", "..vv..vvv.vPqPv.", ".vPPv..vv..vvv..", "vPqqPvvPPv......",
+        "vPqwqPPqqPv.....", ".vPqPvvPqPv.....", "..vvv..vvv......", "................"]
+    save(grid(petals, BLOOM), "item/melatonia_petals")
+
+    def bottle(liquid, light, dark, sparkle=None, cork=(140, 104, 64)):
+        rows = [
+            "................", "................", "......cccc......", "......cCCc......",
+            ".......gg.......", ".......gg.......", "......g..g......", ".....gLLLLg.....",
+            "....gLlllllg....", "....gllllllg....", "....gllllldg....", "....glllldddg...",
+            "....gdlldddg....", ".....gddddg.....", "......gggg......", "................"]
+        rows = [r[:16] for r in rows]
+        rows[11] = "....gllldddg...."
+        img = grid(rows, {'c': cork, 'C': mix(cork, (255, 255, 255), 0.25), 'g': (190, 210, 232), 'L': light,
+                          'l': liquid, 'd': dark})
+        img.putpixel((6, 8), rgba((255, 255, 255)))
+        img.putpixel((6, 9), rgba(mix(liquid, (255, 255, 255), 0.6)))
+        if sparkle:
+            for (x, y) in ((9, 9), (7, 11), (10, 12)):
+                img.putpixel((x, y), rgba(sparkle))
+        return img
+
+    save(bottle((128, 104, 210), (180, 166, 246), (86, 64, 160)), "item/melatonia_extract")
+    save(bottle((84, 58, 178), (140, 120, 240), (46, 30, 116), sparkle=(255, 246, 190)), "item/concentrated_melatonia_extract")
+    tea = bottle((196, 168, 214), (226, 208, 238), (150, 120, 176))
+    for (x, y) in ((7, 3), (8, 2)):
+        tea.putpixel((x, y), rgba(STEM['e']))
+    save(tea, "item/drowsy_tea")
+
+    cookie = [
+        "................", "................", "................", ".....oooooo.....",
+        "....obbbbbbo....", "...obbpbbbbbo...", "..obbbbbdbpbbo..", "..obdbbbbbbbbo..",
+        "..obbbpbbbdbbo..", "..obbbbbbbbbbo..", "..obpbbdbbbpbo..", "...obbbbbbbbo...",
+        "....obbbdbbo....", ".....oooooo.....", "................", "................"]
+    save(grid(cookie, {'o': (120, 70, 36), 'b': (214, 150, 86), 'd': (96, 56, 32), 'p': BLOOM['P']}), "item/melatonia_cookie")
+    stew = [
+        "................", "................", "................", "................",
+        "................", "...oooooooooo...", "..owwqsswqwwwo..", "..osPwwqwswPwo..",
+        "..owwwPwwwqwwo..", "...bwwwwwwwwb...", "...obbbbbbbbo...", "....obbbbbbo....",
+        ".....obbbbo.....", "......oooo......", "................", "................"]
+    save(grid(stew, {'o': (72, 46, 26), 'b': (128, 84, 46), 'w': (170, 140, 196), 'q': (220, 206, 236),
+                     's': (226, 160, 74), 'P': BLOOM['P']}), "item/sleepy_stew")
+
+    # Effect icons (18x18)
+    swirl = Image.new("RGBA", (18, 18), T)
+    for i in range(240):
+        a = i / 240 * 4.6 * math.pi
+        r = 1.2 + a * 0.52
+        x, y = 9 + r * math.cos(a), 9 + r * math.sin(a)
+        if 0 <= x < 18 and 0 <= y < 18:
+            swirl.putpixel((int(x), int(y)), rgba(mix((240, 230, 255), (120, 80, 210), min(1, a / 14))))
+    save(swirl, "mob_effect/dizziness")
+    zzz = Image.new("RGBA", (18, 18), T)
+    cloud = [
+        "...........XXXXX..", "..............X...", ".............X....", "............X.....",
+        "...........XXXXX..", "......XXX.........", "........X.........", ".......X..........",
+        "......XXX.........", "..................", "...wwww..wwww.....", "..wccccwwccccw....",
+        ".wccccccccccccw...", "wccccccccccccccw..", "wccccccccccccccw..", ".wccccccccccccw...",
+        "..wwwwwwwwwwww....", ".................."]
+    zzz = grid(cloud, {'X': (230, 236, 255), 'w': (120, 132, 200), 'c': (176, 188, 240)})
+    save(zzz, "mob_effect/sleepyness")
+
+
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures]
 
 
 def contact_sheet(out_dir):

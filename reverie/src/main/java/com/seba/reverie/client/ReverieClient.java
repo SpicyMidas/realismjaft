@@ -13,6 +13,7 @@ import net.neoforged.fml.common.Mod;
 @Mod(value = Reverie.MOD_ID, dist = Dist.CLIENT)
 public final class ReverieClient {
     public ReverieClient(IEventBus modBus, ModContainer container) {
+        DizzinessClient.init();
         if (Compat.create()) CreateClientCompat.init(modBus);
     }
 }

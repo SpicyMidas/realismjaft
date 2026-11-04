@@ -1,0 +1,10 @@
+{
+  "values": [
+    "reverie:melatonia_extract",
+    "reverie:concentrated_melatonia_extract",
+    {
+      "id": "reverie:melatonia_syrup",
+      "required": false
+    }
+  ]
+}

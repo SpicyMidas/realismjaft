@@ -1,0 +1,18 @@
+{
+  "feature": "reverie:wild_melatonia_patch",
+  "placement": [
+    {
+      "type": "reverie:config_rarity"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "MOTION_BLOCKING"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

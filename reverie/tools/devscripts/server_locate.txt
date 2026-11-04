@@ -1,0 +1,5 @@
+wait 40
+cmd forceload add 0 0 160 160
+wait 200
+say phase3 worldgen ok
+stop

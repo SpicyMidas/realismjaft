@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#reverie:has_wild_melatonia",
+  "features": "reverie:wild_melatonia",
+  "step": "vegetal_decoration"
+}

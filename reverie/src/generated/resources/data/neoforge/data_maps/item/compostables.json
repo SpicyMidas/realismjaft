@@ -1,0 +1,13 @@
+{
+  "values": {
+    "reverie:melatonia_petals": {
+      "chance": 0.65
+    },
+    "reverie:melatonia_seeds": {
+      "chance": 0.3
+    },
+    "reverie:wild_melatonia": {
+      "chance": 0.65
+    }
+  }
+}
