@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "reverie:dreamwood_planks"
+    },
+    "S": {
+      "item": "reverie:lucid_shard"
+    }
+  },
+  "pattern": [
+    "PP",
+    "PS",
+    "PP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "reverie:lone_door"
+  }
+}

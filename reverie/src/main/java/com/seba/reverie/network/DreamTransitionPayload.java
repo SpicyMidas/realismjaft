@@ -11,6 +11,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 public record DreamTransitionPayload(int kind) implements CustomPacketPayload {
     public static final int ENTER = 0;
     public static final int WAKE = 1;
+    public static final int FLASH = 2;
     public static final Type<DreamTransitionPayload> TYPE = new Type<>(Reverie.id("dream_transition"));
     public static final StreamCodec<ByteBuf, DreamTransitionPayload> CODEC =
             ByteBufCodecs.VAR_INT.map(DreamTransitionPayload::new, DreamTransitionPayload::kind);

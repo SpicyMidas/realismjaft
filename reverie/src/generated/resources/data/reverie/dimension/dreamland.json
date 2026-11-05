@@ -3,8 +3,15 @@
   "generator": {
     "type": "reverie:dream_islands",
     "biome_source": {
-      "type": "minecraft:fixed",
-      "biome": "reverie:the_void_between"
+      "type": "reverie:dream_islands",
+      "cloudreach": "reverie:cloudreach",
+      "eye_meadow": "reverie:eye_meadow",
+      "hollow_spires": "reverie:hollow_spires",
+      "mirror_marsh": "reverie:mirror_marsh",
+      "pillow_fields": "reverie:pillow_fields",
+      "sandglass_dunes": "reverie:sandglass_dunes",
+      "upside_down_town": "reverie:upside_down_town",
+      "void_between": "reverie:the_void_between"
     }
   }
 }

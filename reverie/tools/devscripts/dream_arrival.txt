@@ -1,0 +1,31 @@
+newworld arrival flat 31
+wait 40
+cmd gamerule doDaylightCycle false
+cmd time set 6000
+cmd kill @e[type=!player]
+cmd fill -3 -60 -3 3 -57 3 minecraft:oak_planks hollow
+cmd fill -2 -60 -2 2 -60 2 minecraft:red_carpet
+cmd setblock 0 -60 0 minecraft:red_bed[facing=south,part=foot]
+cmd setblock 0 -60 1 minecraft:red_bed[facing=south,part=head]
+cmd setblock 2 -60 2 minecraft:bookshelf
+cmd setblock -2 -60 2 minecraft:potted_poppy
+cmd setblock 2 -59 -2 minecraft:lantern
+cmd setblock -3 -60 0 minecraft:oak_door[facing=east,half=lower]
+cmd setblock -3 -59 0 minecraft:oak_door[facing=east,half=upper]
+cmd setblock 3 -59 0 minecraft:glass_pane
+cmd tp @s -0.5 -60 -0.5 0 30
+cmd effect give @s reverie:sleepyness 240
+wait 20
+use 0 -60 0 up
+wait 160
+hidegui on
+look -90 5
+wait 30
+screenshot arrival_memory
+look 90 15
+wait 20
+screenshot arrival_home
+look 180 -10
+wait 20
+screenshot arrival_sky
+stop

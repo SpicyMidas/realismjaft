@@ -49,7 +49,7 @@ final class WorldGen {
                 java.util.OptionalLong.of(13000), true, false, false, false, 1.0, true, false,
                 com.seba.reverie.dreamland.DreamIslandsChunkGenerator.MIN_Y, com.seba.reverie.dreamland.DreamIslandsChunkGenerator.HEIGHT,
                 com.seba.reverie.dreamland.DreamIslandsChunkGenerator.HEIGHT,
-                net.minecraft.tags.BlockTags.INFINIBURN_OVERWORLD, Reverie.id("dreamland"), 0.15f,
+                net.minecraft.tags.BlockTags.INFINIBURN_OVERWORLD, Reverie.id("dreamland"), 0.3f,
                 new net.minecraft.world.level.dimension.DimensionType.MonsterSettings(true, false,
                         net.minecraft.util.valueproviders.ConstantInt.of(0), 0));
     }

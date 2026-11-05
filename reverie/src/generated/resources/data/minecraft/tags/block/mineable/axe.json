@@ -7,6 +7,11 @@
     {
       "id": "reverie:sport_tuff_gearshift",
       "required": false
-    }
+    },
+    "reverie:dreamwood_log",
+    "reverie:dreamwood_planks",
+    "reverie:lone_door",
+    "reverie:sandglass_core",
+    "reverie:floating_lantern"
   ]
 }

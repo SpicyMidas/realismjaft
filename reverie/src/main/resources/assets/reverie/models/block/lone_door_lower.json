@@ -1,0 +1,253 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "wood": "reverie:block/dreamwood_log",
+    "glow": "reverie:block/lone_door_glow",
+    "particle": "reverie:block/dreamwood_planks"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        6
+      ],
+      "to": [
+        2,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood"
+        }
+      },
+      "name": "jamb"
+    },
+    {
+      "from": [
+        14,
+        0,
+        6
+      ],
+      "to": [
+        16,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood"
+        }
+      },
+      "name": "jamb"
+    },
+    {
+      "from": [
+        2,
+        0,
+        7.9
+      ],
+      "to": [
+        14,
+        16,
+        8.1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glow",
+          "uv": [
+            2,
+            0,
+            14,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#glow",
+          "uv": [
+            2,
+            0,
+            14,
+            16
+          ]
+        }
+      },
+      "name": "glow",
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      },
+      "shade": false
+    },
+    {
+      "from": [
+        -0.5,
+        0,
+        5.5
+      ],
+      "to": [
+        2.5,
+        1,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            13.0,
+            15,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            15,
+            3.0,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            5.5,
+            15,
+            10.5,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            5.5,
+            15,
+            10.5,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            5.5,
+            3.0,
+            10.5
+          ]
+        },
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            5.5,
+            3.0,
+            10.5
+          ]
+        }
+      },
+      "name": "foot"
+    },
+    {
+      "from": [
+        13.5,
+        0,
+        5.5
+      ],
+      "to": [
+        16.5,
+        1,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            15,
+            3.0,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            13.0,
+            15,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            5.5,
+            15,
+            10.5,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            5.5,
+            15,
+            10.5,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            13.0,
+            5.5,
+            16,
+            10.5
+          ]
+        },
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            13.0,
+            5.5,
+            16,
+            10.5
+          ]
+        }
+      },
+      "name": "foot"
+    }
+  ]
+}

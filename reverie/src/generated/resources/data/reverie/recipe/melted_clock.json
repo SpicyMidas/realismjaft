@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:clock"
+    },
+    {
+      "item": "reverie:dream_dust"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "reverie:melted_clock"
+  }
+}

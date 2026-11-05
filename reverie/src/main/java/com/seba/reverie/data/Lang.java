@@ -51,6 +51,35 @@ final class Lang {
         s.add("reverie.command.cannot_dream", "%s cannot dream right now.", "%s non puo' sognare ora.");
         s.add("reverie.command.home", "Dream home of %s: %s %s %s", "Casa onirica di %s: %s %s %s");
         s.add("biome.reverie.the_void_between", "The Void Between", "Il Vuoto Frammezzo");
+        s.add("biome.reverie.pillow_fields", "Pillow Fields", "Campi di Cuscini");
+        s.add("biome.reverie.hollow_spires", "Hollow Spires", "Guglie Cave");
+        s.add("biome.reverie.mirror_marsh", "Mirror Marsh", "Palude Specchio");
+        s.add("biome.reverie.sandglass_dunes", "Sandglass Dunes", "Dune di Clessidra");
+        s.add("biome.reverie.eye_meadow", "Eye Meadow", "Prato degli Occhi");
+        s.add("biome.reverie.upside_down_town", "Upside-Down Town", "Paese Capovolto");
+        s.add("biome.reverie.cloudreach", "Cloudreach", "Cimanuvola");
+        s.add("effect.reverie.drift", "Drift", "Deriva");
+        s.add("block.reverie.dream_grass_block", "Dream Grass Block", "Blocco d'Erba Onirica");
+        s.add("block.reverie.dream_soil", "Dream Soil", "Terra Onirica");
+        s.add("block.reverie.lucid_stone", "Lucid Stone", "Pietra Lucida");
+        s.add("block.reverie.cobbled_lucid_stone", "Cobbled Lucid Stone", "Pietrisco Lucido");
+        s.add("block.reverie.lucid_stone_bricks", "Lucid Stone Bricks", "Mattoni di Pietra Lucida");
+        s.add("block.reverie.dreamwood_log", "Dreamwood Log", "Tronco di Legnosogno");
+        s.add("block.reverie.dreamwood_planks", "Dreamwood Planks", "Assi di Legnosogno");
+        s.add("block.reverie.dreamwood_leaves", "Dreamwood Leaves", "Foglie di Legnosogno");
+        s.add("block.reverie.lucid_crystal_ore", "Lucid Crystal Ore", "Minerale di Cristallo Lucido");
+        s.add("block.reverie.lucid_crystal_cluster", "Lucid Crystal Cluster", "Grappolo di Cristallo Lucido");
+        s.add("block.reverie.pillow_cloud", "Pillow Cloud", "Nuvola Cuscino");
+        s.add("block.reverie.mirror_water", "Mirror Water", "Acqua Specchio");
+        s.add("block.reverie.hourglass_sand", "Hourglass Sand", "Sabbia di Clessidra");
+        s.add("block.reverie.floating_lantern", "Floating Lantern", "Lanterna Fluttuante");
+        s.add("block.reverie.melted_clock", "Melted Clock", "Orologio Sciolto");
+        s.add("block.reverie.eyebloom", "Eyebloom", "Fiordocchio");
+        s.add("block.reverie.sleep_bell", "Sleep Bell", "Campana del Sonno");
+        s.add("block.reverie.sandglass_core", "Sandglass Core", "Cuore di Clessidra");
+        s.add("block.reverie.lone_door", "Lone Door", "Porta Solitaria");
+        s.add("item.reverie.lucid_shard", "Lucid Shard", "Scheggia Lucida");
+        s.add("item.reverie.dream_dust", "Dream Dust", "Polvere di Sogno");
 
         // Create: gearshifts
         s.add("block.reverie.tuff_gearshift", "Tuff Gearshift", "Cambio di Tufo");

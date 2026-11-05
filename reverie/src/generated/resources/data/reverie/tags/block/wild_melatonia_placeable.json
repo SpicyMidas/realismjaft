@@ -1,5 +1,7 @@
 {
   "values": [
-    "#minecraft:dirt"
+    "#minecraft:dirt",
+    "reverie:dream_grass_block",
+    "reverie:dream_soil"
   ]
 }

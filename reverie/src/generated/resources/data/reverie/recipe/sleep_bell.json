@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "P": {
+      "item": "reverie:dreamwood_planks"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PGP",
+    "P P"
+  ],
+  "result": {
+    "count": 1,
+    "id": "reverie:sleep_bell"
+  }
+}

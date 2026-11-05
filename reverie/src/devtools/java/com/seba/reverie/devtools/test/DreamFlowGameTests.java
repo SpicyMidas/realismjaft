@@ -40,13 +40,17 @@ public final class DreamFlowGameTests {
     }
 
     private static ServerPlayer join(GameTestHelper h) {
-        GameProfile profile = new GameProfile(ID, "flow_dreamer");
+        return joinAs(h, ID, "flow_dreamer");
+    }
+
+    static ServerPlayer joinAs(GameTestHelper h, UUID id, String name) {
+        GameProfile profile = new GameProfile(id, name);
         var server = h.getLevel().getServer();
         ServerPlayer player = new ServerPlayer(server, h.getLevel(), profile, ClientInformation.createDefault());
         Connection connection = new Connection(PacketFlow.SERVERBOUND);
         new EmbeddedChannel(connection);
         server.getPlayerList().placeNewPlayer(connection, player, CommonListenerCookie.createInitial(profile, false));
-        return server.getPlayerList().getPlayer(ID);
+        return server.getPlayerList().getPlayer(id);
     }
 
     private static void placeBed(GameTestHelper h, BlockPos foot) {

@@ -47,6 +47,14 @@ public final class DreamCommands {
                         .then(Commands.argument("player", EntityArgument.player())
                                 .executes(ctx -> home(ctx, EntityArgument.getPlayer(ctx, "player")))))
                 .then(Commands.literal("debug").requires(s -> s.hasPermission(2))
+                        .then(Commands.literal("genstats").executes(ctx -> {
+                            long n = com.seba.reverie.dreamland.DreamIslandsChunkGenerator.FILLED.get();
+                            double fill = n == 0 ? 0 : com.seba.reverie.dreamland.DreamIslandsChunkGenerator.FILL_NANOS.get() / 1e6 / n;
+                            double deco = n == 0 ? 0 : com.seba.reverie.dreamland.DreamIslandsChunkGenerator.DECO_NANOS.get() / 1e6 / n;
+                            String text = String.format(java.util.Locale.ROOT, "Dreamland: %d chunks, fill %.3f ms/chunk, decoration %.3f ms/chunk", n, fill, deco);
+                            ctx.getSource().sendSuccess(() -> Component.literal(text), false);
+                            return 1;
+                        }))
                         .then(Commands.literal("dreamstate").then(Commands.argument("player", EntityArgument.player())
                                 .executes(ctx -> debug(ctx, EntityArgument.getPlayer(ctx, "player"))))));
         for (Extension e : EXTENSIONS) e.register(root);

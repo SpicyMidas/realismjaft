@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "reverie:block/lucid_stone_bricks"
+  }
+}

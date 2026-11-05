@@ -1,0 +1,20 @@
+wait 40
+say gen start
+cmd execute in reverie:dreamland run forceload add -256 -256 -1 -1
+cmd execute in reverie:dreamland run forceload add 0 -256 255 -1
+cmd execute in reverie:dreamland run forceload add -256 0 -1 255
+cmd execute in reverie:dreamland run forceload add 0 0 255 255
+wait 1200
+say gen done
+cmd execute in reverie:dreamland run locate biome reverie:pillow_fields
+cmd execute in reverie:dreamland run locate biome reverie:hollow_spires
+cmd execute in reverie:dreamland run locate biome reverie:mirror_marsh
+cmd execute in reverie:dreamland run locate biome reverie:sandglass_dunes
+cmd execute in reverie:dreamland run locate biome reverie:eye_meadow
+cmd execute in reverie:dreamland run locate biome reverie:upside_down_town
+cmd execute in reverie:dreamland run locate biome reverie:cloudreach
+cmd execute in reverie:dreamland run locate biome reverie:the_void_between
+wait 20
+cmd execute in reverie:dreamland run forceload remove all
+say all done
+stop

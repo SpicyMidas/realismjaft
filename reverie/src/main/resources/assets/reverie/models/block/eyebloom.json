@@ -1,0 +1,122 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "stem": "reverie:block/eyebloom_stem",
+    "eye": "reverie:block/eyebloom_eye",
+    "particle": "reverie:block/eyebloom_eye"
+  },
+  "elements": [
+    {
+      "from": [
+        7.5,
+        0,
+        4
+      ],
+      "to": [
+        8.5,
+        9,
+        12
+      ],
+      "faces": {
+        "east": {
+          "texture": "#stem",
+          "uv": [
+            4,
+            0,
+            12,
+            9
+          ]
+        },
+        "west": {
+          "texture": "#stem",
+          "uv": [
+            4,
+            0,
+            12,
+            9
+          ]
+        }
+      },
+      "name": "stem"
+    },
+    {
+      "from": [
+        4,
+        0,
+        7.5
+      ],
+      "to": [
+        12,
+        9,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#stem",
+          "uv": [
+            4,
+            0,
+            12,
+            9
+          ]
+        },
+        "south": {
+          "texture": "#stem",
+          "uv": [
+            4,
+            0,
+            12,
+            9
+          ]
+        }
+      },
+      "name": "stem"
+    },
+    {
+      "from": [
+        4.5,
+        8,
+        4.5
+      ],
+      "to": [
+        11.5,
+        9.2,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#eye"
+        },
+        "south": {
+          "texture": "#eye"
+        },
+        "east": {
+          "texture": "#eye"
+        },
+        "west": {
+          "texture": "#eye"
+        },
+        "up": {
+          "texture": "#eye",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#eye",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      },
+      "name": "eye_white"
+    }
+  ]
+}

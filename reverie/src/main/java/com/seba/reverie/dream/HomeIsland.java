@@ -22,7 +22,7 @@ public final class HomeIsland {
         void build(ServerLevel level, BlockPos center);
     }
 
-    public static volatile Builder builder = HomeIsland::basicPlatform;
+    public static volatile Builder builder = HomeIsland::dreamPlatform;
 
     private HomeIsland() {
     }
@@ -43,6 +43,8 @@ public final class HomeIsland {
         for (int dx = -1; dx <= 1; dx++)
             for (int dz = -1; dz <= 1; dz++)
                 level.getChunk((column.getX() >> 4) + dx, (column.getZ() >> 4) + dz);
+        BlockPos island = com.seba.reverie.dreamland.IslandSearch.homeSpot(level, column);
+        if (island != null) return island;
         BlockPos safe = findSafe(level, column, 8, PREFERRED_Y - 40, PREFERRED_Y + 220);
         if (safe != null) return safe;
         BlockPos center = column.atY(Mth.clamp(PREFERRED_Y, level.getMinBuildHeight() + 8, level.getMaxBuildHeight() - 16));
@@ -75,6 +77,38 @@ public final class HomeIsland {
                 && level.getFluidState(feet).isEmpty() && level.getFluidState(feet.above()).isEmpty();
     }
 
+    /** 7x7 Dream Grass disc with one small dreamwood tree and a floating lantern. Only fills air. */
+    private static void dreamPlatform(ServerLevel level, BlockPos center) {
+        BlockState grass = com.seba.reverie.registry.ModBlocks.DREAM_GRASS_BLOCK.get().defaultBlockState();
+        BlockState soil = com.seba.reverie.registry.ModBlocks.DREAM_SOIL.get().defaultBlockState();
+        BlockState stone = com.seba.reverie.registry.ModBlocks.LUCID_STONE.get().defaultBlockState();
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 3; dz++) {
+                int d2 = dx * dx + dz * dz;
+                if (d2 > 12) continue;
+                setIfAir(level, center.offset(dx, 0, dz), grass);
+                setIfAir(level, center.offset(dx, -1, dz), soil);
+                if (d2 <= 6) setIfAir(level, center.offset(dx, -2, dz), stone);
+                if (d2 <= 2) setIfAir(level, center.offset(dx, -3, dz), stone);
+            }
+        }
+        BlockState log = com.seba.reverie.registry.ModBlocks.DREAMWOOD_LOG.get().defaultBlockState();
+        BlockState leaves = com.seba.reverie.registry.ModBlocks.DREAMWOOD_LEAVES.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.LeavesBlock.PERSISTENT, true);
+        BlockPos trunk = center.offset(-2, 1, -1);
+        for (int i = 0; i < 4; i++) setIfAir(level, trunk.above(i), log);
+        for (int dx = -2; dx <= 2; dx++)
+            for (int dy = 3; dy <= 5; dy++)
+                for (int dz = -2; dz <= 2; dz++)
+                    if (dx * dx + (dy - 4) * (dy - 4) * 2 + dz * dz <= 5) setIfAir(level, trunk.offset(dx, dy, dz), leaves);
+        setIfAir(level, center.offset(2, 3, 2), com.seba.reverie.registry.ModBlocks.FLOATING_LANTERN.get().defaultBlockState());
+    }
+
+    private static void setIfAir(ServerLevel level, BlockPos pos, BlockState state) {
+        if (level.getBlockState(pos).isAir()) level.setBlock(pos, state, net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+    }
+
+    @SuppressWarnings("unused")
     private static void basicPlatform(ServerLevel level, BlockPos center) {
         for (int dx = -3; dx <= 3; dx++) {
             for (int dz = -3; dz <= 3; dz++) {

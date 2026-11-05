@@ -38,6 +38,20 @@ final class TagGen {
             tag(BlockTags.SMALL_FLOWERS).add(ModBlocks.WILD_MELATONIA.get());
             tag(BlockTags.SWORD_EFFICIENT).add(ModBlocks.WILD_MELATONIA.get());
             tag(BlockTags.ENDERMAN_HOLDABLE).add(ModBlocks.WILD_MELATONIA.get());
+            tag(ModTags.Blocks.WILD_MELATONIA_PLACEABLE).add(ModBlocks.DREAM_GRASS_BLOCK.get(), ModBlocks.DREAM_SOIL.get());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LUCID_STONE.get(), ModBlocks.COBBLED_LUCID_STONE.get(),
+                    ModBlocks.LUCID_STONE_BRICKS.get(), ModBlocks.LUCID_CRYSTAL_ORE.get(), ModBlocks.LUCID_CRYSTAL_CLUSTER.get(),
+                    ModBlocks.MIRROR_WATER.get(), ModBlocks.SLEEP_BELL.get(), ModBlocks.MELTED_CLOCK.get());
+            tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.DREAMWOOD_LOG.get(), ModBlocks.DREAMWOOD_PLANKS.get(), ModBlocks.LONE_DOOR.get(),
+                    ModBlocks.SANDGLASS_CORE.get(), ModBlocks.FLOATING_LANTERN.get());
+            tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.DREAM_GRASS_BLOCK.get(), ModBlocks.DREAM_SOIL.get(), ModBlocks.HOURGLASS_SAND.get(),
+                    ModBlocks.PILLOW_CLOUD.get());
+            tag(BlockTags.MINEABLE_WITH_HOE).add(ModBlocks.DREAMWOOD_LEAVES.get());
+            tag(BlockTags.LEAVES).add(ModBlocks.DREAMWOOD_LEAVES.get());
+            tag(BlockTags.LOGS).add(ModBlocks.DREAMWOOD_LOG.get());
+            tag(BlockTags.PLANKS).add(ModBlocks.DREAMWOOD_PLANKS.get());
+            tag(BlockTags.DIRT).add(ModBlocks.DREAM_SOIL.get(), ModBlocks.DREAM_GRASS_BLOCK.get());
+            tag(BlockTags.SMALL_FLOWERS).add(ModBlocks.EYEBLOOM.get());
         }
     }
 
@@ -55,6 +69,10 @@ final class TagGen {
             tag(net.neoforged.neoforge.common.Tags.Items.SEEDS).add(ModItems.MELATONIA_SEEDS.get());
             tag(ItemTags.VILLAGER_PLANTABLE_SEEDS).add(ModItems.MELATONIA_SEEDS.get());
             tag(ItemTags.SMALL_FLOWERS).add(ModItems.WILD_MELATONIA.get());
+            tag(ModTags.Items.LUCID_KEEPSAKES).add(ModItems.LUCID_SHARD.get(), ModItems.DREAM_DUST.get());
+            tag(ItemTags.LOGS).add(ModBlocks.DREAMWOOD_LOG.get().asItem());
+            tag(ItemTags.PLANKS).add(ModBlocks.DREAMWOOD_PLANKS.get().asItem());
+            tag(ItemTags.LEAVES).add(ModBlocks.DREAMWOOD_LEAVES.get().asItem());
             tag(net.neoforged.neoforge.common.Tags.Items.FOODS).add(ModItems.MELATONIA_COOKIE.get(), ModItems.SLEEPY_STEW.get(), ModItems.DROWSY_TEA.get());
         }
     }

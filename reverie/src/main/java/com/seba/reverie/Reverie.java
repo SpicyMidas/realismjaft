@@ -34,11 +34,13 @@ public final class Reverie {
 
         ModBlocks.BLOCKS.register(modBus);
         ModItems.ITEMS.register(modBus);
+        com.seba.reverie.registry.ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModEffects.EFFECTS.register(modBus);
         ModComponents.COMPONENTS.register(modBus);
         ModRecipes.SERIALIZERS.register(modBus);
         ModWorldgen.PLACEMENT_MODIFIERS.register(modBus);
         ModWorldgen.CHUNK_GENERATORS.register(modBus);
+        ModWorldgen.BIOME_SOURCES.register(modBus);
         com.seba.reverie.registry.ModAttachments.ATTACHMENTS.register(modBus);
         modBus.addListener(com.seba.reverie.network.ReverieNetwork::register);
         ModCreativeTab.TABS.register(modBus);
@@ -51,9 +53,14 @@ public final class Reverie {
         ModCreativeTab.add(ModItems.MELATONIA_COOKIE);
         ModCreativeTab.add(ModItems.DROWSY_TEA);
         ModCreativeTab.add(ModItems.SLEEPY_STEW);
+        for (var item : ModItems.DREAM_BLOCK_ITEMS) ModCreativeTab.add(item);
+        ModCreativeTab.add(ModItems.LONE_DOOR);
+        ModCreativeTab.add(ModItems.LUCID_SHARD);
+        ModCreativeTab.add(ModItems.DREAM_DUST);
 
         NeoForge.EVENT_BUS.addListener(Lacing::onFinishUsing);
         com.seba.reverie.dream.DreamEvents.init();
+        com.seba.reverie.dream.DreamManager.addListener(new com.seba.reverie.dreamland.MemoryIsland());
         modBus.addListener(ReverieDataGen::gather);
 
         // Optional integrations: their classes are only touched behind these checks.

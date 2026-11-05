@@ -2,7 +2,7 @@
   "carvers": {},
   "downfall": 0.0,
   "effects": {
-    "fog_color": 1973060,
+    "fog_color": 5524124,
     "mood_sound": {
       "block_search_extent": 8,
       "offset": 2.0,
@@ -11,13 +11,13 @@
     },
     "particle": {
       "options": {
-        "type": "minecraft:white_ash"
+        "type": "minecraft:end_rod"
       },
-      "probability": 0.0015
+      "probability": 4.0E-4
     },
-    "sky_color": 2893670,
+    "sky_color": 4143752,
     "water_color": 6183112,
-    "water_fog_color": 1973060
+    "water_fog_color": 5524124
   },
   "features": [],
   "has_precipitation": false,

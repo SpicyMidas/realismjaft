@@ -189,6 +189,57 @@ final class ClientScript {
                 }
             }
             case "close" -> mc.setScreen(null);
+            case "tpbiome", "tpshape" -> {
+                var server = mc.getSingleplayerServer();
+                if (server == null || mc.player == null) return;
+                var uuid = mc.player.getUUID();
+                double back = a.length > 2 ? Double.parseDouble(a[2]) : 30;
+                double up = a.length > 3 ? Double.parseDouble(a[3]) : 14;
+                server.execute(() -> {
+                    ServerPlayer sp = server.getPlayerList().getPlayer(uuid);
+                    var dream = server.getLevel(com.seba.reverie.dream.DreamManager.DREAMLAND);
+                    if (sp == null || dream == null) return;
+                    BlockPos target = null;
+                    if (a[0].equals("tpbiome")) {
+                        var key = net.minecraft.resources.ResourceKey.create(Registries.BIOME, net.minecraft.resources.ResourceLocation.parse(a[1]));
+                        var found = dream.findClosestBiome3d(h -> h.is(key), sp.level() == dream ? sp.blockPosition() : BlockPos.ZERO.atY(120), 3000, 32, 32);
+                        if (found != null) target = found.getFirst();
+                    } else {
+                        var field = com.seba.reverie.dreamland.IslandSearch.field(dream);
+                        com.seba.reverie.dreamland.IslandField.Shape shape = null;
+                        com.seba.reverie.dreamland.IslandField.Kind kind = null;
+                        try {
+                            shape = com.seba.reverie.dreamland.IslandField.Shape.valueOf(a[1]);
+                        } catch (IllegalArgumentException notShape) {
+                            kind = com.seba.reverie.dreamland.IslandField.Kind.valueOf(a[1]);
+                        }
+                        BlockPos from = sp.level() == dream ? sp.blockPosition() : BlockPos.ZERO;
+                        double best = Double.MAX_VALUE;
+                        for (int layer = 0; layer < (kind == com.seba.reverie.dreamland.IslandField.Kind.CLOUDREACH ? 4 : 3); layer++)
+                            for (int cx = -25; cx <= 25; cx++)
+                                for (int cz = -25; cz <= 25; cz++) {
+                                    var is = field.island(layer, (from.getX() >> 0) / 96 + cx, (from.getZ() >> 0) / 96 + cz);
+                                    if (is == null || shape != null && is.shape != shape || kind != null && (is.kind != kind || is.radius < 22)) continue;
+                                    double d = Math.hypot(is.cx - from.getX(), is.cz - from.getZ());
+                                    if (d < best) {
+                                        best = d;
+                                        target = new BlockPos(is.cx, is.cy, is.cz);
+                                    }
+                                }
+                    }
+                    if (target == null) {
+                        ReverieDevTools.LOG.warn("[devscript] nothing found for {}", rest);
+                        return;
+                    }
+                    double x = target.getX() - back;
+                    double z = target.getZ() - back;
+                    double y = target.getY() + up;
+                    float yaw = (float) Math.toDegrees(Math.atan2(-(target.getX() - x), target.getZ() - z));
+                    float pitch = (float) Math.toDegrees(Math.atan2(up, Math.hypot(back, back)));
+                    ReverieDevTools.LOG.info("[devscript] {} -> {}", rest, target.toShortString());
+                    sp.teleportTo(dream, x, y, z, yaw, pitch);
+                });
+            }
             case "save" -> {
                 var server = mc.getSingleplayerServer();
                 if (server != null) server.execute(() -> {

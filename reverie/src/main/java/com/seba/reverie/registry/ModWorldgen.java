@@ -20,6 +20,12 @@ public final class ModWorldgen {
             com.mojang.serialization.MapCodec<com.seba.reverie.dreamland.DreamIslandsChunkGenerator>> DREAM_ISLANDS =
             CHUNK_GENERATORS.register("dream_islands", () -> com.seba.reverie.dreamland.DreamIslandsChunkGenerator.CODEC);
 
+    public static final DeferredRegister<com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.biome.BiomeSource>> BIOME_SOURCES =
+            DeferredRegister.create(Registries.BIOME_SOURCE, Reverie.MOD_ID);
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.biome.BiomeSource>,
+            com.mojang.serialization.MapCodec<com.seba.reverie.dreamland.DreamBiomeSource>> DREAM_BIOMES =
+            BIOME_SOURCES.register("dream_islands", () -> com.seba.reverie.dreamland.DreamBiomeSource.CODEC);
+
     private ModWorldgen() {
     }
 }

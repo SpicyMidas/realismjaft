@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "reverie:block/melted_clock",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "reverie:block/melted_clock",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "reverie:block/melted_clock",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "reverie:block/melted_clock",
+      "y": 270
+    }
+  }
+}

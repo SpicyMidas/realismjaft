@@ -1,0 +1,40 @@
+newworld flythrough flat 777
+wait 40
+cmd gamemode spectator
+hidegui on
+tpbiome reverie:pillow_fields 34 16
+wait 160
+screenshot fly_pillow
+tpbiome reverie:hollow_spires 40 22
+wait 160
+screenshot fly_spires
+tpbiome reverie:mirror_marsh 30 14
+wait 160
+screenshot fly_marsh
+tpbiome reverie:sandglass_dunes 30 14
+wait 160
+screenshot fly_dunes
+tpbiome reverie:eye_meadow 22 10
+wait 160
+screenshot fly_eye
+tpbiome reverie:upside_down_town 34 -18
+wait 160
+screenshot fly_town
+tpbiome reverie:cloudreach 30 10
+wait 160
+screenshot fly_cloud
+tpshape GREAT_BED 30 16
+wait 160
+screenshot fly_bed
+tpshape STAIRS 40 20
+wait 160
+screenshot fly_stairs
+tpshape SEA_OF_DOORS 26 14
+wait 160
+screenshot fly_doors
+tpshape INVERTED 40 -16
+wait 160
+screenshot fly_inverted
+cmd reverie debug genstats
+wait 10
+stop

@@ -1,0 +1,29 @@
+newworld flythrough2 flat 777
+wait 40
+cmd gamemode spectator
+hidegui on
+tpshape PILLOW_FIELDS 30 14
+wait 160
+screenshot fly2_pillow
+tpshape HOLLOW_SPIRES 36 22
+wait 160
+screenshot fly2_spires
+tpshape MIRROR_MARSH 30 14
+wait 160
+screenshot fly2_marsh
+tpshape SANDGLASS_DUNES 30 14
+wait 160
+screenshot fly2_dunes
+tpshape EYE_MEADOW 20 9
+wait 160
+screenshot fly2_eye
+tpshape UPSIDE_DOWN_TOWN 30 -16
+wait 160
+screenshot fly2_town
+tpshape CLOUD 24 8
+wait 160
+screenshot fly2_cloud
+tpshape INVERTED 36 -12
+wait 160
+screenshot fly2_inverted
+stop

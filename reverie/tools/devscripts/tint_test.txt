@@ -1,0 +1,23 @@
+newworld tint_test flat 3
+wait 30
+cmd time set noon
+cmd fill 0 -60 3 4 -58 5 reverie:dreamwood_leaves[persistent=true]
+cmd fill -4 -60 3 -1 -60 5 reverie:dream_grass_block
+cmd setblock 6 -60 4 reverie:eyebloom
+cmd setblock 7 -60 4 reverie:floating_lantern
+cmd setblock 8 -60 4 reverie:melted_clock
+cmd setblock 9 -60 4 reverie:sleep_bell
+cmd setblock 10 -60 4 reverie:sandglass_core
+cmd setblock 12 -60 4 reverie:lone_door[half=lower,facing=north]
+cmd setblock 12 -59 4 reverie:lone_door[half=upper,facing=north]
+cmd setblock 14 -60 4 reverie:lucid_crystal_cluster[facing=up]
+cmd setblock 15 -60 4 reverie:mirror_water
+cmd setblock 16 -60 4 reverie:pillow_cloud
+cmd tp @s 4.5 -58.5 -2.5 10 20
+wait 40
+hidegui on
+screenshot tint_a
+cmd tp @s 10.5 -59 0.5 0 25
+wait 30
+screenshot tint_b
+stop

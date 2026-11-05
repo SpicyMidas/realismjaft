@@ -1,0 +1,299 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "face": "reverie:block/melted_clock",
+    "gold": "reverie:block/gilded",
+    "particle": "reverie:block/melted_clock"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        1,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face"
+        },
+        "south": {
+          "texture": "#face"
+        },
+        "east": {
+          "texture": "#face"
+        },
+        "west": {
+          "texture": "#face"
+        },
+        "up": {
+          "texture": "#face",
+          "uv": [
+            1,
+            1,
+            15,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#face"
+        }
+      },
+      "name": "flat"
+    },
+    {
+      "from": [
+        2,
+        -2,
+        12
+      ],
+      "to": [
+        14,
+        1,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face",
+          "uv": [
+            2,
+            12,
+            14,
+            15
+          ]
+        },
+        "south": {
+          "texture": "#face",
+          "uv": [
+            2,
+            12,
+            14,
+            15
+          ]
+        },
+        "east": {
+          "texture": "#face",
+          "uv": [
+            3,
+            13,
+            4,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#face",
+          "uv": [
+            12,
+            13,
+            13,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#face",
+          "uv": [
+            2,
+            12,
+            14,
+            13
+          ]
+        },
+        "down": {
+          "texture": "#face",
+          "uv": [
+            2,
+            3,
+            14,
+            4
+          ]
+        }
+      },
+      "name": "bend",
+      "rotation": {
+        "origin": [
+          8,
+          0.5,
+          12
+        ],
+        "axis": "x",
+        "angle": 45
+      }
+    },
+    {
+      "from": [
+        3,
+        -6,
+        13.5
+      ],
+      "to": [
+        13,
+        -1,
+        14.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face",
+          "uv": [
+            3,
+            11,
+            13,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#face",
+          "uv": [
+            3,
+            11,
+            13,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#face",
+          "uv": [
+            1.5,
+            11,
+            2.5,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#face",
+          "uv": [
+            13.5,
+            11,
+            14.5,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#face",
+          "uv": [
+            3,
+            13.5,
+            13,
+            14.5
+          ]
+        },
+        "down": {
+          "texture": "#face",
+          "uv": [
+            3,
+            1.5,
+            13,
+            2.5
+          ]
+        }
+      },
+      "name": "drip"
+    },
+    {
+      "from": [
+        6,
+        -9,
+        13.6
+      ],
+      "to": [
+        9,
+        -6,
+        14.4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face",
+          "uv": [
+            7,
+            13,
+            10,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#face",
+          "uv": [
+            6,
+            13,
+            9,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#face",
+          "uv": [
+            1.6,
+            13,
+            2.4,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#face",
+          "uv": [
+            13.6,
+            13,
+            14.4,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#face",
+          "uv": [
+            6,
+            13.6,
+            9,
+            14.4
+          ]
+        },
+        "down": {
+          "texture": "#face",
+          "uv": [
+            6,
+            1.6,
+            9,
+            2.4
+          ]
+        }
+      },
+      "name": "drop"
+    },
+    {
+      "from": [
+        7.5,
+        1,
+        7.5
+      ],
+      "to": [
+        8.5,
+        1.5,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#gold"
+        },
+        "south": {
+          "texture": "#gold"
+        },
+        "east": {
+          "texture": "#gold"
+        },
+        "west": {
+          "texture": "#gold"
+        },
+        "up": {
+          "texture": "#gold"
+        },
+        "down": {
+          "texture": "#gold"
+        }
+      },
+      "name": "pin"
+    }
+  ]
+}

@@ -36,6 +36,7 @@ public final class DreamClient {
     private static int fadeTicks;
     private static int fadeLength = 1;
     private static int eyelidTimer;
+    private static int flashTicks;
     private static int awakeTicks;
 
     private DreamClient() {
@@ -74,6 +75,11 @@ public final class DreamClient {
 
     private static void onTransition(DreamTransitionPayload payload) {
         Minecraft mc = Minecraft.getInstance();
+        if (payload.kind() == DreamTransitionPayload.FLASH) {
+            flashTicks = 10;
+            mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.AMETHYST_CLUSTER_BREAK, 1.6f, 0.4f));
+            return;
+        }
         if (payload.kind() == DreamTransitionPayload.ENTER) {
             fadeHold = 20;
             fadeLength = fadeTicks = 50;
@@ -89,6 +95,7 @@ public final class DreamClient {
     private static void tick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.isPaused()) return;
+        if (flashTicks > 0) flashTicks--;
         if (fadeHold > 0) fadeHold--;
         else if (fadeTicks > 0) fadeTicks--;
         if (dreaming && ticksLeft > 0) ticksLeft--;
@@ -144,6 +151,10 @@ public final class DreamClient {
             g.fillGradient(0, h - lid, w, h, 0xC0100A14, 0xF0100A14);
         }
 
+        if (flashTicks > 0) {
+            float a = Mth.clamp((flashTicks - pt) / 10f, 0f, 1f);
+            g.fill(0, 0, w, h, ((int) (a * 255) << 24) | 0xFFFFFF);
+        }
         if (fadeHold > 0 || fadeTicks > 0) {
             float a = fadeHold > 0 ? 1f : Mth.clamp((fadeTicks - pt) / fadeLength, 0f, 1f);
             g.fill(0, 0, w, h, ((int) (a * 255) << 24) | 0x05030A);

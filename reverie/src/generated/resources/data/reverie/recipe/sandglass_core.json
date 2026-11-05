@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "P": {
+      "item": "reverie:dreamwood_planks"
+    },
+    "S": {
+      "item": "reverie:hourglass_sand"
+    }
+  },
+  "pattern": [
+    "PGP",
+    " S ",
+    "PGP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "reverie:sandglass_core"
+  }
+}

@@ -18,6 +18,38 @@ final class RecipeGen extends RecipeProvider {
         super(output, registries);
     }
 
+    private void dreamland(RecipeOutput out) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, com.seba.reverie.registry.ModBlocks.DREAMWOOD_PLANKS.get(), 4)
+                .requires(com.seba.reverie.registry.ModBlocks.DREAMWOOD_LOG.get()).group("planks")
+                .unlockedBy("has_log", has(com.seba.reverie.registry.ModBlocks.DREAMWOOD_LOG.get())).save(out);
+        net.minecraft.data.recipes.SimpleCookingRecipeBuilder.smelting(net.minecraft.world.item.crafting.Ingredient.of(
+                        com.seba.reverie.registry.ModBlocks.COBBLED_LUCID_STONE.get()), RecipeCategory.BUILDING_BLOCKS,
+                        com.seba.reverie.registry.ModBlocks.LUCID_STONE.get(), 0.1f, 200)
+                .unlockedBy("has_cobbled", has(com.seba.reverie.registry.ModBlocks.COBBLED_LUCID_STONE.get())).save(out);
+        net.minecraft.data.recipes.ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, com.seba.reverie.registry.ModBlocks.LUCID_STONE_BRICKS.get(), 4)
+                .pattern("SS").pattern("SS").define('S', com.seba.reverie.registry.ModBlocks.LUCID_STONE.get())
+                .unlockedBy("has_lucid", has(com.seba.reverie.registry.ModBlocks.LUCID_STONE.get())).save(out);
+        net.minecraft.data.recipes.ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, com.seba.reverie.registry.ModBlocks.PILLOW_CLOUD.get())
+                .pattern("DD").pattern("DD").define('D', ModItems.DREAM_DUST.get())
+                .unlockedBy("has_dust", has(ModItems.DREAM_DUST.get())).save(out);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.DREAM_DUST.get(), 2).requires(ModItems.LUCID_SHARD.get())
+                .unlockedBy("has_shard", has(ModItems.LUCID_SHARD.get())).save(out);
+        net.minecraft.data.recipes.ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.LONE_DOOR.get())
+                .pattern("PP").pattern("PS").pattern("PP").define('P', com.seba.reverie.registry.ModBlocks.DREAMWOOD_PLANKS.get())
+                .define('S', ModItems.LUCID_SHARD.get()).unlockedBy("has_shard", has(ModItems.LUCID_SHARD.get())).save(out);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, com.seba.reverie.registry.ModBlocks.FLOATING_LANTERN.get())
+                .requires(Items.LANTERN).requires(ModItems.DREAM_DUST.get()).unlockedBy("has_dust", has(ModItems.DREAM_DUST.get())).save(out);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, com.seba.reverie.registry.ModBlocks.MELTED_CLOCK.get())
+                .requires(Items.CLOCK).requires(ModItems.DREAM_DUST.get()).unlockedBy("has_dust", has(ModItems.DREAM_DUST.get())).save(out);
+        net.minecraft.data.recipes.ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, com.seba.reverie.registry.ModBlocks.SLEEP_BELL.get())
+                .pattern("PPP").pattern("PGP").pattern("P P").define('P', com.seba.reverie.registry.ModBlocks.DREAMWOOD_PLANKS.get())
+                .define('G', Items.GOLD_INGOT).unlockedBy("has_planks", has(com.seba.reverie.registry.ModBlocks.DREAMWOOD_PLANKS.get())).save(out);
+        net.minecraft.data.recipes.ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, com.seba.reverie.registry.ModBlocks.SANDGLASS_CORE.get())
+                .pattern("PGP").pattern(" S ").pattern("PGP").define('P', com.seba.reverie.registry.ModBlocks.DREAMWOOD_PLANKS.get())
+                .define('G', Items.GLASS).define('S', com.seba.reverie.registry.ModBlocks.HOURGLASS_SAND.get())
+                .unlockedBy("has_sand", has(com.seba.reverie.registry.ModBlocks.HOURGLASS_SAND.get())).save(out);
+    }
+
     @Override
     protected void buildRecipes(RecipeOutput out) {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.TUFF_ALLOY.get())
@@ -38,6 +70,7 @@ final class RecipeGen extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.SLEEPY_STEW.get())
                 .requires(Items.BOWL).requires(ModItems.MELATONIA_PETALS.get(), 2).requires(Items.POTATO).requires(Items.CARROT)
                 .unlockedBy("has_petals", has(ModItems.MELATONIA_PETALS.get())).save(out);
+        dreamland(out);
         net.minecraft.data.recipes.SpecialRecipeBuilder.special(com.seba.reverie.content.melatonia.LacingRecipe::new)
                 .save(out, com.seba.reverie.Reverie.id("lacing").toString());
     }

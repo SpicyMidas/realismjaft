@@ -15,6 +15,7 @@ public final class ReverieClient {
     public ReverieClient(IEventBus modBus, ModContainer container) {
         DizzinessClient.init();
         DreamClient.init(modBus);
+        com.seba.reverie.client.dreamland.DreamlandClient.init(modBus);
         if (Compat.create()) CreateClientCompat.init(modBus);
     }
 }

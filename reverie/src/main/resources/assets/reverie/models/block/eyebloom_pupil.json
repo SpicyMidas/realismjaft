@@ -1,0 +1,79 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "pupil": "reverie:block/eyebloom_pupil",
+    "particle": "reverie:block/eyebloom_pupil"
+  },
+  "elements": [
+    {
+      "from": [
+        6.6,
+        9.2,
+        6.6
+      ],
+      "to": [
+        9.4,
+        9.6,
+        9.4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#pupil",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#pupil",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#pupil",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#pupil",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#pupil",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#pupil",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      },
+      "name": "pupil"
+    }
+  ]
+}

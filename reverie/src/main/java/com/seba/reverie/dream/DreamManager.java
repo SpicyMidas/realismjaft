@@ -77,6 +77,10 @@ public final class DreamManager {
         default void started(ServerPlayer player, DreamSession session) {
         }
 
+        /** The player logged back in during a dream. */
+        default void resumed(ServerPlayer player, DreamSession session) {
+        }
+
         default void ending(ServerPlayer player, DreamSession session, Reason reason) {
         }
     }
@@ -361,7 +365,7 @@ public final class DreamManager {
             }
         }
         syncState(player);
-        for (Listener l : LISTENERS) safely(() -> l.started(player, data.session));
+        for (Listener l : LISTENERS) safely(() -> l.resumed(player, data.session));
     }
 
     // ------------------------------------------------------------------ waking up

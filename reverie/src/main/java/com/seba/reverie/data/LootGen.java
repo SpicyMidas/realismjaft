@@ -62,6 +62,31 @@ final class LootGen {
                     .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.MELATONIA_SEEDS.get())))
                     .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.MELATONIA_PETALS.get())
                             .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 1)))))));
+            dreamland();
+        }
+
+        private void dreamland() {
+            var fortune = registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE);
+            for (var b : new net.neoforged.neoforge.registries.DeferredBlock<?>[]{ModBlocks.DREAM_SOIL, ModBlocks.COBBLED_LUCID_STONE,
+                    ModBlocks.LUCID_STONE_BRICKS, ModBlocks.DREAMWOOD_LOG, ModBlocks.DREAMWOOD_PLANKS, ModBlocks.HOURGLASS_SAND,
+                    ModBlocks.FLOATING_LANTERN, ModBlocks.MELTED_CLOCK, ModBlocks.EYEBLOOM, ModBlocks.SLEEP_BELL, ModBlocks.SANDGLASS_CORE}) {
+                dropSelf(b.get());
+            }
+            add(ModBlocks.LONE_DOOR.get(), b -> createDoorTable(b));
+            add(ModBlocks.LUCID_STONE.get(), b -> createSingleItemTableWithSilkTouch(b, ModBlocks.COBBLED_LUCID_STONE.get()));
+            add(ModBlocks.DREAM_GRASS_BLOCK.get(), b -> createSilkTouchDispatchTable(b, applyExplosionDecay(b,
+                    LootItem.lootTableItem(ModBlocks.DREAM_SOIL.get()))).withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                    .when(doesNotHaveSilkTouch()).when(net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition.randomChance(0.2f))
+                    .add(LootItem.lootTableItem(ModItems.DREAM_DUST.get()))));
+            add(ModBlocks.PILLOW_CLOUD.get(), b -> createSilkTouchDispatchTable(b, applyExplosionDecay(b, LootItem.lootTableItem(ModItems.DREAM_DUST.get())
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))))));
+            add(ModBlocks.LUCID_CRYSTAL_ORE.get(), b -> createSilkTouchDispatchTable(b, applyExplosionDecay(b, LootItem.lootTableItem(ModItems.LUCID_SHARD.get())
+                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))).apply(ApplyBonusCount.addOreBonusCount(fortune)))));
+            add(ModBlocks.LUCID_CRYSTAL_CLUSTER.get(), b -> createSilkTouchDispatchTable(b, LootItem.lootTableItem(ModItems.LUCID_SHARD.get())
+                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(2)))));
+            add(ModBlocks.DREAMWOOD_LEAVES.get(), b -> createSilkTouchOrShearsDispatchTable(b, applyExplosionCondition(b,
+                    LootItem.lootTableItem(ModItems.DREAM_DUST.get())).when(net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition.randomChance(0.05f))));
+            add(ModBlocks.MIRROR_WATER.get(), b -> createSilkTouchOnlyTable(b));
         }
 
         @Override

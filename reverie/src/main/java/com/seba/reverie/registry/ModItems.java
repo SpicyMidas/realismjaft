@@ -46,6 +46,25 @@ public final class ModItems {
                     .nutrition(7).saturationModifier(0.8f).usingConvertsTo(Items.BOWL)
                     .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 300), 1f).build()), false));
 
+    // --- Dreamland
+    public static final DeferredItem<Item> LUCID_SHARD = ITEMS.registerSimpleItem("lucid_shard", new Item.Properties());
+    public static final DeferredItem<Item> DREAM_DUST = ITEMS.registerSimpleItem("dream_dust", new Item.Properties());
+    public static final java.util.List<DeferredItem<? extends Item>> DREAM_BLOCK_ITEMS = new java.util.ArrayList<>();
+
+    static {
+        for (var block : new net.neoforged.neoforge.registries.DeferredBlock<?>[]{
+                ModBlocks.DREAM_GRASS_BLOCK, ModBlocks.DREAM_SOIL, ModBlocks.LUCID_STONE, ModBlocks.COBBLED_LUCID_STONE,
+                ModBlocks.LUCID_STONE_BRICKS, ModBlocks.DREAMWOOD_LOG, ModBlocks.DREAMWOOD_PLANKS, ModBlocks.DREAMWOOD_LEAVES,
+                ModBlocks.LUCID_CRYSTAL_ORE, ModBlocks.LUCID_CRYSTAL_CLUSTER, ModBlocks.PILLOW_CLOUD, ModBlocks.MIRROR_WATER,
+                ModBlocks.HOURGLASS_SAND, ModBlocks.FLOATING_LANTERN, ModBlocks.MELTED_CLOCK, ModBlocks.EYEBLOOM,
+                ModBlocks.SLEEP_BELL, ModBlocks.SANDGLASS_CORE}) {
+            DREAM_BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(block));
+        }
+    }
+
+    public static final DeferredItem<net.minecraft.world.item.DoubleHighBlockItem> LONE_DOOR = ITEMS.register("lone_door",
+            () -> new net.minecraft.world.item.DoubleHighBlockItem(ModBlocks.LONE_DOOR.get(), new Item.Properties()));
+
     private ModItems() {
     }
 }

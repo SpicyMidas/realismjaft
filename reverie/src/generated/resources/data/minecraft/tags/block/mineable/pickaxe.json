@@ -7,6 +7,14 @@
     {
       "id": "reverie:sport_tuff_gearshift",
       "required": false
-    }
+    },
+    "reverie:lucid_stone",
+    "reverie:cobbled_lucid_stone",
+    "reverie:lucid_stone_bricks",
+    "reverie:lucid_crystal_ore",
+    "reverie:lucid_crystal_cluster",
+    "reverie:mirror_water",
+    "reverie:sleep_bell",
+    "reverie:melted_clock"
   ]
 }

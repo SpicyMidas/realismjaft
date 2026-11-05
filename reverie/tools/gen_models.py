@@ -272,6 +272,100 @@ def gearshift():
         write(f"blockstates/{name}.json", {"multipart": parts})
 
 
+D = "reverie:block/"
+
+
+def dream_decor():
+    # Floating lantern (drawn bobbing by a renderer; the block model is also the item model).
+    lantern = [
+        box([5, 2, 5], [11, 9, 11], "lamp", name="lantern"),
+        box([6, 9, 6], [10, 10, 10], "frame", name="cap"),
+        box([4.5, 1.5, 4.5], [11.5, 2, 11.5], "frame", name="base"),
+        box([7, 10, 7], [9, 12, 9], "frame", name="ring"),
+    ]
+    write("models/block/floating_lantern.json", model({"lamp": D + "floating_lantern", "frame": D + "dreamwood_log", "particle": D + "floating_lantern"},
+                                                      [dict(e, **{"neoforge_data": {"block_light": 15, "sky_light": 15}}) if e.get("name") == "lantern" else e for e in lantern]))
+    write("blockstates/floating_lantern.json", {"variants": {"": {"model": "reverie:block/floating_lantern"}}})
+
+    # Melted clock: a disc draped over an edge (flat part on top, bending down the front), hands by renderer.
+    clock = [
+        box([1, 0, 1], [15, 1, 12], "face", uv={"up": [1, 1, 15, 12]}, name="flat"),
+        box([2, -2, 12], [14, 1, 13], "face", uv={"north": [2, 12, 14, 15], "south": [2, 12, 14, 15]},
+            rotation={"origin": [8, 0.5, 12], "axis": "x", "angle": 45}, name="bend"),
+        box([3, -6, 13.5], [13, -1, 14.5], "face", uv={"north": [3, 11, 13, 16], "south": [3, 11, 13, 16]}, name="drip"),
+        box([6, -9, 13.6], [9, -6, 14.4], "face", name="drop"),
+        box([7.5, 1, 7.5], [8.5, 1.5, 8.5], "gold", name="pin"),
+    ]
+    write("models/block/melted_clock.json", model({"face": D + "melted_clock", "gold": D + "gilded", "particle": D + "melted_clock"}, clock))
+    write("models/block/melted_clock_hands.json", model({"hand": D + "clock_hand", "particle": D + "clock_hand"}, [
+        box([7.6, 1.05, 3.5], [8.4, 1.25, 8.2], "hand", name="minute"),
+        box([7.6, 1.1, 5.5], [8.4, 1.3, 8.2], "hand", name="hour"),
+    ]))
+    write("blockstates/melted_clock.json", {"variants": {f"facing={f}": {"model": "reverie:block/melted_clock", "y": y}
+                                                        for f, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270))}})
+
+    # Eyebloom: stem cross + an eye disc facing outward on both sides; the pupil is a renderer model.
+    eye = [
+        box([7.5, 0, 4], [8.5, 9, 12], "stem", faces=("east", "west"), uv={"east": [4, 0, 12, 9], "west": [4, 0, 12, 9]}, name="stem"),
+        box([4, 0, 7.5], [12, 9, 8.5], "stem", faces=("north", "south"), uv={"north": [4, 0, 12, 9], "south": [4, 0, 12, 9]}, name="stem"),
+        box([4.5, 8, 4.5], [11.5, 9.2, 11.5], "eye", uv={"up": [0, 0, 16, 16], "down": [0, 0, 16, 16]}, name="eye_white"),
+    ]
+    write("models/block/eyebloom.json", model({"stem": D + "eyebloom_stem", "eye": D + "eyebloom_eye", "particle": D + "eyebloom_eye"}, eye))
+    write("models/block/eyebloom_pupil.json", model({"pupil": D + "eyebloom_pupil", "particle": D + "eyebloom_pupil"},
+                                                    [box([6.6, 9.2, 6.6], [9.4, 9.6, 9.4], "pupil", uv={f: [0, 0, 16, 16] for f in FACES}, name="pupil")]))
+    write("blockstates/eyebloom.json", {"variants": {"": {"model": "reverie:block/eyebloom"}}})
+
+    # Sleep bell on a little yoke.
+    bell = [
+        box([4, 13, 7], [12, 14, 9], "wood", name="yoke"),
+        box([4, 0, 7], [5, 13, 9], "wood", name="post"),
+        box([11, 0, 7], [12, 13, 9], "wood", name="post"),
+        box([6, 6, 6], [10, 12, 10], "gold", name="bell"),
+        box([5.5, 5, 5.5], [10.5, 6, 10.5], "gold", name="lip"),
+        box([7.5, 4, 7.5], [8.5, 5, 8.5], "gold", name="clapper"),
+    ]
+    write("models/block/sleep_bell.json", model({"wood": D + "dreamwood_log", "gold": D + "gilded", "particle": D + "gilded"}, bell))
+    write("blockstates/sleep_bell.json", {"variants": {"": {"model": "reverie:block/sleep_bell"}}})
+
+    # Sandglass core: a small hourglass (frame, two glass bulbs, sand).
+    hg = [
+        box([3, 0, 3], [13, 1, 13], "wood", name="base"),
+        box([3, 15, 3], [13, 16, 13], "wood", name="top"),
+        box([3, 1, 3], [4, 15, 4], "wood", name="rod"),
+        box([12, 1, 12], [13, 15, 13], "wood", name="rod"),
+        box([4.5, 1, 4.5], [11.5, 7, 11.5], "glass", name="bulb"),
+        box([6.5, 7, 6.5], [9.5, 9, 9.5], "glass", name="waist"),
+        box([4.5, 9, 4.5], [11.5, 15, 11.5], "glass", name="bulb"),
+        box([5, 1, 5], [11, 3, 11], "sand", name="sand_low"),
+        box([5.5, 11, 5.5], [10.5, 14.5, 10.5], "sand", name="sand_high"),
+    ]
+    write("models/block/sandglass_core.json", model({"wood": D + "dreamwood_planks", "glass": D + "sandglass_glass", "sand": D + "hourglass_sand",
+                                                     "particle": D + "sandglass_glass"}, hg, render_type="minecraft:translucent"))
+    write("blockstates/sandglass_core.json", {"variants": {"": {"model": "reverie:block/sandglass_core"}}})
+
+    # Lone Door: a freestanding frame (model faces north), a soft glow inside the doorway.
+    def door(upper):
+        e = [box([0, 0, 6], [2, 16, 10], "wood", name="jamb"), box([14, 0, 6], [16, 16, 10], "wood", name="jamb"),
+             dict(box([2, 0, 7.9], [14, 16, 8.1], "glow", faces=("north", "south"), uv={"north": [2, 0, 14, 16], "south": [2, 0, 14, 16]}, name="glow"),
+                  **{"neoforge_data": {"block_light": 15, "sky_light": 15}, "shade": False})]
+        if upper:
+            e.append(box([0, 14, 6], [16, 16, 10], "wood", name="lintel"))
+            e.append(box([-1, 16, 5.5], [17, 17, 10.5], "wood", name="cap"))
+        else:
+            e.append(box([-0.5, 0, 5.5], [2.5, 1, 10.5], "wood", name="foot"))
+            e.append(box([13.5, 0, 5.5], [16.5, 1, 10.5], "wood", name="foot"))
+        return e
+    for upper in (False, True):
+        write(f"models/block/lone_door_{'upper' if upper else 'lower'}.json",
+              model({"wood": D + "dreamwood_log", "glow": D + "lone_door_glow", "particle": D + "dreamwood_planks"}, door(upper),
+                    render_type="minecraft:translucent"))
+    write("blockstates/lone_door.json", {"variants": {f"facing={f},half={h}": {"model": f"reverie:block/lone_door_{h}", "y": y}
+                                                     for f, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270))
+                                                     for h in ("lower", "upper")}})
+    write("models/item/lone_door.json", {"parent": "minecraft:item/generated", "textures": {"layer0": "reverie:item/lone_door"}})
+
+
 if __name__ == "__main__":
+    dream_decor()
     gearshift()
     print("models written")
