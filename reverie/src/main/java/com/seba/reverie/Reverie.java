@@ -67,6 +67,7 @@ public final class Reverie {
         com.seba.reverie.shade.ShadeCrowdManager.init();
         com.seba.reverie.dreamland.DreamWeather.init();
         com.seba.reverie.dreamland.RecurringObjects.init();
+        com.seba.reverie.dreamland.DreamFootsteps.init();
         com.seba.reverie.dream.DreamAdvancements.init();
         modBus.addListener(ReverieDataGen::gather);
 

@@ -54,6 +54,8 @@ public final class DreamSky {
     private static int[][] linesNow;
 
     private static boolean failed;
+    /** Size of the big sky objects; grows in Cloudreach, where the sky is closest. */
+    static float closeness = 1f;
 
     // Moon Follows You: the big moon's azimuth is dragged toward behind your direction of travel.
     private static double moonAz = Math.toRadians(200);
@@ -308,7 +310,7 @@ public final class DreamSky {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, PLANET);
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        texturedQuad(b, m, dir(Math.toRadians(128), Math.toRadians(34)), 34, 17, time * 0.00035f + 0.35f, 0, 0, 1, 1, 0.92f);
+        texturedQuad(b, m, dir(Math.toRadians(128), Math.toRadians(34)), 34 * closeness, 17 * closeness, time * 0.00035f + 0.35f, 0, 0, 1, 1, 0.92f);
         draw(b);
     }
 
@@ -317,7 +319,7 @@ public final class DreamSky {
         RenderSystem.setShaderTexture(0, MOON);
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         // The big one (full, follows you), a small crescent and a half moon that is lit from the wrong side.
-        texturedQuad(b, m, dir(moonAz + moonVel * partial, Math.toRadians(27)), 15, 15, 0, 0, 0, 0.25f, 1, 1f);
+        texturedQuad(b, m, dir(moonAz + moonVel * partial, Math.toRadians(27)), 15 * closeness, 15 * closeness, 0, 0, 0, 0.25f, 1, 1f);
         texturedQuad(b, m, dir(Math.toRadians(300), Math.toRadians(52)), 3.2f, 3.2f, 0.4f, 0.75f, 0, 1f, 1, 0.95f);
         texturedQuad(b, m, dir(Math.toRadians(40), Math.toRadians(16)), 6, 6, (float) Math.PI, 0.5f, 0, 0.75f, 1, 0.9f);
         draw(b);

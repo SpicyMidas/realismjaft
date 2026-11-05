@@ -24,7 +24,20 @@ final class ShadeDevCommands {
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> e.getDispatcher().register(Commands.literal("reveriedev")
                 .requires(s -> s.hasPermission(2))
                 .then(Commands.literal("shadelineup").executes(ctx -> lineup(ctx.getSource().getPlayerOrException())))
-                .then(Commands.literal("shadedump").executes(ctx -> dump(ctx.getSource().getLevel())))));
+                .then(Commands.literal("shadedump").executes(ctx -> dump(ctx.getSource().getLevel())))
+                .then(Commands.literal("buildstairs").executes(ctx -> {
+                    // Runs the Impossible Stairs builder on the block under the player.
+                    var p = ctx.getSource().getPlayerOrException();
+                    try {
+                        var m = Class.forName("com.seba.reverie.dreamland.IslandDecorator").getDeclaredMethod("impossibleStairs",
+                                net.minecraft.world.level.WorldGenLevel.class, net.minecraft.core.BlockPos.class);
+                        m.setAccessible(true);
+                        m.invoke(null, p.serverLevel(), p.blockPosition().below());
+                    } catch (ReflectiveOperationException ex) {
+                        throw new IllegalStateException(ex);
+                    }
+                    return 1;
+                }))));
     }
 
     private static int lineup(ServerPlayer p) {

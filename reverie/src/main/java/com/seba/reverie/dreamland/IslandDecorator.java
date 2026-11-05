@@ -231,6 +231,7 @@ final class IslandDecorator {
         if (is.kind == Kind.PILLOW_FIELDS && roll < 0.12) sleepBellGrove(level, field, is, ground);
         else if (is.kind == Kind.SANDGLASS_DUNES && roll < 0.7) hourglass(level, ground.above());
         else if (roll > 0.982 && is.shape != Shape.SPIRES) giantClock(level, ground.above(9), IslandField.mix(h ^ 0xC10CL));
+        else if (roll > 0.94 && is.shape == Shape.PLATEAU && is.kind != Kind.UPSIDE_DOWN_TOWN) impossibleStairs(level, ground);
     }
 
     private static void loneDoor(WorldGenLevel level, IslandField field, Island is, int x, int z, Direction facing) {
@@ -285,6 +286,40 @@ final class IslandDecorator {
                 }
             }
         level.setBlock(base.offset(0, 3, 0), ModBlocks.SANDGLASS_CORE.get().defaultBlockState(), FLAGS);
+    }
+
+    /**
+     * Impossible Stairs: a closed loop of floating stairs, two flights up and two down. The descending flights are
+     * built from upside-down stairs, so from the plaque on the ground beside it every flight seems to climb and the
+     * loop never ends. (A true Penrose illusion needs a perspective-free view; blocks on a grid cannot fake it.)
+     */
+    private static void impossibleStairs(WorldGenLevel level, BlockPos ground) {
+        int lift = 6;
+        for (int dx = -3; dx <= 3; dx++)
+            for (int dz = -3; dz <= 3; dz++)
+                for (int dy = lift; dy <= lift + 9; dy++)
+                    if (!level.getBlockState(ground.offset(dx, dy, dz)).isAir()) return;
+        BlockPos plaque = ground.offset(-7, 1, 7);
+        if (!level.getBlockState(plaque).isAir() || !level.getBlockState(plaque.below()).isSolid()) return;
+        Direction[] flights = {Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};
+        int x = -2;
+        int z = -2;
+        int y = 0;
+        for (int f = 0; f < 4; f++) {
+            Direction d = flights[f];
+            boolean up = f < 2;
+            for (int s = 0; s < 4; s++) {
+                BlockState stair = Blocks.QUARTZ_STAIRS.defaultBlockState()
+                        .setValue(net.minecraft.world.level.block.StairBlock.FACING, up ? d : d.getOpposite())
+                        .setValue(net.minecraft.world.level.block.StairBlock.HALF, up ? net.minecraft.world.level.block.state.properties.Half.BOTTOM
+                                : net.minecraft.world.level.block.state.properties.Half.TOP);
+                level.setBlock(ground.offset(x, lift + y, z), stair, FLAGS);
+                x += d.getStepX();
+                z += d.getStepZ();
+                y += up ? 1 : -1;
+            }
+        }
+        level.setBlock(plaque, Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE.defaultBlockState(), FLAGS);
     }
 
     /** A little house hanging from the island's underside, furniture on its ceiling (which is its floor). */

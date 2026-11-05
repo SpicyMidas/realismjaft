@@ -99,7 +99,8 @@ public final class DreamEffectsClient {
                 double a = rng.nextDouble() * Math.PI * 2;
                 var p = mc.player.position();
                 mc.getSoundManager().play(new net.minecraft.client.resources.sounds.SimpleSoundInstance(
-                        net.minecraft.sounds.SoundEvents.BELL_BLOCK, SoundSource.MASTER, 0.5f, 0.5f, rng,
+                        net.minecraft.sounds.SoundEvents.BELL_BLOCK, SoundSource.MASTER,
+                        0.5f * (float) (double) ReverieConfig.get(ReverieConfig.AMBIENT_VOLUME), 0.5f, rng,
                         p.x + Math.cos(a) * 40, p.y + 10, p.z + Math.sin(a) * 40));
             }
             default -> {

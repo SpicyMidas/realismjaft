@@ -49,6 +49,9 @@ public final class DreamAmbienceClient {
         else if (biome.is(DreamlandBiomeKeys.CLOUDREACH)) emit(mc, rng, p, ModParticles.DREAM_PETAL.get(), 0.15f, wrongRain ? 0.02f : -0.02f);
         else emit(mc, rng, p, ModParticles.DREAM_PAGE.get(), 0.03f, -0.02f);
 
+        // Cloudreach: the sky is closest and shooting stars are frequent.
+        if (biome.is(DreamlandBiomeKeys.CLOUDREACH) && rng.nextInt(140) == 0) DreamSky.shootingStar(rng, rng.nextBoolean() ? mc.player.getYRot() : Float.NaN);
+        DreamSky.closeness = Mth.lerp(0.02f, DreamSky.closeness, biome.is(DreamlandBiomeKeys.CLOUDREACH) ? 1.35f : 1f);
         weather(mc, rng, p);
         captions(mc, rng, p);
     }
@@ -91,7 +94,7 @@ public final class DreamAmbienceClient {
             }
             if (elapsed < 48 && elapsed % 12 == 0) {
                 mc.getSoundManager().play(new SimpleSoundInstance(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.AMBIENT,
-                        0.6f, 0.7f + elapsed / 12 * 0.25f, rng, p.x, p.y + 2, p.z));
+                        0.6f * ambient(), 0.7f + elapsed / 12 * 0.25f, rng, p.x, p.y + 2, p.z));
             }
         } else if (w == DreamWeather.Kind.UPWARD_RAIN.id) {
             int n = (int) (22 * DreamEffectsClient.weatherStrength(40));
@@ -100,7 +103,7 @@ public final class DreamAmbienceClient {
                         p.z + (rng.nextDouble() - 0.5) * 24, 0, 0.6 + rng.nextDouble() * 0.3, 0);
             }
             if (elapsed == 0) {
-                mc.getSoundManager().play(new SimpleSoundInstance(SoundEvents.WEATHER_RAIN, SoundSource.WEATHER, 0.4f, 0.6f, rng, p.x, p.y, p.z));
+                mc.getSoundManager().play(new SimpleSoundInstance(SoundEvents.WEATHER_RAIN, SoundSource.WEATHER, 0.4f * ambient(), 0.6f, rng, p.x, p.y, p.z));
             }
         }
     }
@@ -117,8 +120,13 @@ public final class DreamAmbienceClient {
         double a = rng.nextDouble() * Math.PI * 2;
         double r = 9 + rng.nextDouble() * 9;
         float pitch = event == ModSounds.CLOCK_BACKWARDS.get() ? 0.6f : event == ModSounds.BED_CREAK.get() ? 0.55f : 0.8f + rng.nextFloat() * 0.3f;
-        mc.getSoundManager().play(new SimpleSoundInstance(event, SoundSource.AMBIENT, 0.35f, pitch, rng,
+        mc.getSoundManager().play(new SimpleSoundInstance(event, SoundSource.AMBIENT, 0.35f * ambient(), pitch, rng,
                 p.x + Math.cos(a) * r, p.y + rng.nextDouble() * 3, p.z + Math.sin(a) * r));
+    }
+
+    /** Client config multiplier for Reverie's own ambient sounds. */
+    static float ambient() {
+        return (float) (double) ReverieConfig.get(ReverieConfig.AMBIENT_VOLUME);
     }
 
     static boolean inDreamland(Minecraft mc) {

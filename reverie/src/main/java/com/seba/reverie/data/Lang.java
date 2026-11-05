@@ -78,6 +78,11 @@ final class Lang {
         s.add("item.reverie.dreamy_pie_slice", "Slice of Dreamy Pie", "Fetta di Torta Sognante");
         s.add("item.reverie.night_bloom_roll", "Night-Bloom Roll", "Involtino Fiordinotte");
         s.add("item.reverie.melatonia_syrup", "Melatonia Syrup", "Sciroppo di Melatonia");
+        s.add("reverie.command.backup.count", "%s has %s dream backups (newest first):", "%s ha %s backup dei sogni (dal piu' recente):");
+        s.add("reverie.command.backup.dreaming", "%s is dreaming; wake them first.", "%s sta sognando; prima sveglialo.");
+        s.add("reverie.command.backup.none", "There is no backup number %s.", "Non esiste il backup numero %s.");
+        s.add("reverie.command.backup.unreadable", "Backup %s could not be read.", "Il backup %s non si puo' leggere.");
+        s.add("reverie.command.backup.restored", "Gave back %s stacks to %s.", "Restituiti %s stack a %s.");
         s.add("reverie.command.shades_cleared", "Removed %s shades.", "Rimosse %s ombre.");
         s.add("reverie.command.shades_count", "%s shades are watching.", "%s ombre stanno guardando.");
         s.add("reverie.command.unknown_event", "Unknown event: %s", "Evento sconosciuto: %s");

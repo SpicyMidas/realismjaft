@@ -57,6 +57,7 @@ public final class DreamCommands {
                         }))
                         .then(Commands.literal("dreamstate").then(Commands.argument("player", EntityArgument.player())
                                 .executes(ctx -> debug(ctx, EntityArgument.getPlayer(ctx, "player"))))));
+        root.then(BackupCommands.node());
         for (Extension e : EXTENSIONS) e.register(root);
         dispatcher.register(root);
     }

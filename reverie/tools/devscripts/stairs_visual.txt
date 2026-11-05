@@ -1,0 +1,15 @@
+newworld stairs flat 3
+wait 40
+cmd gamerule doDaylightCycle false
+cmd time set 18000
+cmd tp @s 0.5 -60 0.5 0 0
+wait 10
+cmd reveriedev buildstairs
+cmd tp @s -6.5 -60 7.5 225 -32
+hidegui on
+wait 30
+screenshot stairs_plaque
+cmd tp @s 12.5 -55 -12.5 45 -5
+wait 10
+screenshot stairs_side
+stop

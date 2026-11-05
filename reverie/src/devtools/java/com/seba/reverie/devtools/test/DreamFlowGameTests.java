@@ -166,6 +166,36 @@ public final class DreamFlowGameTests {
                 .thenSucceed();
     }
 
+    @GameTest(templateNamespace = "reverie", template = "empty", timeoutTicks = 200, batch = "reverie_backup")
+    public static void backupRestoreGivesItemsBack(GameTestHelper h) {
+        if (DreamTestSupport.skipWithoutDreamland(h)) return;
+        var server = h.getLevel().getServer();
+        UUID id = UUID.fromString("5e1f5a1e-0000-4000-8000-00000000bac0");
+        ServerPlayer p = joinAs(h, id, "backup_dreamer");
+        if (DreamManager.isDreaming(p)) DreamManager.wake(p, DreamManager.Reason.COMMAND);
+        DreamManager.resetCooldown(p);
+        List<ItemStack> before = DreamGameTests.fillInventory(p);
+        p.getInventory().selected = 4; // empty hand: nothing is carried into the dream
+        h.assertTrue(DreamManager.startDream(p, null), "dream did not start");
+        DreamManager.wake(p, DreamManager.Reason.BED); // as if they lay down in a dream bed
+        for (var adv : new net.minecraft.resources.ResourceLocation[]{com.seba.reverie.dream.DreamAdvancements.COUNTING_SHEEP,
+                com.seba.reverie.dream.DreamAdvancements.WIDE_AWAKE}) {
+            var holder = server.getAdvancements().get(adv);
+            h.assertTrue(holder != null && p.getAdvancements().getOrStartProgress(holder).isDone(), "advancement not granted: " + adv);
+        }
+        p.getInventory().clearContent(); // the disaster
+        var source = server.createCommandSourceStack().withPermission(4).withSuppressedOutput();
+        server.getCommands().performPrefixedCommand(source, "reverie backup restore backup_dreamer 1");
+        for (ItemStack stack : before) {
+            if (stack.isEmpty()) continue;
+            h.assertTrue(p.getInventory().contains(s -> ItemStack.isSameItemSameComponents(s, stack) && s.getCount() == stack.getCount()),
+                    "restore did not give back " + stack);
+        }
+        server.getPlayerList().remove(p);
+        com.seba.reverie.devtools.ReverieDevTools.log("PASS backupRestoreGivesItemsBack");
+        h.succeed();
+    }
+
     /** Pretend the dream ended already (as if the player was offline past its end). */
     private static void expireSession(ServerPlayer player) {
         try {
