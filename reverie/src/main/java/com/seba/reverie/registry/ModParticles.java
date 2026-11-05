@@ -15,6 +15,7 @@ public final class ModParticles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_PETAL = PARTICLES.register("dream_petal", () -> new SimpleParticleType(false));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_PAGE = PARTICLES.register("dream_page", () -> new SimpleParticleType(false));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_RAINDROP = PARTICLES.register("dream_raindrop", () -> new SimpleParticleType(false));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_Z = PARTICLES.register("dream_z", () -> new SimpleParticleType(false));
 
     private ModParticles() {
     }

@@ -94,6 +94,17 @@ public class DreamIslandsChunkGenerator extends ChunkGenerator {
 
     @Override
     public void spawnOriginalMobs(WorldGenRegion level) {
+        // Like the noise generator, but the biome is read at the island surface (the top of the world is void).
+        var chunk = level.getCenter();
+        int x = chunk.getMiddleBlockX();
+        int z = chunk.getMiddleBlockZ();
+        int top = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE_WG, x, z);
+        if (top <= level.getMinBuildHeight() + 4) return;
+        var biome = level.getBiome(new net.minecraft.core.BlockPos(x, top, z));
+        var random = new net.minecraft.world.level.levelgen.WorldgenRandom(
+                new net.minecraft.world.level.levelgen.LegacyRandomSource(net.minecraft.world.level.levelgen.RandomSupport.generateUniqueSeed()));
+        random.setDecorationSeed(level.getSeed(), chunk.getMinBlockX(), chunk.getMinBlockZ());
+        net.minecraft.world.level.NaturalSpawner.spawnMobsForChunkGeneration(level, biome, chunk, random);
     }
 
     @Override

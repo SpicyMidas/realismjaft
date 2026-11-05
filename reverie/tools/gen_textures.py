@@ -867,6 +867,41 @@ def dreamland_textures():
     save(grid(door, {'o': (70, 40, 70), 'd': DWOOD[1], 'w': (250, 244, 236), 'h': (255, 255, 255)}), "item/lone_door")
 
 
+def fauna_textures():
+    """Lucid Moth: wings up, wings down, and a soft glow cell (48x16). A snore Z particle."""
+    import math as m
+    img = Image.new("RGBA", (48, 16), T)
+    body, wing, edge = (40, 36, 70), (150, 220, 255), (220, 248, 255)
+    for frame, spread in ((0, 1.0), (1, 0.45)):
+        ox = frame * 16
+        for y in range(16):
+            for x in range(16):
+                dx, dy = x - 7.5, y - 8.0
+                # body: a thin vertical oval
+                if abs(dx) < 1.2 and abs(dy) < 4.5:
+                    img.putpixel((ox + x, y), rgba(body))
+                    continue
+                # wings: two rounded lobes each side, narrower when folded
+                for sy, rw in ((-2.2, 6.2), (2.4, 4.6)):
+                    wx = abs(dx) / (rw * spread + 0.6)
+                    wy = (dy - sy) / 2.6
+                    if wx * wx + wy * wy < 1 and abs(dx) >= 1.2:
+                        c = edge if wx * wx + wy * wy > 0.6 else wing
+                        img.putpixel((ox + x, y), rgba(c, 235))
+        img.putpixel((ox + 6, 3), rgba(body))
+        img.putpixel((ox + 9, 3), rgba(body))
+    for y in range(16):
+        for x in range(16):
+            d = m.hypot(x - 7.5, y - 7.5) / 7.5
+            if d < 1:
+                v = (1 - d) ** 2
+                img.putpixel((32 + x, y), (int(120 * v), int(200 * v), int(255 * v), 255))
+    save(img, "entity/lucid_moth")
+    z = [
+        "........", ".zzzzz..", "....z...", "...z....", "..z.....", ".zzzzz..", "........", "........"]
+    save(grid(z, {'z': (236, 232, 255)}), "particle/dream_z_0")
+
+
 def paper_whale_texture():
     """A paper whale: pale folded paper, a darker fold line, a tiny eye. Faces right."""
     import math as m
@@ -1080,7 +1115,7 @@ def shade_textures():
     save(img, "entity/shade")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture]
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture, fauna_textures]
 
 
 def contact_sheet(out_dir):

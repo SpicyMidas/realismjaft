@@ -43,6 +43,7 @@ public final class Reverie {
         ModWorldgen.BIOME_SOURCES.register(modBus);
         com.seba.reverie.registry.ModAttachments.ATTACHMENTS.register(modBus);
         com.seba.reverie.registry.ModEntities.ENTITIES.register(modBus);
+        com.seba.reverie.registry.ModEntities.init(modBus);
         com.seba.reverie.registry.ModParticles.PARTICLES.register(modBus);
         com.seba.reverie.registry.ModSounds.SOUNDS.register(modBus);
         modBus.addListener(com.seba.reverie.network.ReverieNetwork::register);
@@ -61,6 +62,8 @@ public final class Reverie {
         ModCreativeTab.add(ModItems.LUCID_SHARD);
         ModCreativeTab.add(ModItems.DREAM_DUST);
         ModCreativeTab.add(ModItems.DREAM_CATCHER);
+        ModCreativeTab.add(ModItems.SLEEPWALKING_SHEEP_SPAWN_EGG);
+        ModCreativeTab.add(ModItems.LUCID_MOTH_SPAWN_EGG);
 
         NeoForge.EVENT_BUS.addListener(Lacing::onFinishUsing);
         com.seba.reverie.dream.DreamEvents.init();

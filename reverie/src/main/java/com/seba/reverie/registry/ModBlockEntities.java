@@ -19,6 +19,10 @@ public final class ModBlockEntities {
     @SuppressWarnings("DataFlowIssue")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ResonatorBlockEntity>> RESONATOR = BLOCK_ENTITIES.register("resonator",
             () -> BlockEntityType.Builder.of(ResonatorBlockEntity::new, ModBlocks.SLEEP_BELL.get(), ModBlocks.SANDGLASS_CORE.get()).build(null));
+    @SuppressWarnings("DataFlowIssue")
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<net.minecraft.world.level.block.entity.BlockEntity>> IMPOSSIBLE_STAIRS =
+            BLOCK_ENTITIES.register("impossible_stairs", () -> BlockEntityType.Builder.<net.minecraft.world.level.block.entity.BlockEntity>of(
+                    (pos, state) -> ModBlocks.IMPOSSIBLE_STAIRS.get().newBlockEntity(pos, state), ModBlocks.IMPOSSIBLE_STAIRS.get()).build(null));
 
     private ModBlockEntities() {
     }

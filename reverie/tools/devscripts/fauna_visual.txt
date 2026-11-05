@@ -1,0 +1,20 @@
+newworld fauna flat 77
+wait 40
+cmd gamerule doDaylightCycle false
+cmd reverie dream Dev
+wait 140
+hidegui on
+cmd reverie shades clear
+cmd tp @s ~ ~ ~ 0 15
+wait 5
+cmd summon reverie:sleepwalking_sheep ~-1 ~ ~5
+cmd summon reverie:sleepwalking_sheep ~2 ~ ~7
+cmd setblock ~3 ~2 ~5 reverie:floating_lantern
+wait 260
+cmd execute if entity @e[type=reverie:lucid_moth]
+cmd execute if entity @e[type=reverie:sleepwalking_sheep]
+screenshot fauna
+look 265 -40
+wait 5
+screenshot aurora_shader
+stop

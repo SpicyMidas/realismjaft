@@ -40,4 +40,11 @@ public class FloatingLanternBlock extends BaseEntityBlock {
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new DecorBlockEntity(pos, state);
     }
+
+    /** Server only: the lantern calls its Lucid Moths (Dreamland only, see LanternMoths). */
+    @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(net.minecraft.world.level.Level level,
+            BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        return level.isClientSide ? null : (lvl, pos, st, be) -> com.seba.reverie.fauna.LanternMoths.tick(lvl, pos);
+    }
 }

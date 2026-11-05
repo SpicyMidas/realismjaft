@@ -22,6 +22,27 @@ public final class ModEntities {
                     .clientTrackingRange(8)
                     .updateInterval(2)
                     .build("shade"));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.seba.reverie.fauna.SleepwalkingSheep>> SLEEPWALKING_SHEEP =
+            ENTITIES.register("sleepwalking_sheep", () -> EntityType.Builder.<com.seba.reverie.fauna.SleepwalkingSheep>of(
+                            com.seba.reverie.fauna.SleepwalkingSheep::new, MobCategory.CREATURE)
+                    .sized(0.9f, 1.3f).eyeHeight(1.235f).clientTrackingRange(10).build("sleepwalking_sheep"));
+    // Lucid Moths are called by Floating Lanterns and never saved.
+    public static final DeferredHolder<EntityType<?>, EntityType<com.seba.reverie.fauna.LucidMoth>> LUCID_MOTH =
+            ENTITIES.register("lucid_moth", () -> EntityType.Builder.<com.seba.reverie.fauna.LucidMoth>of(
+                            com.seba.reverie.fauna.LucidMoth::new, MobCategory.AMBIENT)
+                    .sized(0.35f, 0.35f).noSave().clientTrackingRange(6).build("lucid_moth"));
+
+    /** Attributes and spawn rules (mod bus). */
+    public static void init(net.neoforged.bus.api.IEventBus modBus) {
+        modBus.addListener((net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent e) -> {
+            e.put(SLEEPWALKING_SHEEP.get(), com.seba.reverie.fauna.SleepwalkingSheep.createAttributes().build());
+            e.put(LUCID_MOTH.get(), com.seba.reverie.fauna.LucidMoth.createAttributes().build());
+        });
+        modBus.addListener((net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent e) -> e.register(SLEEPWALKING_SHEEP.get(),
+                net.minecraft.world.entity.SpawnPlacementTypes.ON_GROUND, net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> level.getBlockState(pos.below()).isSolid(),
+                net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent.Operation.REPLACE));
+    }
 
     private ModEntities() {
     }

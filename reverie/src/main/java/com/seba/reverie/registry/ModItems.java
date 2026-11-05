@@ -49,6 +49,12 @@ public final class ModItems {
     // --- Dreamland
     public static final DeferredItem<Item> LUCID_SHARD = ITEMS.registerSimpleItem("lucid_shard", new Item.Properties());
     public static final DeferredItem<Item> DREAM_DUST = ITEMS.registerSimpleItem("dream_dust", new Item.Properties());
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> SLEEPWALKING_SHEEP_SPAWN_EGG = ITEMS.register(
+            "sleepwalking_sheep_spawn_egg", () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.SLEEPWALKING_SHEEP,
+                    0xE8E4F4, 0x9B8BD6, new Item.Properties()));
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> LUCID_MOTH_SPAWN_EGG = ITEMS.register(
+            "lucid_moth_spawn_egg", () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.LUCID_MOTH,
+                    0x2E2A55, 0xBFEFFF, new Item.Properties()));
     public static final DeferredItem<com.seba.reverie.content.DreamCatcherItem> DREAM_CATCHER = ITEMS.register("dream_catcher",
             () -> new com.seba.reverie.content.DreamCatcherItem(new Item.Properties().stacksTo(1)));
     public static final java.util.List<DeferredItem<? extends Item>> DREAM_BLOCK_ITEMS = new java.util.ArrayList<>();

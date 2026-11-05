@@ -31,6 +31,9 @@ final class ModelGen {
             basicItem(ModItems.LUCID_SHARD.get());
             basicItem(ModItems.DREAM_DUST.get());
             basicItem(ModItems.DREAM_CATCHER.get());
+            for (var egg : new String[]{"sleepwalking_sheep_spawn_egg", "lucid_moth_spawn_egg"}) {
+                withExistingParent(egg, mcLoc("item/template_spawn_egg"));
+            }
             for (String block : new String[]{"dream_grass_block", "dream_soil", "lucid_stone", "cobbled_lucid_stone", "lucid_stone_bricks",
                     "dreamwood_log", "dreamwood_planks", "dreamwood_leaves", "lucid_crystal_ore", "pillow_cloud", "mirror_water",
                     "hourglass_sand", "floating_lantern", "melted_clock", "sleep_bell", "sandglass_core"}) {
@@ -51,6 +54,8 @@ final class ModelGen {
 
         @Override
         protected void registerStatesAndModels() {
+            // The Impossible Stairs anchor draws nothing itself; the model only names a particle texture.
+            simpleBlock(ModBlocks.IMPOSSIBLE_STAIRS.get(), models().getBuilder("impossible_stairs").texture("particle", mcLoc("block/quartz_block_side")));
             com.seba.reverie.compat.fd.FdDataGen.blockStates(this);
             getVariantBuilder(ModBlocks.MELATONIA.get()).forAllStates(state -> {
                 int age = state.getValue(MelatoniaCropBlock.AGE);

@@ -63,6 +63,9 @@ public final class DreamlandClient {
 
     private static void renderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.DECOR.get(), DecorRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.IMPOSSIBLE_STAIRS.get(), ImpossibleStairsRenderer::new);
+        event.registerEntityRenderer(com.seba.reverie.registry.ModEntities.SLEEPWALKING_SHEEP.get(), net.minecraft.client.renderer.entity.SheepRenderer::new);
+        event.registerEntityRenderer(com.seba.reverie.registry.ModEntities.LUCID_MOTH.get(), com.seba.reverie.client.fauna.LucidMothRenderer::new);
     }
 
     private static void models(ModelEvent.RegisterAdditional event) {
@@ -74,6 +77,7 @@ public final class DreamlandClient {
         event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_PETAL.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.PETAL));
         event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_PAGE.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.PAGE));
         event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_RAINDROP.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.RAINDROP));
+        event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_Z.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.Z));
     }
 
     /** Fog Tide: the fog turns a pale glowing lavender. */

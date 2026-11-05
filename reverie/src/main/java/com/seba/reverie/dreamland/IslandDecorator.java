@@ -289,37 +289,29 @@ final class IslandDecorator {
     }
 
     /**
-     * Impossible Stairs: a closed loop of floating stairs, two flights up and two down. The descending flights are
-     * built from upside-down stairs, so from the plaque on the ground beside it every flight seems to climb and the
-     * loop never ends. (A true Penrose illusion needs a perspective-free view; blocks on a grid cannot fake it.)
+     * Impossible Stairs: an invisible anchor whose renderer draws a loop of four climbing flights that never ends
+     * (the last flight is re-solved toward each viewer's eye, see ImpossibleStairsRenderer). Next to it a slim
+     * viewing tower with a ladder and a plaque on top: from up there you look down on the climb.
      */
     private static void impossibleStairs(WorldGenLevel level, BlockPos ground) {
-        int lift = 6;
+        BlockPos anchor = ground.above(2);
+        BlockPos tower = ground.offset(-8, 1, 8);
         for (int dx = -3; dx <= 3; dx++)
             for (int dz = -3; dz <= 3; dz++)
-                for (int dy = lift; dy <= lift + 9; dy++)
-                    if (!level.getBlockState(ground.offset(dx, dy, dz)).isAir()) return;
-        BlockPos plaque = ground.offset(-7, 1, 7);
-        if (!level.getBlockState(plaque).isAir() || !level.getBlockState(plaque.below()).isSolid()) return;
-        Direction[] flights = {Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};
-        int x = -2;
-        int z = -2;
-        int y = 0;
-        for (int f = 0; f < 4; f++) {
-            Direction d = flights[f];
-            boolean up = f < 2;
-            for (int s = 0; s < 4; s++) {
-                BlockState stair = Blocks.QUARTZ_STAIRS.defaultBlockState()
-                        .setValue(net.minecraft.world.level.block.StairBlock.FACING, up ? d : d.getOpposite())
-                        .setValue(net.minecraft.world.level.block.StairBlock.HALF, up ? net.minecraft.world.level.block.state.properties.Half.BOTTOM
-                                : net.minecraft.world.level.block.state.properties.Half.TOP);
-                level.setBlock(ground.offset(x, lift + y, z), stair, FLAGS);
-                x += d.getStepX();
-                z += d.getStepZ();
-                y += up ? 1 : -1;
-            }
+                for (int dy = 0; dy <= 12; dy++)
+                    if (!level.getBlockState(anchor.offset(dx, dy, dz)).isAir()) return;
+        if (!level.getBlockState(tower.below()).isSolid()) return;
+        for (int dy = 0; dy <= 12; dy++) {
+            if (!level.getBlockState(tower.above(dy)).isAir() || !level.getBlockState(tower.above(dy).east()).isAir()) return;
         }
-        level.setBlock(plaque, Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE.defaultBlockState(), FLAGS);
+        BlockState brick = ModBlocks.LUCID_STONE_BRICKS.get().defaultBlockState();
+        BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(net.minecraft.world.level.block.LadderBlock.FACING, Direction.EAST);
+        for (int dy = 0; dy < 11; dy++) {
+            level.setBlock(tower.above(dy), brick, FLAGS);
+            level.setBlock(tower.above(dy).east(), ladder, FLAGS);
+        }
+        level.setBlock(tower.above(11), Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE.defaultBlockState(), FLAGS);
+        level.setBlock(anchor, ModBlocks.IMPOSSIBLE_STAIRS.get().defaultBlockState(), FLAGS);
     }
 
     /** A little house hanging from the island's underside, furniture on its ceiling (which is its floor). */

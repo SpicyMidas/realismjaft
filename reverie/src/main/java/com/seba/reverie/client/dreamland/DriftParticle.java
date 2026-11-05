@@ -10,7 +10,7 @@ import net.minecraft.util.Mth;
 
 /** Petals, pages and raindrops that keep their spawn velocity (up, down or sideways) with a little flutter. */
 public class DriftParticle extends TextureSheetParticle {
-    public enum Kind { PETAL, PAGE, RAINDROP }
+    public enum Kind { PETAL, PAGE, RAINDROP, Z }
 
     private final Kind kind;
     private final float spin;
@@ -29,13 +29,16 @@ public class DriftParticle extends TextureSheetParticle {
             case PETAL -> 90 + random.nextInt(70);
             case PAGE -> 120 + random.nextInt(80);
             case RAINDROP -> 18 + random.nextInt(14);
+            case Z -> 40 + random.nextInt(20);
         };
         this.quadSize = switch (kind) {
             case PETAL -> 0.16f + random.nextFloat() * 0.08f;
             case PAGE -> 0.22f + random.nextFloat() * 0.08f;
             case RAINDROP -> 0.14f;
+            case Z -> 0.12f + random.nextFloat() * 0.04f;
         };
-        this.spin = kind == Kind.RAINDROP ? 0 : (random.nextFloat() - 0.5f) * 0.2f;
+        this.spin = kind == Kind.RAINDROP || kind == Kind.Z ? 0 : (random.nextFloat() - 0.5f) * 0.2f;
+        if (kind == Kind.Z) this.roll = 0;
         this.phase = random.nextFloat() * Mth.TWO_PI;
         this.roll = random.nextFloat() * Mth.TWO_PI;
         this.oRoll = roll;

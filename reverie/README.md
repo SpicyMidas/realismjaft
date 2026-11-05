@@ -42,10 +42,12 @@ Sleepy Stew are the plain recipes.
   Great Bed, the Sea of Doors and clouds.
 - Landmarks: Lone Doors (walk through and you arrive somewhere else, and sometimes they lie), the Staircase to
   Nowhere, hanging houses, the Sleep Bell Grove, hourglasses with time bubbles, a giant clock, the Impossible
-  Stairs, and a **Memory Island**: a scrambled echo of the room you fell asleep in.
+  Stairs (climb its viewing tower), and a **Memory Island**: a scrambled echo of the room you fell asleep in.
 - The sky: stars that slowly gather into constellations that are never the same twice, three moons of the wrong
-  sizes (the big one trails behind you as you walk), a ringed planet, aurora curtains, a paper whale swimming
-  slowly past, and a closed Eye on the horizon that opens as the dream ends.
+  sizes (the big one trails behind you as you walk), a ringed planet, aurora curtains (a custom shader), a paper
+  whale swimming slowly past, and a closed Eye on the horizon that opens as the dream ends.
+- Dream fauna: **Sleepwalking Sheep** drift a couple of blocks above Pillow Fields, Eye Meadow and Cloudreach,
+  snoring; **Lucid Moths** circle the Floating Lanterns. Both drop Dream Dust.
 - Dream weather: Starfall (sometimes a star lands and leaves a Lucid Shard), Petal Drift, Fog Tide, Upward Rain,
   and The Long Silence.
 - **Shades**: a crowd of harmless silhouettes always 28 to 52 blocks away, watching. Walk toward one and it is gone.
@@ -162,12 +164,13 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 - **Gearshifts on contraptions.** A gearshift moved by a Create contraption keeps its gear, which is saved in the
   block entity. Its stick is drawn by a block-entity renderer, and whether it shows on a moving contraption was not
   tested. Contraptions do not transmit rotation through it while moving, as with every Create gearbox.
-- **The Impossible Stairs** are a closed loop of floating stairs that seems to climb forever from its plaque. It is
-  not a true Penrose illusion: perspective on a block grid cannot hide that seam.
+- **The Impossible Stairs** are drawn, not built: you cannot walk on them. Their last flight is re-solved every
+  frame along the rays from your eye, so the four climbing flights close into a loop from wherever you stand. Seen
+  from below, where no climbing solution exists, the last flight comes down instead.
+- **Shader packs.** With an Iris or Oculus shader pack active, the aurora uses its plain fallback.
 - **Recipe viewers** (checked with JEI) list the extracts, foods, Cooking Pot and Cutting Board recipes. Lacing is
   a special crafting recipe (any food + an Extract), so viewers do not list it.
-- The Sleepwalking Sheep and Lucid Moths (stretch goals in the design) are not in this version. The Paper Whale is
-  there, as a sky object rather than an entity.
+- The Paper Whale is a sky object rather than an entity.
 
 ## Building from source
 

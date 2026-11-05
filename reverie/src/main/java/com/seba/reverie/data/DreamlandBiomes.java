@@ -45,6 +45,16 @@ final class DreamlandBiomes {
                 null, null, 0);
     }
 
+    /** Sleepwalking Sheep drift over the soft biomes. */
+    private static net.minecraft.world.level.biome.MobSpawnSettings spawns(ResourceKey<Biome> key) {
+        var b = new net.minecraft.world.level.biome.MobSpawnSettings.Builder();
+        if (key == DreamlandBiomeKeys.PILLOW_FIELDS || key == DreamlandBiomeKeys.EYE_MEADOW || key == DreamlandBiomeKeys.CLOUDREACH) {
+            b.addSpawn(net.minecraft.world.entity.MobCategory.CREATURE, new net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData(
+                    com.seba.reverie.registry.ModEntities.SLEEPWALKING_SHEEP.get(), key == DreamlandBiomeKeys.PILLOW_FIELDS ? 12 : 6, 1, 3));
+        }
+        return b.build();
+    }
+
     private static void reg(BootstrapContext<Biome> ctx, ResourceKey<Biome> key, int fog, int sky, int water, ParticleOptions particle,
                             float particleChance, Object loop, Object additions, double additionChance) {
         var features = ctx.lookup(Registries.PLACED_FEATURE);
@@ -58,7 +68,7 @@ final class DreamlandBiomes {
         ctx.register(key, new Biome.BiomeBuilder()
                 .hasPrecipitation(false).temperature(0.6f).downfall(0f)
                 .specialEffects(effects.build())
-                .mobSpawnSettings(MobSpawnSettings.EMPTY)
+                .mobSpawnSettings(spawns(key))
                 .generationSettings(new BiomeGenerationSettings.Builder(features, carvers).build())
                 .build());
     }

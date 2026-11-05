@@ -79,6 +79,10 @@ public final class ModBlocks {
     public static final DeferredBlock<com.seba.reverie.dreamland.block.LoneDoorBlock> LONE_DOOR = BLOCKS.register("lone_door",
             () -> new com.seba.reverie.dreamland.block.LoneDoorBlock(BlockBehaviour.Properties.of().strength(2f)
                     .sound(SoundType.CHERRY_WOOD).noOcclusion().lightLevel(s -> 7).mapColor(MapColor.COLOR_MAGENTA)));
+    /** Anchor of the Impossible Stairs (invisible, no shape, no item; worldgen only). */
+    public static final DeferredBlock<com.seba.reverie.dreamland.block.ImpossibleStairsBlock> IMPOSSIBLE_STAIRS = BLOCKS.register("impossible_stairs",
+            () -> new com.seba.reverie.dreamland.block.ImpossibleStairsBlock(BlockBehaviour.Properties.of().strength(-1f, 3600000f)
+                    .noCollission().noOcclusion().noLootTable()));
 
     private ModBlocks() {
     }

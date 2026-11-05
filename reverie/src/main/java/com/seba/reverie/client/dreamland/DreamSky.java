@@ -174,6 +174,11 @@ public final class DreamSky {
 
     /** Aurora ribbons: slow curtains of colour high in the sky, brighter in Cloudreach. */
     private static void aurora(Matrix4f m, float time) {
+        var shader = com.seba.reverie.client.shader.ReverieShaders.aurora();
+        if (shader != null) {
+            auroraShaded(m, time, shader);
+            return;
+        }
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         float strength = 0.42f * closeness * closeness;
@@ -199,6 +204,44 @@ public final class DreamSky {
             }
         }
         draw(b);
+    }
+
+    /** The shader aurora: the folds, rays and colours are all in aurora.fsh; here only the ribbons' shape. */
+    private static void auroraShaded(Matrix4f m, float time, net.minecraft.client.renderer.ShaderInstance shader) {
+        RenderSystem.setShader(() -> shader);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+        BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        float strength = 0.75f * Math.min(1.3f, closeness * closeness);
+        for (int ribbon = 0; ribbon < 3; ribbon++) {
+            float az0 = new float[]{0.6f, 3.4f, 5.2f}[ribbon];
+            float span = new float[]{1.9f, 1.6f, 0.9f}[ribbon];
+            float base = new float[]{0.55f, 0.72f, 0.42f}[ribbon];
+            float height = new float[]{0.34f, 0.28f, 0.22f}[ribbon];
+            int segments = 96;
+            for (int i = 0; i < segments; i++) {
+                float t0 = i / (float) segments;
+                float t1 = (i + 1) / (float) segments;
+                float a0 = Mth.sin(t0 * Mth.PI) * strength * (ribbon == 2 ? 0.6f : 1f);
+                float a1 = Mth.sin(t1 * Mth.PI) * strength * (ribbon == 2 ? 0.6f : 1f);
+                double z0 = az0 + t0 * span + Math.sin(time * 0.003 + t0 * 4 + ribbon) * 0.09;
+                double z1 = az0 + t1 * span + Math.sin(time * 0.003 + t1 * 4 + ribbon) * 0.09;
+                double e0 = base + Math.sin(t0 * 6 + time * 0.005 + ribbon * 1.7) * 0.07;
+                double e1 = base + Math.sin(t1 * 6 + time * 0.005 + ribbon * 1.7) * 0.07;
+                float u0 = t0 * span * 9f + ribbon * 13f;
+                float u1 = t1 * span * 9f + ribbon * 13f;
+                auroraVertex(b, m, dir(z0, e0), u0, 0, a0);
+                auroraVertex(b, m, dir(z1, e1), u1, 0, a1);
+                auroraVertex(b, m, dir(z1, e1 + height), u1, 1, a1);
+                auroraVertex(b, m, dir(z0, e0 + height), u0, 1, a0);
+            }
+        }
+        draw(b);
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+    }
+
+    private static void auroraVertex(BufferBuilder b, Matrix4f m, Vec3 d, float u, float v, float alpha) {
+        b.addVertex(m, (float) d.x * R, (float) d.y * R, (float) d.z * R).setUv(u, v).setColor(1f, 1f, 1f, alpha);
     }
 
     private static float[] auroraColor(float t, float time, int ribbon, float strength) {
