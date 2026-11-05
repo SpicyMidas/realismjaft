@@ -4,9 +4,8 @@
   "textures": {
     "particle": "reverie:block/gearshift/casing_side_sport",
     "side": "reverie:block/gearshift/casing_side_sport",
-    "end": "reverie:block/gearshift/casing_end",
-    "hole": "reverie:block/gearshift/hole",
-    "boot": "reverie:block/gearshift/boot",
+    "frame": "reverie:block/gearshift/casing_frame",
+    "gearbox": "reverie:block/gearshift/casing_gearbox",
     "plate": "reverie:block/gearshift/gate_plate_sport"
   },
   "elements": [
@@ -23,10 +22,10 @@
       ],
       "faces": {
         "north": {
-          "texture": "#end"
+          "texture": "#frame"
         },
         "south": {
-          "texture": "#end"
+          "texture": "#frame"
         },
         "east": {
           "texture": "#side"
@@ -38,91 +37,131 @@
           "texture": "#plate"
         },
         "down": {
-          "texture": "#side"
+          "texture": "#side",
+          "rotation": 90
         }
       },
       "name": "casing"
     },
     {
       "from": [
-        6,
-        6,
-        0.25
+        1.95,
+        1.95,
+        1
       ],
       "to": [
-        10,
-        10,
-        15.75
+        14.05,
+        14.05,
+        0
       ],
       "faces": {
         "north": {
-          "texture": "#hole"
-        },
-        "south": {
-          "texture": "#hole"
-        }
-      },
-      "name": "hole_back"
-    },
-    {
-      "from": [
-        6.5,
-        16,
-        6.5
-      ],
-      "to": [
-        9.5,
-        16.5,
-        9.5
-      ],
-      "faces": {
-        "north": {
-          "texture": "#boot",
+          "texture": "#gearbox",
           "uv": [
-            6.5,
-            0,
-            9.5,
-            0.5
-          ]
-        },
-        "south": {
-          "texture": "#boot",
-          "uv": [
-            6.5,
-            0,
-            9.5,
-            0.5
-          ]
-        },
-        "east": {
-          "texture": "#boot",
-          "uv": [
-            6.5,
-            0,
-            9.5,
-            0.5
-          ]
-        },
-        "west": {
-          "texture": "#boot",
-          "uv": [
-            6.5,
-            0,
-            9.5,
-            0.5
+            2,
+            2,
+            14,
+            14
           ]
         },
         "up": {
-          "texture": "#boot",
+          "texture": "#gearbox",
           "uv": [
-            6.5,
-            6.5,
-            9.5,
-            9.5
+            2,
+            15,
+            14,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#gearbox",
+          "uv": [
+            2,
+            0,
+            14,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#gearbox",
+          "uv": [
+            15,
+            2,
+            16,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#gearbox",
+          "uv": [
+            0,
+            2,
+            1,
+            14
           ]
         }
       },
-      "name": "boot"
+      "name": "gearbox_north"
+    },
+    {
+      "from": [
+        1.95,
+        1.95,
+        16
+      ],
+      "to": [
+        14.05,
+        14.05,
+        15
+      ],
+      "faces": {
+        "south": {
+          "texture": "#gearbox",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#gearbox",
+          "uv": [
+            2,
+            15,
+            14,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#gearbox",
+          "uv": [
+            2,
+            0,
+            14,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#gearbox",
+          "uv": [
+            15,
+            2,
+            16,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#gearbox",
+          "uv": [
+            0,
+            2,
+            1,
+            14
+          ]
+        }
+      },
+      "name": "gearbox_south"
     }
   ]
 }

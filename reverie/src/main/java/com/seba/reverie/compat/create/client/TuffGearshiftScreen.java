@@ -334,15 +334,19 @@ public class TuffGearshiftScreen extends Screen {
     }
 
     private void drawFrame(GuiGraphics g, TuffGearshiftBlockEntity be) {
-        // Panel body: dark tuff casing with a lighter bevel and a pale alloy inlay.
+        // Panel body: tuff inside an alloy edge, a wooden title board with a pale alloy inlay under it.
         g.fill(0, 0, W, H, 0xFF2B2D27);
         g.fill(1, 1, W - 1, H - 1, 0xFF4E5147);
-        g.fill(2, 2, W - 2, H - 2, 0xFF42453C);
-        g.fill(2, 2, W - 2, 3, 0xFF6C7070);
-        g.fill(2, H - 3, W - 2, H - 2, 0xFF2B2D27);
-        g.fill(4, 13, W - 4, 14, 0xFFBBBDB1);
-        g.drawString(font, be.getBlockState().getBlock().getName(), 6, 4, 0xFFE2E4DA, false);
-        // Plate: the metal texture, recessed.
+        for (int y = 2; y < H - 2; y += 16) {
+            for (int x = 2; x < W - 2; x += 16) {
+                g.blit(TEX, x, y, 80, 104, Math.min(16, W - 2 - x), Math.min(16, H - 2 - y));
+            }
+        }
+        g.blit(TEX, 2, 2, 0, 132, W - 4, 11);
+        g.fill(2, 13, W - 2, 14, 0xFFBBBDB1);
+        g.fill(2, H - 3, W - 2, H - 2, 0x802B2D27);
+        g.drawString(font, be.getBlockState().getBlock().getName(), 6, 4, 0xFFF2EAD8, true);
+        // Plate: the block's top (wood board between tuff strips), recessed.
         g.fill(PLATE_X - 1, PLATE_Y - 1, PLATE_X + PLATE_W + 1, PLATE_Y + PLATE_H + 1, 0xFF1C201C);
         g.blit(TEX, PLATE_X, PLATE_Y, PLATE_W, PLATE_H, 0, 0, 144, 100, 256, 256);
     }

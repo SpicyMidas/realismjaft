@@ -217,17 +217,56 @@ CREATE_FRAME = [
 FRAME_COLORS = {'A': (78, 81, 71), 'B': (93, 95, 86), 'C': (108, 112, 112), 'D': (66, 69, 60), 'E': (133, 134, 124),
                 'F': (166, 168, 156), 'G': (187, 189, 177), 'H': (148, 148, 139), 'I': (115, 117, 115), 'J': (85, 87, 76),
                 'K': (70, 72, 63), 'L': (43, 45, 39)}
-# Create's red lamp strips (columns 2-3 and 12-13, rows 2-13), off and on, exactly.
-LAMP_OFF = [("2c0300", "2c0300"), ("400101", "2c0300"), ("470102", "400101"), ("580101", "4b0101"), ("4b0101", "580101"),
-            ("580101", "470102"), ("580101", "580101"), ("580101", "400101"), ("4b0101", "580101"), ("400101", "470102"),
-            ("2c0200", "400101"), ("2c0300", "2c0300")]
-LAMP_ON = [("970000", "7d0000"), ("a50000", "970000"), ("cd0000", "ae0000"), ("ae0000", "cd0000"), ("cd0000", "a50000"),
-           ("cd0000", "cd0000"), ("cd0000", "970000"), ("ae0000", "cd0000"), ("cd0000", "a50000"), ("ae0000", "cd0000"),
-           ("970000", "ae0000"), ("7d0000", "970000")]
-# The ring of Create's gearbox shaft hole (rows/cols 4..11); 'b' (the 4x4 core) is left open for the shaft.
-GEARBOX_RING = ["..SSTU..", ".SWXYYXW", "SWXbbbbX", "TXbbbbbY", "TYbbbbbY", "SXbbbbbX", ".SWXYYXW", "..SeTS.."]
-RING_COLORS = {'S': (51, 49, 49), 'T': (66, 65, 65), 'U': (80, 80, 80), 'W': (58, 56, 56), 'X': (26, 25, 25),
-               'Y': (3, 3, 3), 'e': (61, 60, 60)}
+# Create's own gearshift side and gearbox face, pixel for pixel (Create 6.0.10: gearshift_off.png, gearbox.png). Their
+# andesite greys become the alloy (CREATE_GREY -> FRAME_COLORS), Create's red lamp columns (x 2-3, 12-13) become tuff
+# and the gearbox ring dark tuff. The wood is Create's.
+CREATE_GEARSHIFT = [
+    "505351 60635f 60635f 828784 412d15 755631 795933 966f3f 755631 795933 795933 412d15 828784 60635f 60635f 404543",
+    "60635f 828784 9aa49d a8b3ab 50371c 70522e 82613a 966f3f 82613a 795933 755631 50371c 8f9691 8f9691 828784 505351",
+    "60635f 9aa49d 2c0300 2c0300 553a1f 70522e 7a5a34 966f3f 553a1f 82613a 755631 553a1f 2c0300 2c0300 707570 505351",
+    "60635f a8b3ab 400101 2c0300 50371c 614b2e 70522e 886539 614b2e 553a1f 886539 50371c 400101 2c0300 828784 505351",
+    "60635f 9aa49d 470102 400101 50371c 70522e 7a5a34 886539 5a4424 614b2e 553a1f 50371c 470102 400101 8f9691 505351",
+    "686c68 8f9691 580101 4b0101 50371c 82613a 70522e 886539 5a4424 82613a 70522e 50371c 580101 4b0101 828784 585b58",
+    "60635f 9aa49d 4b0101 580101 553a1f 785836 70522e 886539 553a1f 785836 70522e 553a1f 4b0101 580101 707570 505351",
+    "60635f a8b3ab 580101 470102 553a1f 70522e 70522e 966f3f 553a1f 70522e 70522e 553a1f 580101 470102 828784 505351",
+    "686c68 8f9691 580101 580101 553a1f 70522e 795933 966f3f 553a1f 70522e 795933 553a1f 580101 580101 828784 505351",
+    "60635f 9aa49d 580101 400101 50371c 70522e 70522e 966f3f 5a4424 70522e 795933 553a1f 580101 400101 707570 505351",
+    "686c68 9aa49d 4b0101 580101 50371c 70522e 614b2e 966f3f 5a4424 70522e 7a5a34 553a1f 4b0101 580101 828784 585b58",
+    "60635f 8f9691 400101 470102 50371c 966f3f 886539 966f3f 614b2e 7a5a34 785832 553a1f 400101 470102 828784 505351",
+    "60635f 8f9691 2c0200 400101 50371c 70522e 966f3f 886539 5a4424 7a5a34 70522e 553a1f 2c0200 400101 828784 505351",
+    "60635f 828784 2c0300 2c0300 553a1f 82613a 70522e 966f3f 553a1f 82613a 70522e 553a1f 2c0300 2c0300 707570 505351",
+    "60635f 707570 828784 828784 50371c 805f38 775832 70522e 553a1f 805f38 775832 50371c 828784 707570 707570 505351",
+    "404543 505351 505351 686c68 412d15 805f38 70522e 70522e 5a4424 805f38 70522e 412d15 60635f 505351 505351 353b39",
+]
+CREATE_GEARBOX = [
+    "505351 60635f 60635f 60635f 686c68 60635f 686c68 60635f 60635f 60635f 686c68 686c68 60635f 60635f 60635f 404543",
+    "60635f 828784 9aa49d a8b3ab 9aa49d 8f9691 9aa49d a8b3ab 8f9691 828784 828784 9aa49d 8f9691 8f9691 828784 505351",
+    "60635f 9aa49d 46321c 46321c 4e361c 4e361c 46321c 46321c 46321c 46321c 46321c 4e361c 46321c 4e361c 707570 505351",
+    "60635f a8b3ab 46321c 654928 70512c 654928 644828 593e22 593e22 644828 6f512b 654928 6f512b 553b1f 828784 505351",
+    "60635f 9aa49d 46321c 654928 70522e 333131 424141 505050 505050 454444 333131 70522e 6f512b 4e361c 8f9691 505351",
+    "686c68 8f9691 4e361c 654928 333131 3a3838 1a1919 030303 030303 1a1919 3a3838 333131 6f512b 553b1f 828784 585b58",
+    "60635f 9aa49d 46321c 5d4224 424141 1a1919 000000 000000 000000 000000 1a1919 454444 644828 4e361c 707570 505351",
+    "60635f a8b3ab 46321c 593e22 505050 030303 000000 000000 000000 000000 030303 505050 593e22 4e361c 828784 505351",
+    "686c68 8f9691 46321c 593e22 505050 030303 000000 000000 000000 000000 030303 505050 593e22 4e361c 828784 505351",
+    "60635f 9aa49d 46321c 654928 3a3838 1a1919 000000 000000 000000 000000 1a1919 454444 644828 553b1f 707570 505351",
+    "686c68 9aa49d 46321c 6b4d2c 333131 3a3838 1a1919 030303 030303 1a1919 3a3838 383737 6f512b 593e22 828784 585b58",
+    "60635f 8f9691 4e361c 6b4d2c 70522e 333131 3d3c3c 4e4e4e 505050 424141 333131 70522e 6b4d2c 593e22 828784 505351",
+    "60635f 8f9691 46321c 6c4e2d 6c4e2d 654928 654928 5d4224 5d4224 6f512b 654928 6b4d2c 644828 5a3f23 828784 505351",
+    "60635f 828784 4e361c 5a3f22 5d4222 593e22 5a3f23 4e361c 4e361c 5d4221 593e22 593e22 543b1f 5a3f22 707570 505351",
+    "60635f 707570 828784 828784 828784 828784 707570 828784 828784 707570 828784 828784 828784 707570 707570 505351",
+    "404543 505351 505351 494c4a 505351 505351 505351 505351 494c4a 505351 505351 505351 505351 505351 505351 353b39",
+]
+CREATE_GREY = {'353b39': 'L', '404543': 'D', '494c4a': 'K', '505351': 'A', '585b58': 'J', '60635f': 'B', '686c68': 'C',
+               '707570': 'I', '828784': 'E', '8f9691': 'H', '9aa49d': 'F', 'a8b3ab': 'G'}
+RING_TUFF = {'1a1919': (26, 27, 24), '333131': (52, 54, 48), '383737': (56, 58, 52), '3a3838': (58, 60, 54),
+             '3d3c3c': (62, 64, 57), '424141': (66, 69, 60), '454444': (70, 72, 63), '4e4e4e': (77, 80, 72),
+             '505050': (80, 83, 74)}
+WOOD_LIGHT = (0x96, 0x6f, 0x3f)
+# The small redstone light in each tuff strip, 2x2: off (Create's unlit lamp reds) and lit.
+REDSTONE_OFF = [[(0x58, 1, 1), (0x4b, 1, 1)], [(0x47, 1, 2), (0x58, 1, 1)]]
+REDSTONE_ON = [[(0xff, 0x52, 0x3a), (0xe0, 0x10, 0x08)], [(0xcd, 0, 0), (0xa5, 0, 0)]]
+SOCKET = (36, 38, 33)
+SPORT_STRIPE = ((214, 22, 18), (158, 10, 8))
 
 
 def hexc(h):
@@ -236,6 +275,15 @@ def hexc(h):
 
 def tuff_art():
     return Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "art", "tuff.png")).convert("RGBA")
+
+
+def create_pixels(rows, extra=None):
+    img = Image.new("RGBA", (16, 16))
+    for y, row in enumerate(rows):
+        for x, h in enumerate(row.split()):
+            c = FRAME_COLORS[CREATE_GREY[h]] if h in CREATE_GREY else (extra or {}).get(h, hexc(h))
+            img.putpixel((x, y), rgba(c))
+    return img
 
 
 def create_casing(interior):
@@ -248,77 +296,73 @@ def create_casing(interior):
     return img
 
 
-def tuff_panel(seam=True):
-    """Tuff with darker seams at x=4 and x=11 (where Create's boards meet the lamps)."""
-    img = tuff_art()
-    if seam:
-        for y in range(2, 14):
-            for x in (4, 11):
-                r, g, b, a = img.getpixel((x, y))
-                img.putpixel((x, y), (int(r * 0.7), int(g * 0.7), int(b * 0.7), 255))
+def gearshift_side(sport, on):
+    """Create's gearshift side: alloy frame, Create's wooden board down the middle, tuff where Create has its lamps, and
+    a small redstone light in each tuff strip that is lit while powered. The sport has a red stripe down the board."""
+    img = create_pixels(CREATE_GEARSHIFT)
+    tuff = tuff_art()
+    for y in range(2, 14):
+        for x in (2, 3, 12, 13):
+            r, g, b, _ = tuff.getpixel((x, y))
+            k = 0.62 if y in (2, 13) else 1.0    # the strip sits a little deeper, like Create's lamp
+            img.putpixel((x, y), (int(r * k), int(g * k), int(b * k), 255))
+    lamp = REDSTONE_ON if on else REDSTONE_OFF
+    for x0 in (2, 12):
+        for dx in (0, 1):
+            img.putpixel((x0 + dx, 6), rgba(SOCKET))
+            img.putpixel((x0 + dx, 9), rgba(SOCKET))
+            for dy in (0, 1):
+                img.putpixel((x0 + dx, 7 + dy), rgba(lamp[dy][dx]))
+    if sport:
+        for y in range(16):
+            img.putpixel((7, y), rgba(SPORT_STRIPE[0]))
+            img.putpixel((8, y), rgba(SPORT_STRIPE[1]))
     return img
+
+
+def gate_plate(sport, on):
+    """The top: the side turned so the board runs across it (it wraps around the shaft axis, as on Create's), with the
+    gate cut into the board. Must match TuffGearshiftRenderer: rail at x 7-8, rows end at x 4 and 12, columns at
+    z 5/8/11 (two texels wide), sport at single texels 4/6/9/11."""
+    top = gearshift_side(sport, on).rotate(90)
+    groove, groove_dark = (46, 31, 14), (24, 16, 7)
+    cols = [4.5, 6.5, 9.5, 11.5] if sport else [5, 8, 11]
+    cells = set()
+
+    def cut(x0, x1, z0, z1):
+        for x in range(x0, x1):
+            for z in range(z0, z1):
+                cells.add((x, z))
+
+    def span(c):  # texels of a groove centred at c: two wide on whole pixels, one wide on halves
+        return (int(c) - 1, int(c) + 1) if c == int(c) else (int(c), int(c) + 1)
+
+    cut(7, 9, span(cols[0])[0], span(cols[-1])[1])                 # neutral rail along z
+    for i, c in enumerate(cols):
+        z0, z1 = span(c)
+        cut(3, 9 if i == len(cols) - 1 else 13, z0, z1)            # rows reach x = 4 (odd gears, R) and x = 12 (even)
+    stripe = {rgba(c) for c in SPORT_STRIPE}
+    for (x, z) in cells:   # cut into the wood: dark brown, deeper in the shadow of the upper/left edge
+        shadow = (x - 1, z) not in cells or (x, z - 1) not in cells
+        top.putpixel((x, z), rgba(groove_dark if shadow else groove))
+    for (x, z) in cells:   # a light wooden lip on the lower/right edge of every groove
+        for (lx, lz) in ((x + 1, z), (x, z + 1)):
+            if (lx, lz) not in cells and 4 <= lz <= 11 and top.getpixel((lx, lz)) not in stripe:
+                top.putpixel((lx, lz), rgba(WOOD_LIGHT))
+    return top
 
 
 def gearshift_textures():
     for sport in (False, True):
         for on in (False, True):
-            img = create_casing(tuff_panel())
-            lamp = LAMP_ON if on else LAMP_OFF
-            for i, (a, b) in enumerate(lamp):
-                y = 2 + i
-                img.putpixel((2, y), rgba(hexc(a)))
-                img.putpixel((3, y), rgba(hexc(b)))
-                img.putpixel((12, y), rgba(hexc(a)))
-                img.putpixel((13, y), rgba(hexc(b)))
-            if sport:
-                # The sport's red racing stripe across the panel, between the lamps.
-                for x in range(4, 12):
-                    img.putpixel((x, 11), rgba((205, 0, 0) if x % 3 else (240, 40, 30)))
-                    img.putpixel((x, 12), rgba((125, 0, 0)))
-            save(img, "block/gearshift/casing_side" + ("_sport" if sport else "") + ("_on" if on else ""))
+            suffix = ("_sport" if sport else "") + ("_on" if on else "")
+            save(gearshift_side(sport, on), "block/gearshift/casing_side" + suffix)
+            save(gate_plate(sport, on), "block/gearshift/gate_plate" + suffix)
 
-    # Shaft faces: Create's gearbox face, with tuff instead of planks and the hole open for the shaft.
-    end = create_casing(tuff_panel(seam=False))
-    for dy, row in enumerate(GEARBOX_RING):
-        for dx, ch in enumerate(row):
-            x, y = 4 + dx, 4 + dy
-            if ch == 'b':
-                # only the shaft's own 4x4 is open (the plate behind covers exactly that); the rest of the core is black
-                end.putpixel((x, y), T if 6 <= x <= 9 and 6 <= y <= 9 else rgba((3, 3, 3)))
-            elif ch != '.':
-                end.putpixel((x, y), rgba(RING_COLORS[ch]))
-    save(end, "block/gearshift/casing_end")
-    save(Image.new("RGBA", (16, 16), rgba((3, 3, 3))), "block/gearshift/hole")
-
-    # Top: the gate plate cut into the tuff. Must match TuffGearshiftRenderer (slots where the rod passes the top).
-    for sport in (False, True):
-        top = create_casing(tuff_panel(seam=False))
-        groove, lip = (24, 25, 22), (160, 162, 151)
-        cols = [3.5, 6.5, 9.5, 12.5] if sport else [4, 8, 12]   # column centres along z (v)
-
-        cells = set()
-
-        def cut(x0, x1, z0, z1):
-            for x in range(x0, x1):
-                for z in range(z0, z1):
-                    cells.add((x, z))
-
-        def span(c):  # texels of a groove centred at c: two wide on whole pixels, one wide on halves
-            return (int(c) - 1, int(c) + 1) if c == int(c) else (int(c), int(c) + 1)
-
-        r0, r1 = span(8)
-        cut(r0, r1, span(cols[0])[0], span(cols[-1])[1])          # neutral rail along z
-        for i, c in enumerate(cols):
-            z0, z1 = span(c)
-            last = i == len(cols) - 1
-            cut(4 - 1, 8 + 1 if last else 12 + 1, z0, z1)        # rows reach x = 4 (odd gears, R) and x = 12 (even)
-        for (x, z) in cells:
-            top.putpixel((x, z), rgba(groove))
-        for (x, z) in cells:   # a lit lip on the lower/right edge of every groove
-            for (lx, lz) in ((x + 1, z), (x, z + 1)):
-                if (lx, lz) not in cells:
-                    top.putpixel((lx, lz), rgba(lip))
-        save(top, "block/gearshift/gate_plate" + ("_sport" if sport else ""))
+    # Shaft faces, as Create builds them: the frame alone on the face, and the gearbox panel (wood, dark ring, black
+    # hole) one pixel further in, so the end of the shaft stands out of it.
+    save(create_casing(Image.new("RGBA", (16, 16), T)), "block/gearshift/casing_frame")
+    save(create_pixels(CREATE_GEARBOX, RING_TUFF), "block/gearshift/casing_gearbox")
 
     # The stick: a plain rod, a small collar and a knob, one texel per model pixel.
     rod = Image.new("RGBA", (16, 16), rgba(ALLOY['light']))
@@ -340,9 +384,6 @@ def gearshift_textures():
     rect(sport_knob, 6, 6, 10, 10, ALLOY['hi'])
     sport_knob.putpixel((8, 8), rgba((205, 0, 0)))
     save(sport_knob, "block/gearshift/knob_sport")
-    boot = Image.new("RGBA", (16, 16), rgba((43, 45, 39)))
-    rect(boot, 6, 6, 10, 10, (30, 31, 27))
-    save(boot, "block/gearshift/boot")
 
     frame = noise_fill(16, 16, [ALLOY['out'], (36, 38, 33), ALLOY['dark']], 909)
     save(frame, "block/gearshift/window_frame")
@@ -359,28 +400,64 @@ def gearshift_textures():
     gearshift_gui()
 
 
-def brushed(w, h, seed, base=(148, 148, 139)):
+def wood_board(w, h, seed, vertical=True):
+    """Planks in Create's wood colours: 8-10 px boards with a dark edge, grain streaks and the odd butt joint."""
     rnd = random.Random(seed)
+    body = [hexc(c) for c in ("70522e", "755631", "795933", "785836", "7a5a34", "775832")]
+    light = [hexc(c) for c in ("82613a", "886539", "966f3f")]
+    dark = [hexc(c) for c in ("5a4424", "614b2e")]
+    edge = [hexc(c) for c in ("50371c", "553a1f")]
+    along, across = (h, w) if vertical else (w, h)
     img = Image.new("RGBA", (w, h))
-    for y in range(h):
-        row = rnd.randint(-8, 8)
-        for x in range(w):
-            v = row + rnd.randint(-5, 5)
-            img.putpixel((x, y), rgba(tuple(max(0, min(255, c + v)) for c in base)))
+
+    def put(a, s, c):
+        img.putpixel((s, a) if vertical else (a, s), rgba(c))
+
+    s = 0
+    while s < across:
+        pw = min(rnd.choice((8, 8, 9, 10)), across - s)
+        joint = rnd.randrange(8, along - 8) if along > 24 and rnd.random() < 0.6 else -1
+        for i in range(pw):
+            base = rnd.choice(body)
+            streak = rnd.random()
+            for a in range(along):
+                if i == 0:
+                    c = edge[(a // 3) % 2]
+                elif a == joint:
+                    c = hexc("412d15")
+                else:
+                    c = base
+                    if streak < 0.25 and (a // 7 + i) % 3:
+                        c = light[(a // 5 + i) % 3]
+                    elif 0.25 <= streak < 0.4 and (a // 9) % 2 == 0:
+                        c = dark[(a // 4) % 2]
+                    if rnd.random() < 0.05:
+                        c = rnd.choice(light + dark)
+                put(a, s + i, c)
+        s += pw
     return img
 
 
 def gearshift_gui():
     img = Image.new("RGBA", (256, 256), T)
-    # The plate is the block's top: tuff inside Create's frame colours.
+    # The plate is the block's top: Create's wood board between tuff strips, in the alloy frame.
     tuff = tuff_art()
     plate = Image.new("RGBA", (144, 100))
     for y in range(100):
         for x in range(144):
             plate.putpixel((x, y), tuff.getpixel((x % 16, y % 16)))
+    plate.paste(wood_board(112, 96, 77), (16, 2))
+    for y in range(2, 98):      # dark seams where the board meets the tuff
+        for x in (15, 128):
+            r, g, b, _ = plate.getpixel((x, y))
+            plate.putpixel((x, y), (int(r * 0.55), int(g * 0.55), int(b * 0.55), 255))
     bevel(plate, 0, 0, 144, 100, FRAME_COLORS['G'], FRAME_COLORS['L'])
     bevel(plate, 1, 1, 143, 99, FRAME_COLORS['F'], FRAME_COLORS['A'])
-    for (bx, by) in ((4, 4), (136, 4), (4, 92), (136, 92)):
+    # one small redstone light in the middle of each tuff strip, as on the block (static here; the readout has the live one)
+    for x0 in (7, 135):
+        rect(plate, x0 - 1, 46, x0 + 3, 54, SOCKET)
+        rect(plate, x0, 48, x0 + 2, 52, REDSTONE_OFF[0][0])
+    for (bx, by) in ((5, 5), (135, 5), (5, 91), (135, 91)):
         rect(plate, bx, by, bx + 4, by + 4, ALLOY['dark'])
         rect(plate, bx, by, bx + 3, by + 3, ALLOY['light'])
         plate.putpixel((bx + 1, by + 1), rgba(ALLOY['hi']))
@@ -409,6 +486,9 @@ def gearshift_gui():
     # lamps (56,104) off and (68,104) on, 12x12
     disc(62, 110, 5.5, lambda x, y, d: (90, 24, 20) if d > 4.5 else (60, 14, 12))
     disc(74, 110, 5.5, lambda x, y, d: (120, 30, 20) if d > 4.5 else mix((255, 220, 200), (255, 50, 30), min(1, d / 4)))
+    # tuff tile (80,104) for the window body, and the wooden title board (0,132) 228x11
+    img.paste(tuff, (80, 104))
+    img.paste(wood_board(228, 11, 31, vertical=False), (0, 132))
     save(img, "gui/gearshift")
 
 

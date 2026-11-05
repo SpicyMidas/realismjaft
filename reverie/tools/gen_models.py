@@ -3,9 +3,9 @@
 
 Run from the project root:  python3 tools/gen_models.py
 Writes into src/main/resources/assets/reverie/. Geometry is in model pixels (0..16) in a canonical
-orientation: shaft along Z, gearstick on top (+Y), gear windows on +-X, vent underneath. The blockstate
+orientation: shaft along Z, gearstick on top (+Y), gear windows on +-X. The blockstate
 rotates it for axis=x (y=90) and axis=y (x=90). The stick pivot and gate spacing must match
-TuffGearshiftRenderer (PIVOT_*, COLUMN_SPACING, ROW_OFFSET).
+TuffGearshiftRenderer (PIVOT_*, columnAtTop, ROW_OFFSET).
 """
 import json
 import os
@@ -85,21 +85,27 @@ T = "reverie:block/gearshift/"
 
 
 def casing_elements(sport):
-    """Create's gearshift shape: a full cube; the shaft faces are Create's gearbox face with the hole left open (a dark
-    plate 1 px inside keeps the hole from showing the block's insides), the gate plate on top, a little boot ring
-    where the stick comes out."""
+    """Create's gearshift, element for element: a full cube whose shaft faces carry only the frame (open in the middle),
+    and 1 px inside each shaft face the gearbox panel. The panel is an inverted box (from/to swapped along z), as in
+    Create's block.json, so its four rim faces turn inward and show as the walls of the recess. The shaft half reaches
+    the surface, so its end stands 1 px out of the black hole."""
+    rim = {"up": [2, 15, 14, 16], "down": [2, 0, 14, 1], "east": [15, 2, 16, 14], "west": [0, 2, 1, 14]}
+    walls = ("up", "down", "east", "west")
     return [
-        box([0, 0, 0], [16, 16, 16], {"north": "end", "south": "end", "east": "side", "west": "side",
-                                      "up": "plate", "down": "side"}, name="casing"),
-        box([6, 6, 0.25], [10, 10, 15.75], {"north": "hole", "south": "hole"}, faces=("north", "south"), name="hole_back"),
-        box([6.5, 16, 6.5], [9.5, 16.5, 9.5], "boot", faces=("north", "south", "east", "west", "up"), name="boot"),
+        box([0, 0, 0], [16, 16, 16], {"north": "frame", "south": "frame", "east": "side", "west": "side",
+                                      "up": "plate", "down": "side"}, face_rot={"down": 90}, name="casing"),
+        box([1.95, 1.95, 1], [14.05, 14.05, 0], "gearbox", faces=("north",) + walls,
+            uv=dict(rim, north=[2, 2, 14, 14]), name="gearbox_north"),
+        box([1.95, 1.95, 16], [14.05, 14.05, 15], "gearbox", faces=("south",) + walls,
+            uv=dict(rim, south=[2, 2, 14, 14]), name="gearbox_south"),
     ]
 
 
 def casing_textures(sport, powered=False):
-    side = T + "casing_side" + ("_sport" if sport else "") + ("_on" if powered else "")
-    return {"particle": side, "side": side, "end": T + "casing_end", "hole": T + "hole", "boot": T + "boot",
-            "plate": T + ("gate_plate_sport" if sport else "gate_plate")}
+    suffix = ("_sport" if sport else "") + ("_on" if powered else "")
+    side = T + "casing_side" + suffix
+    return {"particle": side, "side": side, "frame": T + "casing_frame", "gearbox": T + "casing_gearbox",
+            "plate": T + "gate_plate" + suffix}
 
 
 def window_elements(vertical):

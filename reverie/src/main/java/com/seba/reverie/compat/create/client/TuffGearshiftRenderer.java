@@ -54,10 +54,15 @@ public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearsh
     /** Knob centre height above the pivot (knob at 21 px), and the rod's travel where it passes the top face. */
     static final float KNOB_HEIGHT = 17f;
     private static final float TOP_TO_KNOB = KNOB_HEIGHT / (16f - PIVOT_Y);
-    /** Knob travel (pixels) so the rod meets the plate slots: rows 4 px off the rail, columns 4 px (sport 3 px) apart. */
+    /** Knob travel (pixels) so the rod meets the plate slots: rows 4 px off the rail. */
     static final float ROW_OFFSET = 4f * TOP_TO_KNOB;
-    static final float COLUMN_REGULAR = 4f * TOP_TO_KNOB;
-    static final float COLUMN_SPORT = 3f * TOP_TO_KNOB;
+    /**
+     * Where the rod crosses the top face for each column, in pixels from the middle. The gate is cut into the wooden
+     * board (z 4..11 of gate_plate in tools/gen_textures.py): regular columns 3 px apart, sport columns on single
+     * texels 4, 6, 9 and 11.
+     */
+    private static final float REGULAR_SPACING = 3f;
+    private static final float[] SPORT_COLUMNS = {-3.5f, -1.5f, 1.5f, 3.5f};
 
     private final RandomSource random = RandomSource.create();
 
@@ -101,6 +106,13 @@ public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearsh
         }
     }
 
+    /** Column position at the top face for a (possibly fractional, mid-shift) gate column. */
+    static float columnAtTop(GateLayout layout, float gx) {
+        if (layout != GateLayout.SPORT) return (gx - layout.restX) * REGULAR_SPACING;
+        int i = Math.max(0, Math.min(SPORT_COLUMNS.length - 2, (int) Math.floor(gx)));
+        return SPORT_COLUMNS[i] + (SPORT_COLUMNS[i + 1] - SPORT_COLUMNS[i]) * (gx - i);
+    }
+
     private void renderStick(TuffGearshiftBlockEntity be, float pt, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         BlockState state = be.getBlockState();
         if (!(state.getBlock() instanceof TuffGearshiftBlock block)) return;
@@ -113,7 +125,7 @@ public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearsh
 
         boolean sport = layout == GateLayout.SPORT;
         float knobHeight = KNOB_HEIGHT;
-        float dz = (gx - layout.restX) * (sport ? COLUMN_SPORT : COLUMN_REGULAR);
+        float dz = columnAtTop(layout, gx) * TOP_TO_KNOB;
         float dx = gy * ROW_OFFSET;
         float tiltX = (float) Math.toDegrees(Math.atan2(dz, knobHeight));
         float tiltZ = (float) -Math.toDegrees(Math.atan2(dx, knobHeight));
