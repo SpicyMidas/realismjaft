@@ -867,7 +867,20 @@ def dreamland_textures():
     save(grid(door, {'o': (70, 40, 70), 'd': DWOOD[1], 'w': (250, 244, 236), 'h': (255, 255, 255)}), "item/lone_door")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures]
+def shade_textures():
+    """Shade silhouette: near-black with a faint violet grain (so it is not a hole in the world), and a pale
+    corner used only by the pinprick-eye boxes."""
+    img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+    n = value_noise(64, 64, 9101, cell=4)
+    for y in range(64):
+        for x in range(64):
+            v = n[y][x]
+            img.putpixel((x, y), rgba(mix((6, 4, 10), (20, 14, 30), v * 0.7)))
+    rect(img, 56, 0, 64, 8, rgba((236, 232, 255)))
+    save(img, "entity/shade")
+
+
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures]
 
 
 def contact_sheet(out_dir):

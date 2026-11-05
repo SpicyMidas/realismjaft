@@ -50,6 +50,10 @@ final class Lang {
         s.add("reverie.command.dreaming", "%s is dreaming.", "%s sta sognando.");
         s.add("reverie.command.cannot_dream", "%s cannot dream right now.", "%s non puo' sognare ora.");
         s.add("reverie.command.home", "Dream home of %s: %s %s %s", "Casa onirica di %s: %s %s %s");
+        s.add(entity(com.seba.reverie.registry.ModEntities.SHADE), "Shade", "Ombra");
+        s.add("reverie.command.shades_cleared", "Removed %s shades.", "Rimosse %s ombre.");
+        s.add("reverie.command.shades_count", "%s shades are watching.", "%s ombre stanno guardando.");
+        s.add("reverie.command.unknown_event", "Unknown event: %s", "Evento sconosciuto: %s");
         s.add("biome.reverie.the_void_between", "The Void Between", "Il Vuoto Frammezzo");
         s.add("biome.reverie.pillow_fields", "Pillow Fields", "Campi di Cuscini");
         s.add("biome.reverie.hollow_spires", "Hollow Spires", "Guglie Cave");

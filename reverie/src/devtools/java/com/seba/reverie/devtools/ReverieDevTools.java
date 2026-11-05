@@ -38,6 +38,7 @@ public final class ReverieDevTools {
 
     public ReverieDevTools(IEventBus modBus) {
         modBus.addListener(ReverieDevTools::registerTests);
+        ShadeDevCommands.init();
         List<String> script = loadScript();
         if (script == null) return;
         if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -57,6 +58,7 @@ public final class ReverieDevTools {
         if (!com.seba.reverie.compat.Compat.create()) {
             event.register(com.seba.reverie.devtools.test.DreamFlowGameTests.class);
             event.register(com.seba.reverie.devtools.test.DreamlandGameTests.class);
+            event.register(com.seba.reverie.devtools.test.ShadeGameTests.class);
         }
         // Optional-mod tests reference those mods' classes, so they are only registered when present.
         if (com.seba.reverie.compat.Compat.create()) TestRegistrar.create(event);

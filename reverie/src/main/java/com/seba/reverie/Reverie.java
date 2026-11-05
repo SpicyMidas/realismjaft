@@ -42,6 +42,7 @@ public final class Reverie {
         ModWorldgen.CHUNK_GENERATORS.register(modBus);
         ModWorldgen.BIOME_SOURCES.register(modBus);
         com.seba.reverie.registry.ModAttachments.ATTACHMENTS.register(modBus);
+        com.seba.reverie.registry.ModEntities.ENTITIES.register(modBus);
         modBus.addListener(com.seba.reverie.network.ReverieNetwork::register);
         ModCreativeTab.TABS.register(modBus);
         ModCreativeTab.add(ModItems.TUFF_ALLOY);
@@ -61,6 +62,7 @@ public final class Reverie {
         NeoForge.EVENT_BUS.addListener(Lacing::onFinishUsing);
         com.seba.reverie.dream.DreamEvents.init();
         com.seba.reverie.dream.DreamManager.addListener(new com.seba.reverie.dreamland.MemoryIsland());
+        com.seba.reverie.shade.ShadeCrowdManager.init();
         modBus.addListener(ReverieDataGen::gather);
 
         // Optional integrations: their classes are only touched behind these checks.

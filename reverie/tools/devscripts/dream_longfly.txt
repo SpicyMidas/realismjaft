@@ -1,0 +1,251 @@
+newworld longfly flat 4242
+wait 40
+cmd gamemode spectator
+hidegui on
+cmd execute in reverie:dreamland run tp @s 0 120 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 48 141 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 96 159 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 144 172 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 192 179 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 240 179 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 288 172 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 336 158 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 384 140 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 432 119 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 480 99 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 528 81 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 576 68 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 624 61 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 672 61 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 720 68 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 768 82 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 816 100 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 864 121 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 912 142 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 960 159 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 1008 173 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 1056 179 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 1104 179 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 1152 171 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 1200 157 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 1248 139 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 1296 118 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 1344 98 0 -90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 1392 80 0 -90 15
+wait 80
+screenshot longfly_0
+cmd execute in reverie:dreamland run tp @s 0 170 0 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 179 48 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 179 96 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 173 144 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 161 192 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 143 240 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 122 288 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 102 336 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 83 384 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 69 432 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 61 480 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 61 528 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 67 576 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 80 624 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 98 672 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 118 720 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 139 768 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 157 816 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 171 864 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 179 912 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 179 960 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 173 1008 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 160 1056 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 142 1104 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 121 1152 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 101 1200 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 82 1248 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 69 1296 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 61 1344 0 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 61 1392 0 15
+wait 80
+screenshot longfly_1
+cmd execute in reverie:dreamland run tp @s 0 175 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -48 163 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -96 146 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -144 125 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -192 105 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -240 86 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -288 71 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -336 62 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -384 60 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -432 66 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -480 78 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -528 95 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -576 115 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -624 136 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -672 155 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -720 169 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -768 178 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -816 180 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -864 174 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -912 162 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -960 145 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -1008 124 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -1056 104 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -1104 85 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -1152 70 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -1200 62 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -1248 60 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -1296 66 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -1344 78 0 90 15
+wait 80
+cmd execute in reverie:dreamland run tp @s -1392 96 0 90 15
+wait 80
+screenshot longfly_2
+cmd execute in reverie:dreamland run tp @s 0 128 0 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 108 -48 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 88 -96 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 73 -144 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 63 -192 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 60 -240 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 64 -288 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 76 -336 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 92 -384 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 112 -432 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 133 -480 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 152 -528 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 168 -576 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 177 -624 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 180 -672 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 175 -720 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 164 -768 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 147 -816 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 127 -864 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 107 -912 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 87 -960 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 72 -1008 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 63 -1056 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 60 -1104 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 65 -1152 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 76 -1200 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 93 -1248 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 113 -1296 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 134 -1344 180 15
+wait 80
+cmd execute in reverie:dreamland run tp @s 0 153 -1392 180 15
+wait 80
+screenshot longfly_3
+cmd reverie debug genstats
+wait 10
+stop

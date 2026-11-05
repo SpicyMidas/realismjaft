@@ -153,7 +153,8 @@ public final class DreamManager {
 
     /** Starts a dream. {@code bed} is null when started by command. Returns false if nothing happened. */
     public static boolean startDream(ServerPlayer player, BlockPos bed) {
-        if (isDreaming(player) || !player.isAlive()) return false;
+        // Never from inside Dreamland: the wake-up point would be the dream itself.
+        if (isDreaming(player) || !player.isAlive() || player.level().dimension().equals(DREAMLAND)) return false;
         MinecraftServer server = player.server;
         ServerLevel dream = server.getLevel(DREAMLAND);
         if (dream == null) {

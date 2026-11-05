@@ -2,6 +2,6 @@
 wait 60
 cmd gamerule doDaylightCycle true
 cmd test runall
-wait 900
+wait 1700
 say tests done
 stop

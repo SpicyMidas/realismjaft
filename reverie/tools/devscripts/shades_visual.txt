@@ -1,0 +1,67 @@
+newworld shades2 flat 77
+wait 40
+cmd gamerule doDaylightCycle false
+cmd time set 6000
+cmd tp @s 0 -60 0 0 0
+wait 10
+cmd reveriedev shadelineup
+hidegui on
+wait 30
+screenshot lineup_day
+lookshade onlooker
+wait 5
+screenshot lineup_eyes
+cmd time set 18000
+wait 10
+look 0 0
+wait 5
+screenshot lineup_night
+cmd kill @e[type=reverie:shade]
+cmd reverie dream Dev
+wait 220
+shadestats
+look 0 5
+wait 20
+screenshot shades_n
+look 180 5
+wait 10
+screenshot shades_s
+look 0 5
+wait 5
+cmd reverie debug shadeevent Dev counting
+wait 20
+shadestats
+screenshot shades_counting
+wait 160
+look 0 5
+wait 20
+screenshot shades_counting_after
+cmd reverie debug shadeevent Dev everyone_turns
+wait 30
+lookshade
+wait 3
+screenshot shades_turns
+wait 420
+cmd reverie debug shadeevent Dev hush
+wait 25
+shadestats
+cmd reveriedev shadedump
+screenshot shades_hush
+wait 440
+shadestats
+cmd reveriedev shadedump
+look 0 5
+wait 5
+cmd reverie debug shadeevent Dev behind_you
+wait 3
+shadestats
+look 180 5
+wait 1
+screenshot shades_behind
+wait 20
+cmd reverie wake
+wait 80
+cmd reverie shades count
+cmd reveriedev shadedump
+shadestats
+stop

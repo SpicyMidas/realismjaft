@@ -1,0 +1,20 @@
+newworld lineup flat 77
+wait 40
+cmd gamerule doDaylightCycle false
+cmd time set 6000
+cmd tp @s 0 -60 0 0 0
+wait 10
+cmd reveriedev shadelineup
+hidegui on
+wait 30
+screenshot lineup_day
+lookshade onlooker
+wait 5
+screenshot lineup_eyes
+lookshade doorframe
+wait 5
+screenshot lineup_eyes_door
+lookshade headless
+wait 5
+screenshot lineup_eyes_headless
+stop

@@ -146,6 +146,44 @@ final class ClientScript {
                     mc.player.xRotO = mc.player.getXRot();
                 }
             }
+            case "lookshade" -> {
+                // lookshade [variant]: aim at the nearest Shade (optionally of one variant) and log what was found.
+                if (mc.player != null && mc.level != null) {
+                    com.seba.reverie.shade.ShadeEntity best = null;
+                    for (var e : mc.level.entitiesForRendering()) {
+                        if (!(e instanceof com.seba.reverie.shade.ShadeEntity s)) continue;
+                        if (a.length > 1 && !s.variant().name().equalsIgnoreCase(a[1])) continue;
+                        if (best == null || s.distanceToSqr(mc.player) < best.distanceToSqr(mc.player)) best = s;
+                    }
+                    if (best != null) {
+                        Vec3 to = com.seba.reverie.shade.ShadeLook.headOf(best).subtract(mc.player.getEyePosition());
+                        float yaw = (float) (Math.atan2(to.z, to.x) * 180 / Math.PI) - 90f;
+                        float pitch = (float) -(Math.atan2(to.y, Math.hypot(to.x, to.z)) * 180 / Math.PI);
+                        mc.player.setYRot(yaw);
+                        mc.player.setXRot(pitch);
+                        mc.player.yRotO = yaw;
+                        mc.player.xRotO = pitch;
+                        ReverieDevTools.LOG.info("[devscript] lookshade {} at {} dist {}", best.variant(), best.blockPosition(),
+                                String.format("%.1f", Math.sqrt(best.distanceToSqr(mc.player))));
+                    } else {
+                        ReverieDevTools.LOG.info("[devscript] lookshade: none");
+                    }
+                }
+            }
+            case "shadestats" -> {
+                if (mc.level != null && mc.player != null) {
+                    java.util.Map<String, Integer> counts = new java.util.TreeMap<>();
+                    double min = Double.MAX_VALUE, max = 0;
+                    for (var e : mc.level.entitiesForRendering()) {
+                        if (!(e instanceof com.seba.reverie.shade.ShadeEntity s)) continue;
+                        counts.merge(s.variant().name(), 1, Integer::sum);
+                        double d = Math.sqrt(s.distanceToSqr(mc.player));
+                        min = Math.min(min, d);
+                        max = Math.max(max, d);
+                    }
+                    ReverieDevTools.LOG.info("[devscript] shadestats {} min {} max {}", counts, String.format("%.1f", min), String.format("%.1f", max));
+                }
+            }
             case "use" -> {
                 BlockPos pos = new BlockPos(Integer.parseInt(a[1]), Integer.parseInt(a[2]), Integer.parseInt(a[3]));
                 Direction face = a.length > 4 ? Direction.byName(a[4]) : Direction.UP;
