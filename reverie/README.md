@@ -13,7 +13,7 @@ Two optional mods add more:
 | Installed | Adds |
 |---|---|
 | [Create](https://github.com/Creators-of-Create/Create) 6.0.x (tested 6.0.10) | **Tuff Gearshift** and **Sport Tuff Gearshift** (multi-ratio gearboxes with an interactive gear-stick GUI), **Latch Remote** |
-| [Farmer's Delight](https://github.com/vectorwing/FarmersDelight) 1.3.x (tested 1.3.4) | Cooking Pot and Cutting Board recipes, Lullaby Stew, Dozing Dumplings, Dreamy Pie, Night-Bloom Roll, Melatonia Syrup |
+| [Farmer's Delight](https://github.com/vectorwing/FarmersDelight) 1.3.x (tested 1.3.4) | Cooking Pot and Cutting Board recipes, Lullaby Stew, Dozing Dumplings, Dreamy Pie, Night-Bloom Roll, Melatonia Syrup, and the *Sweet Dreams, Chef* advancement (eat every dish) |
 
 Without them Reverie works on its own. Their content simply does not exist, and nothing breaks.
 
@@ -49,7 +49,7 @@ Sleepy Stew are the plain recipes.
 - Dream weather: Starfall (sometimes a star lands and leaves a Lucid Shard), Petal Drift, Fog Tide, Upward Rain,
   and The Long Silence.
 - **Shades**: a crowd of harmless silhouettes always 28 to 52 blocks away, watching. Walk toward one and it is gone.
-  Now and then the whole crowd does something stranger.
+  Now and then the whole crowd does something stranger, and once in a while one of them is shaped like you.
 - Odd subtitles from nowhere (turn subtitles on), a procedural lullaby, and one recurring object that the dream
   keeps returning to.
 
@@ -61,6 +61,9 @@ Sleepy Stew are the plain recipes.
   the config.
 - **Latch Remote**: a Linked Controller that latches. One click turns the signal on, the next turns it off.
   Sneak-use it in the air to set its frequency pair, or sneak-click a Redstone Link to copy that link's frequencies.
+
+**Dream Catcher** (sticks, string, feathers and a Lucid Shard): hold it as you fall asleep and one thing you find in
+that dream has at least an even chance to come back with you. The catcher itself stays in the dream.
 
 ## Your items are safe
 
@@ -101,7 +104,7 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `/reverie backup list <player>` / `restore <player> <n>` | See *Your items are safe* |
 | `/reverie debug dreamstate <player>` | Dream state, cooldown, backups |
 | `/reverie debug genstats` | Dreamland generation timings |
-| `/reverie debug shadeevent <player> <event>` | hush, everyone_turns, behind_you, gravity_hiccup, counting |
+| `/reverie debug shadeevent <player> <event>` | hush, everyone_turns, behind_you, gravity_hiccup, counting, mimic |
 | `/reverie debug weather <player> <kind>` | starfall, petal_drift, fog_tide, upward_rain, long_silence |
 
 ## Configuration
@@ -134,7 +137,7 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `dreamland.lyingDoors` | true | Lone Doors sometimes lead to a copy of where you were, one block off |
 | `dreamland.enableRareEvents` | true | Master switch for the Shade events below |
 | `dreamland.events.hush` / `everyoneTurns` / `behindYou` / `counting` / `gravityHiccup` / `farewell` | true | Each Shade event |
-| `dreamland.events.mimic` | true | Reserved (Mimic is not in this version) |
+| `dreamland.events.mimic` | true | Mimic: your own silhouette copies you, three seconds late |
 
 `config/reverie-client.toml`:
 
@@ -163,8 +166,8 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
   not a true Penrose illusion: perspective on a block grid cannot hide that seam.
 - **Recipe viewers** (checked with JEI) list the extracts, foods, Cooking Pot and Cutting Board recipes. Lacing is
   a special crafting recipe (any food + an Extract), so viewers do not list it.
-- Mimic, dream fauna, the Dream Catcher and a "Master Chef" advancement (stretch goals in the design) are not in
-  this version.
+- Dream fauna (sleepwalking sheep, lucid moths, the paper whale) and aurora ribbons, stretch goals in the design,
+  are not in this version.
 
 ## Building from source
 

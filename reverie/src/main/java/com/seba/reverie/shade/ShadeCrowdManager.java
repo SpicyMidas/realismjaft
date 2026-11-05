@@ -39,7 +39,11 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
  * looking at blink a little closer (never inside 24). Also runs the rare events and the Farewell.
  */
 public final class ShadeCrowdManager implements DreamManager.Listener {
-    public enum Event { HUSH, EVERYONE_TURNS, BEHIND_YOU, GRAVITY_HICCUP, COUNTING }
+    public enum Event { HUSH, EVERYONE_TURNS, BEHIND_YOU, GRAVITY_HICCUP, COUNTING, MIMIC }
+
+    private static final int MIMIC_DELAY = 60;
+    private static final int MIMIC_COPY = 420;
+    private static final int MIMIC_MAX = 760;
 
     public static final int HUSH = 1;
     public static final int TURNS = 2;
@@ -63,6 +67,11 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         int awayTicks;
         int behindId = -1;
         int behindTicks;
+        int mimicId = -1;
+        int mimicAge;
+        Vec3 mimicOrigin;
+        Vec3 playerOrigin;
+        final java.util.ArrayDeque<double[]> mimicHistory = new java.util.ArrayDeque<>();
         boolean farewellSent;
     }
 
@@ -122,6 +131,9 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
             }
             Entity behind = dream.getEntity(c.behindId);
             if (behind != null) behind.discard();
+            Entity mimic = dream.getEntity(c.mimicId);
+            if (mimic != null) mimic.discard();
+            c.mimicId = -1;
         }
         c.ids.clear();
         return n;
@@ -140,6 +152,7 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         if (dream == null || CROWDS.isEmpty() && dream.players().isEmpty()) return;
         try {
             behindYouTick(dream);
+            mimicTick(dream);
             if (serverTick % 10 != 0) return;
             for (Iterator<Map.Entry<UUID, Crowd>> it = CROWDS.entrySet().iterator(); it.hasNext(); ) {
                 var entry = it.next();
@@ -164,7 +177,7 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
 
     /** True if a crowd owns this entity id (also the Behind You shade). */
     public static boolean tracked(int id) {
-        for (Crowd c : CROWDS.values()) if (c.behindId == id || c.ids.contains(id)) return true;
+        for (Crowd c : CROWDS.values()) if (c.behindId == id || c.mimicId == id || c.ids.contains(id)) return true;
         return false;
     }
 
@@ -343,6 +356,7 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
             case BEHIND_YOU -> ReverieConfig.get(ReverieConfig.EVENT_BEHIND_YOU);
             case GRAVITY_HICCUP -> ReverieConfig.get(ReverieConfig.EVENT_GRAVITY_HICCUP);
             case COUNTING -> ReverieConfig.get(ReverieConfig.EVENT_COUNTING);
+            case MIMIC -> ReverieConfig.get(ReverieConfig.EVENT_MIMIC);
         };
     }
 
@@ -439,6 +453,79 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
                 c.event = e;
                 c.eventTicks = 140;
                 Net.send(p, new ShadeEventPayload(COUNTING, 140));
+            }
+            case MIMIC -> startMimic(level, p, c, rng);
+        }
+    }
+
+    /** Mimic: a silhouette in your own shape, about 30 blocks away, standing on ground at about your height. */
+    private static void startMimic(ServerLevel level, ServerPlayer p, Crowd c, RandomSource rng) {
+        if (c.mimicId >= 0) return;
+        for (int attempt = 0; attempt < 20; attempt++) {
+            double a = rng.nextDouble() * Math.PI * 2;
+            double r = 24 + rng.nextDouble() * 12;
+            Vec3 at = p.position().add(Math.cos(a) * r, 0, Math.sin(a) * r);
+            int x = Mth.floor(at.x);
+            int z = Mth.floor(at.z);
+            if (!level.isLoaded(new net.minecraft.core.BlockPos(x, 0, z))) continue;
+            int top = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            if (top <= level.getMinBuildHeight() + 4 || Math.abs(top - p.getY()) > 12) continue;
+            ShadeEntity s = ModEntities.SHADE.get().create(level);
+            if (s == null) return;
+            s.managed = true;
+            s.setVariant(ShadeEntity.Variant.MIMIC);
+            s.setOwner(p);
+            s.setMode(ShadeEntity.FIXED);
+            s.setFixedYaw(p.getYRot());
+            s.moveTo(x + 0.5, top, z + 0.5, p.getYRot(), 0);
+            if (!level.addFreshEntity(s)) return;
+            c.mimicId = s.getId();
+            c.mimicAge = 0;
+            c.mimicOrigin = s.position();
+            c.playerOrigin = p.position();
+            c.mimicHistory.clear();
+            c.event = Event.MIMIC;
+            c.eventTicks = MIMIC_MAX;
+            return;
+        }
+    }
+
+    /** Copies the dreamer's movement three seconds late, then walks off the edge of its island. Every tick. */
+    private static void mimicTick(ServerLevel level) {
+        for (var entry : CROWDS.entrySet()) {
+            Crowd c = entry.getValue();
+            if (c.mimicId < 0) continue;
+            ServerPlayer p = level.getServer().getPlayerList().getPlayer(entry.getKey());
+            if (!(level.getEntity(c.mimicId) instanceof ShadeEntity s) || p == null || ++c.mimicAge > MIMIC_MAX) {
+                if (level.getEntity(c.mimicId) instanceof ShadeEntity gone) gone.discard();
+                c.mimicId = -1;
+                if (c.event == Event.MIMIC) c.event = null;
+                continue;
+            }
+            if (s.fading()) continue;
+            c.mimicHistory.addLast(new double[]{p.getX(), p.getY(), p.getZ(), p.getYRot()});
+            if (c.mimicAge <= MIMIC_COPY) {
+                if (c.mimicHistory.size() <= MIMIC_DELAY) continue;
+                double[] then = c.mimicHistory.removeFirst();
+                Vec3 target = c.mimicOrigin.add(then[0] - c.playerOrigin.x, 0, then[2] - c.playerOrigin.z);
+                double y = groundY(level, target, s.getY());
+                s.setPos(target.x, y, target.z);
+                s.setFixedYaw((float) then[3]);
+            } else {
+                // Done copying: it turns away and walks straight on until the ground ends.
+                if (c.mimicAge == MIMIC_COPY + 1) s.setFixedYaw(s.fixedYaw() + 90 + p.getRandom().nextInt(180));
+                float yaw = s.fixedYaw() * Mth.DEG_TO_RAD;
+                Vec3 next = s.position().add(-Mth.sin(yaw) * 0.12, 0, Mth.cos(yaw) * 0.12);
+                int x = Mth.floor(next.x);
+                int z = Mth.floor(next.z);
+                int top = level.isLoaded(new net.minecraft.core.BlockPos(x, 0, z))
+                        ? level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) : level.getMinBuildHeight();
+                if (top < s.getY() - 2) {
+                    s.setDrift(new Vec3(0, -0.35, 0)); // over the edge
+                    if (c.mimicAge % 20 == 0 || s.getY() < c.mimicOrigin.y - 12) s.fadeOut();
+                } else {
+                    s.setPos(next.x, Math.abs(top - s.getY()) < 2 ? top : s.getY(), next.z);
+                }
             }
         }
     }

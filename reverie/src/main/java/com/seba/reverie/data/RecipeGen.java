@@ -10,6 +10,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
 
@@ -58,6 +59,10 @@ final class RecipeGen extends RecipeProvider {
                 .save(out);
         CreateDataGen.recipes(out);
         com.seba.reverie.compat.fd.FdDataGen.recipes(out);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DREAM_CATCHER.get())
+                .pattern("/S/").pattern("SLS").pattern("F F")
+                .define('/', Items.STICK).define('S', Items.STRING).define('L', ModItems.LUCID_SHARD.get()).define('F', Items.FEATHER)
+                .unlockedBy("has_lucid_shard", has(ModItems.LUCID_SHARD.get())).save(out);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.MELATONIA_EXTRACT.get())
                 .requires(ModItems.MELATONIA_PETALS.get(), 3).requires(Items.GLASS_BOTTLE)

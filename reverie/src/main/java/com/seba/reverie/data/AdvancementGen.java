@@ -92,6 +92,38 @@ final class AdvancementGen {
         gen.put("data/reverie/advancement/gear_head.json", adv, Compat.CREATE);
     }
 
+    /** Master Chef: eat every Reverie dish (needs Farmer's Delight, which adds most of them). */
+    static void masterChef(JsonGen gen) {
+        String[] dishes = {"melatonia_cookie", "drowsy_tea", "sleepy_stew", "lullaby_stew", "dozing_dumplings", "dreamy_pie_slice",
+                "night_bloom_roll", "melatonia_syrup"};
+        JsonObject criteria = new JsonObject();
+        com.google.gson.JsonArray requirements = new com.google.gson.JsonArray();
+        for (String dish : dishes) {
+            JsonObject item = new JsonObject();
+            item.addProperty("items", "reverie:" + dish);
+            JsonObject conditions = new JsonObject();
+            conditions.add("item", item);
+            JsonObject c = new JsonObject();
+            c.addProperty("trigger", "minecraft:consume_item");
+            c.add("conditions", conditions);
+            criteria.add(dish, c);
+            requirements.add(JsonGen.array(new com.google.gson.JsonPrimitive(dish)));
+        }
+        JsonObject icon = new JsonObject();
+        icon.addProperty("id", "reverie:lullaby_stew");
+        JsonObject display = new JsonObject();
+        display.add("icon", icon);
+        display.add("title", translatable("advancements.reverie.master_chef.title"));
+        display.add("description", translatable("advancements.reverie.master_chef.description"));
+        display.addProperty("frame", "challenge");
+        JsonObject adv = new JsonObject();
+        adv.addProperty("parent", "reverie:root");
+        adv.add("display", display);
+        adv.add("criteria", criteria);
+        adv.add("requirements", requirements);
+        gen.put("data/reverie/advancement/master_chef.json", adv, Compat.FARMERS_DELIGHT);
+    }
+
     private static JsonObject translatable(String key) {
         JsonObject o = new JsonObject();
         o.addProperty("translate", key);

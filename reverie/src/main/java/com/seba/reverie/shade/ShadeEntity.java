@@ -19,7 +19,9 @@ import net.minecraft.world.phys.Vec3;
  */
 public class ShadeEntity extends Entity {
     public enum Variant {
-        ONLOOKER(1.55), TALL_ONE(3.75), STOOPED_ONE(1.05), WIDE_ARMED(1.55), HEADLESS(1.05), HANGING(0.3), DOORFRAME(1.85);
+        ONLOOKER(1.55), TALL_ONE(3.75), STOOPED_ONE(1.05), WIDE_ARMED(1.55), HEADLESS(1.05), HANGING(0.3), DOORFRAME(1.85),
+        /** The dreamer's own shape (only for the Mimic event). */
+        MIMIC(1.55);
 
         /** Height of the head (or what passes for one) above the entity's feet, in blocks. */
         public final double headHeight;
@@ -50,6 +52,9 @@ public class ShadeEntity extends Entity {
     /** Level time when the fade started, so the crowd manager can clean up a shade that is not ticking. */
     long fadeGameTime;
     private Vec3 drift = Vec3.ZERO;
+    /** Client: distance walked, for the Mimic's limb swing. */
+    public float walkDist;
+    public float walkSpeed;
     private int lerpSteps;
     private double lerpX;
     private double lerpY;
@@ -148,6 +153,9 @@ public class ShadeEntity extends Entity {
                 lerpPositionAndRotationStep(lerpSteps, lerpX, lerpY, lerpZ, getYRot(), getXRot());
                 lerpSteps--;
             }
+            float moved = (float) Math.hypot(getX() - xo, getZ() - zo);
+            walkDist += moved;
+            walkSpeed += (Math.min(1f, moved * 4f) - walkSpeed) * 0.3f;
             clientTurn();
             return;
         }

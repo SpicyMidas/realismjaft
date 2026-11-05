@@ -1,0 +1,113 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "parent": "reverie:root",
+  "criteria": {
+    "dozing_dumplings": {
+      "conditions": {
+        "item": {
+          "items": "reverie:dozing_dumplings"
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    },
+    "dreamy_pie_slice": {
+      "conditions": {
+        "item": {
+          "items": "reverie:dreamy_pie_slice"
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    },
+    "drowsy_tea": {
+      "conditions": {
+        "item": {
+          "items": "reverie:drowsy_tea"
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    },
+    "lullaby_stew": {
+      "conditions": {
+        "item": {
+          "items": "reverie:lullaby_stew"
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    },
+    "melatonia_cookie": {
+      "conditions": {
+        "item": {
+          "items": "reverie:melatonia_cookie"
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    },
+    "melatonia_syrup": {
+      "conditions": {
+        "item": {
+          "items": "reverie:melatonia_syrup"
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    },
+    "night_bloom_roll": {
+      "conditions": {
+        "item": {
+          "items": "reverie:night_bloom_roll"
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    },
+    "sleepy_stew": {
+      "conditions": {
+        "item": {
+          "items": "reverie:sleepy_stew"
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.reverie.master_chef.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "reverie:lullaby_stew"
+    },
+    "title": {
+      "translate": "advancements.reverie.master_chef.title"
+    }
+  },
+  "requirements": [
+    [
+      "melatonia_cookie"
+    ],
+    [
+      "drowsy_tea"
+    ],
+    [
+      "sleepy_stew"
+    ],
+    [
+      "lullaby_stew"
+    ],
+    [
+      "dozing_dumplings"
+    ],
+    [
+      "dreamy_pie_slice"
+    ],
+    [
+      "night_bloom_roll"
+    ],
+    [
+      "melatonia_syrup"
+    ]
+  ]
+}

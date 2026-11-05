@@ -28,13 +28,47 @@ public class ShadeRenderer extends EntityRenderer<ShadeEntity> {
     private static final float[] HALO_ALPHA = {0, 0.2f, 0.09f};
 
     private final ShadeModel[] models = new ShadeModel[ShadeModel.LAYERS.length];
+    private final net.minecraft.client.model.PlayerModel<net.minecraft.client.player.AbstractClientPlayer> mimicWide;
+    private final net.minecraft.client.model.PlayerModel<net.minecraft.client.player.AbstractClientPlayer> mimicSlim;
 
     public ShadeRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
         for (int i = 0; i < models.length; i++) {
             models[i] = new ShadeModel(ctx.bakeLayer(ShadeModel.humanoidLayer(i)), ctx.bakeLayer(ShadeModel.doorframeLayer(i)));
         }
+        this.mimicWide = new net.minecraft.client.model.PlayerModel<>(ctx.bakeLayer(net.minecraft.client.model.geom.ModelLayers.PLAYER), false);
+        this.mimicSlim = new net.minecraft.client.model.PlayerModel<>(ctx.bakeLayer(net.minecraft.client.model.geom.ModelLayers.PLAYER_SLIM), true);
         this.shadowRadius = 0;
+    }
+
+    /** The Mimic: the dreamer's own shape (wide or slim arms), as a silhouette, walking. */
+    private void renderMimic(ShadeEntity shade, float alpha, float yaw, float partial, PoseStack pose, MultiBufferSource buffers) {
+        boolean slim = false;
+        if (shade.level().getEntity(shade.ownerId()) instanceof net.minecraft.client.player.AbstractClientPlayer owner) {
+            slim = owner.getSkin().model() == net.minecraft.client.resources.PlayerSkin.Model.SLIM;
+        }
+        var model = slim ? mimicSlim : mimicWide;
+        float swing = shade.walkDist * 2.2f;
+        float amount = shade.walkSpeed;
+        model.head.resetPose();
+        model.rightLeg.xRot = Mth.cos(swing) * 1.2f * amount;
+        model.leftLeg.xRot = Mth.cos(swing + Mth.PI) * 1.2f * amount;
+        model.rightArm.xRot = Mth.cos(swing + Mth.PI) * 0.9f * amount;
+        model.leftArm.xRot = Mth.cos(swing) * 0.9f * amount;
+        model.rightSleeve.copyFrom(model.rightArm);
+        model.leftSleeve.copyFrom(model.leftArm);
+        model.rightPants.copyFrom(model.rightLeg);
+        model.leftPants.copyFrom(model.leftLeg);
+        model.hat.copyFrom(model.head);
+        model.jacket.copyFrom(model.body);
+        pose.pushPose();
+        pose.mulPose(Axis.YP.rotationDegrees(180f - yaw));
+        pose.scale(-1, -1, 1);
+        pose.translate(0, -1.501, 0);
+        // Drawn with the near-black Shade texture (a skin-sized 64x64 layout): only the outline of the shape is left.
+        model.renderToBuffer(pose, buffers.getBuffer(RenderType.entityTranslucent(TEXTURE)), LightTexture.FULL_BRIGHT,
+                OverlayTexture.NO_OVERLAY, FastColor.ARGB32.color(Mth.floor(alpha * 255), 255, 255, 255));
+        pose.popPose();
     }
 
     @Override
@@ -45,6 +79,10 @@ public class ShadeRenderer extends EntityRenderer<ShadeEntity> {
         float t = shade.tickCount + partial;
         boolean reduceMotion = ReverieConfig.get(ReverieConfig.REDUCE_MOTION);
         float yaw = Mth.rotLerp(partial, shade.yRotO, shade.getYRot());
+        if (variant == ShadeEntity.Variant.MIMIC) {
+            renderMimic(shade, alpha, yaw, partial, pose, buffers);
+            return;
+        }
 
         pose.pushPose();
         if (variant == ShadeEntity.Variant.HANGING) {

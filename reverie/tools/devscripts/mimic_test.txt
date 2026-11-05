@@ -1,0 +1,51 @@
+newworld mimic2 flat 77
+wait 40
+cmd reverie dream Dev
+wait 200
+hidegui on
+cmd reverie debug shadeevent Dev mimic
+wait 5
+cmd reveriedev shadedump
+lookshade mimic
+wait 5
+screenshot mimic_start
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+cmd tp @s ~1 ~ ~
+wait 2
+wait 30
+cmd reveriedev shadedump
+wait 40
+cmd reveriedev shadedump
+lookshade mimic
+wait 2
+screenshot mimic_copied
+wait 400
+cmd reveriedev shadedump
+stop

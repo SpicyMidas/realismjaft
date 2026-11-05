@@ -867,6 +867,18 @@ def dreamland_textures():
     save(grid(door, {'o': (70, 40, 70), 'd': DWOOD[1], 'w': (250, 244, 236), 'h': (255, 255, 255)}), "item/lone_door")
 
 
+def dream_catcher_texture():
+    """A willow hoop with a web, a lucid shard at its heart and two feathers."""
+    rows = [
+        "................", ".....hhhhhh.....", "....hw.ww.wh....", "...hw..w..wwh...",
+        "...h.w.w.w..h...", "...hw.wLw.w.h...", "...h..LlL...h...", "...hw.wLw.w.h...",
+        "...h.w.w.w..h...", "....hw.w.wwh....", ".....hhhhhh.....", ".....s....s.....",
+        ".....s....s.....", "....fF....fF....", "....fF....fF....", ".....f.....f....",
+    ]
+    save(grid(rows, {'h': (124, 86, 52), 'w': (226, 222, 236), 'L': (120, 196, 236), 'l': (220, 246, 255),
+                     's': (200, 196, 210), 'f': (236, 232, 244), 'F': (170, 150, 220)}), "item/dream_catcher")
+
+
 def particle_textures():
     """Dream petals (three tints), paper pages and an upward raindrop streak."""
     petal = [
@@ -1045,7 +1057,7 @@ def shade_textures():
     save(img, "entity/shade")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures]
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture]
 
 
 def contact_sheet(out_dir):

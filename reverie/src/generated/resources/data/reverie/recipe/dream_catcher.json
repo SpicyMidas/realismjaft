@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "/": {
+      "item": "minecraft:stick"
+    },
+    "F": {
+      "item": "minecraft:feather"
+    },
+    "L": {
+      "item": "reverie:lucid_shard"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    "/S/",
+    "SLS",
+    "F F"
+  ],
+  "result": {
+    "count": 1,
+    "id": "reverie:dream_catcher"
+  }
+}

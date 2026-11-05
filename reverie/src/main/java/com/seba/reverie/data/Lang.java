@@ -57,6 +57,11 @@ final class Lang {
         s.add("subtitles.reverie.caption.footsteps_stop", "Footsteps stop", "Dei passi si fermano");
         s.add("subtitles.reverie.caption.folding", "Something is being folded", "Qualcosa viene piegato");
         s.add("subtitles.reverie.caption.clock_backwards", "A clock ticks backwards", "Un orologio ticchetta all'indietro");
+        s.add("item.reverie.dream_catcher", "Dream Catcher", "Acchiappasogni");
+        s.add("item.reverie.dream_catcher.desc", "Hold it as you fall asleep: one thing from the dream is likelier to stay.",
+                "Tienilo in mano mentre ti addormenti: una cosa del sogno ha piu' probabilita' di restare.");
+        s.add("advancements.reverie.master_chef.title", "Sweet Dreams, Chef", "Sogni d'Oro, Chef");
+        s.add("advancements.reverie.master_chef.description", "Eat every Reverie dish.", "Mangia ogni piatto di Reverie.");
         s.add("reverie.recurring.dandelion", "The Same Dandelion", "Lo Stesso Dente di Leone");
         s.add("reverie.recurring.key", "A Brass Key", "Una Chiave d'Ottone");
         s.add("reverie.recurring.boat", "A Paper Boat", "Una Barchetta di Carta");

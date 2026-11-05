@@ -60,6 +60,7 @@ public final class Reverie {
         ModCreativeTab.add(ModItems.LONE_DOOR);
         ModCreativeTab.add(ModItems.LUCID_SHARD);
         ModCreativeTab.add(ModItems.DREAM_DUST);
+        ModCreativeTab.add(ModItems.DREAM_CATCHER);
 
         NeoForge.EVENT_BUS.addListener(Lacing::onFinishUsing);
         com.seba.reverie.dream.DreamEvents.init();

@@ -41,6 +41,7 @@ public final class ReverieDataGen {
             com.seba.reverie.compat.create.CreateDataGen.json(json);
             com.seba.reverie.compat.fd.FdDataGen.json(json);
             AdvancementGen.json(json);
+            AdvancementGen.masterChef(json);
             CoreJson.json(json);
         }));
         BlockTagsProvider blockTags = new TagGen.Blocks(out, lookup, files);

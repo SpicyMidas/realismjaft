@@ -49,6 +49,8 @@ public final class ModItems {
     // --- Dreamland
     public static final DeferredItem<Item> LUCID_SHARD = ITEMS.registerSimpleItem("lucid_shard", new Item.Properties());
     public static final DeferredItem<Item> DREAM_DUST = ITEMS.registerSimpleItem("dream_dust", new Item.Properties());
+    public static final DeferredItem<com.seba.reverie.content.DreamCatcherItem> DREAM_CATCHER = ITEMS.register("dream_catcher",
+            () -> new com.seba.reverie.content.DreamCatcherItem(new Item.Properties().stacksTo(1)));
     public static final java.util.List<DeferredItem<? extends Item>> DREAM_BLOCK_ITEMS = new java.util.ArrayList<>();
 
     static {

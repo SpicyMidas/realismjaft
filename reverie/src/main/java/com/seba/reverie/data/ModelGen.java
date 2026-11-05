@@ -30,6 +30,7 @@ final class ModelGen {
             withExistingParent("wild_melatonia", "item/generated").texture("layer0", modLoc("block/wild_melatonia"));
             basicItem(ModItems.LUCID_SHARD.get());
             basicItem(ModItems.DREAM_DUST.get());
+            basicItem(ModItems.DREAM_CATCHER.get());
             for (String block : new String[]{"dream_grass_block", "dream_soil", "lucid_stone", "cobbled_lucid_stone", "lucid_stone_bricks",
                     "dreamwood_log", "dreamwood_planks", "dreamwood_leaves", "lucid_crystal_ore", "pillow_cloud", "mirror_water",
                     "hourglass_sand", "floating_lantern", "melted_clock", "sleep_bell", "sandglass_core"}) {

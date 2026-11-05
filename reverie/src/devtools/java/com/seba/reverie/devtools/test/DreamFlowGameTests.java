@@ -196,6 +196,26 @@ public final class DreamFlowGameTests {
         h.succeed();
     }
 
+    @GameTest(templateNamespace = "reverie", template = "empty", timeoutTicks = 100, batch = "reverie_backup")
+    public static void dreamCatcherMarksTheDream(GameTestHelper h) {
+        if (DreamTestSupport.skipWithoutDreamland(h)) return;
+        var server = h.getLevel().getServer();
+        ServerPlayer p = joinAs(h, UUID.fromString("5e1f5a1e-0000-4000-8000-0000000dc0c0"), "catcher_dreamer");
+        if (DreamManager.isDreaming(p)) DreamManager.wake(p, DreamManager.Reason.COMMAND);
+        DreamManager.resetCooldown(p);
+        p.getInventory().clearContent();
+        p.getInventory().setItem(0, new ItemStack(com.seba.reverie.registry.ModItems.DREAM_CATCHER.get()));
+        p.getInventory().selected = 0;
+        h.assertTrue(DreamManager.startDream(p, null), "dream did not start");
+        h.assertTrue(DreamManager.data(p).session().dreamCatcher(), "holding a Dream Catcher did not mark the dream");
+        DreamManager.wake(p, DreamManager.Reason.COMMAND);
+        h.assertFalse(p.getInventory().contains(s -> s.is(com.seba.reverie.registry.ModItems.DREAM_CATCHER.get())),
+                "the Dream Catcher came back (it is carried into the dream like any held item)");
+        server.getPlayerList().remove(p);
+        com.seba.reverie.devtools.ReverieDevTools.log("PASS dreamCatcherMarksTheDream");
+        h.succeed();
+    }
+
     /** Pretend the dream ended already (as if the player was offline past its end). */
     private static void expireSession(ServerPlayer player) {
         try {

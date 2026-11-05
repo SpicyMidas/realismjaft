@@ -243,8 +243,7 @@ public final class DreamManager {
     }
 
     private static boolean isDreamCatcher(ItemStack held) {
-        var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(held.getItem());
-        return id.getNamespace().equals(Reverie.MOD_ID) && id.getPath().equals("dream_catcher");
+        return held.is(com.seba.reverie.registry.ModItems.DREAM_CATCHER.get());
     }
 
     /** Block states only (no block entities, no inventories, no text) of a 9x6x9 box around the bed. */
