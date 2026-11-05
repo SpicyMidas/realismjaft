@@ -1,0 +1,10 @@
+{
+  "type": "reverie:dreamland",
+  "generator": {
+    "type": "reverie:dream_islands",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "reverie:the_void_between"
+    }
+  }
+}

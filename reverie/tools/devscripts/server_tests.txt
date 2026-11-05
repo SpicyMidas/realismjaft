@@ -1,0 +1,7 @@
+# Run every registered gametest inside a real dedicated server (has the Dreamland dimension).
+wait 60
+cmd gamerule doDaylightCycle true
+cmd test runall
+wait 900
+say tests done
+stop

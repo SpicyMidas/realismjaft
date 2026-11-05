@@ -40,6 +40,18 @@ final class Lang {
         s.add("reverie.laced.normal", "Laced with Melatonia", "Corretto con Melatonia");
         s.add("reverie.laced.strong", "Strongly laced", "Fortemente corretto");
 
+        // Dreams
+        s.add("reverie.dream.backup_failed", "You cannot fall asleep: the dream backup could not be written. Tell the server admin.",
+                "Non riesci ad addormentarti: il backup del sogno non e' stato scritto. Avvisa l'amministratore.");
+        s.add("reverie.dream.keepsake", "You woke up holding %s.", "Ti sei svegliato stringendo %s.");
+        s.add("reverie.dream.bed_not_dreaming", "This bed is only a dream.", "Questo letto e' solo un sogno.");
+        s.add("reverie.command.not_dreaming", "%s is not dreaming.", "%s non sta sognando.");
+        s.add("reverie.command.woke", "%s woke up.", "%s si e' svegliato.");
+        s.add("reverie.command.dreaming", "%s is dreaming.", "%s sta sognando.");
+        s.add("reverie.command.cannot_dream", "%s cannot dream right now.", "%s non puo' sognare ora.");
+        s.add("reverie.command.home", "Dream home of %s: %s %s %s", "Casa onirica di %s: %s %s %s");
+        s.add("biome.reverie.the_void_between", "The Void Between", "Il Vuoto Frammezzo");
+
         // Create: gearshifts
         s.add("block.reverie.tuff_gearshift", "Tuff Gearshift", "Cambio di Tufo");
         s.add("block.reverie.sport_tuff_gearshift", "Sport Tuff Gearshift", "Cambio Sportivo di Tufo");

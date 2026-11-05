@@ -36,11 +36,31 @@ final class WorldGen {
     static final ResourceKey<PlacedFeature> WILD_MELATONIA_PLACED = ResourceKey.create(Registries.PLACED_FEATURE, Reverie.id("wild_melatonia"));
     static final ResourceKey<BiomeModifier> ADD_WILD_MELATONIA = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Reverie.id("add_wild_melatonia"));
 
+    static final ResourceKey<net.minecraft.world.level.dimension.DimensionType> DREAMLAND_TYPE =
+            ResourceKey.create(Registries.DIMENSION_TYPE, Reverie.id("dreamland"));
+    static final ResourceKey<net.minecraft.world.level.dimension.LevelStem> DREAMLAND_STEM =
+            ResourceKey.create(Registries.LEVEL_STEM, Reverie.id("dreamland"));
+
     private WorldGen() {
+    }
+
+    private static net.minecraft.world.level.dimension.DimensionType dreamlandType() {
+        return new net.minecraft.world.level.dimension.DimensionType(
+                java.util.OptionalLong.of(13000), true, false, false, false, 1.0, true, false,
+                com.seba.reverie.dreamland.DreamIslandsChunkGenerator.MIN_Y, com.seba.reverie.dreamland.DreamIslandsChunkGenerator.HEIGHT,
+                com.seba.reverie.dreamland.DreamIslandsChunkGenerator.HEIGHT,
+                net.minecraft.tags.BlockTags.INFINIBURN_OVERWORLD, Reverie.id("dreamland"), 0.15f,
+                new net.minecraft.world.level.dimension.DimensionType.MonsterSettings(true, false,
+                        net.minecraft.util.valueproviders.ConstantInt.of(0), 0));
     }
 
     static DatapackBuiltinEntriesProvider create(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         RegistrySetBuilder builder = new RegistrySetBuilder()
+                .add(Registries.DIMENSION_TYPE, ctx -> ctx.register(DREAMLAND_TYPE, dreamlandType()))
+                .add(Registries.BIOME, DreamlandBiomes::bootstrap)
+                .add(Registries.LEVEL_STEM, ctx -> ctx.register(DREAMLAND_STEM, new net.minecraft.world.level.dimension.LevelStem(
+                        ctx.lookup(Registries.DIMENSION_TYPE).getOrThrow(DREAMLAND_TYPE),
+                        new com.seba.reverie.dreamland.DreamIslandsChunkGenerator(DreamlandBiomes.biomeSource(ctx.lookup(Registries.BIOME))))))
                 .add(Registries.CONFIGURED_FEATURE, ctx -> ctx.register(WILD_MELATONIA_PATCH, new ConfiguredFeature<>(Feature.FLOWER,
                         FeatureUtils.simpleRandomPatchConfiguration(20, PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.WILD_MELATONIA.get())))))))

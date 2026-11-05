@@ -46,6 +46,21 @@ final class ClientScript {
 
     private void tick() {
         Minecraft mc = Minecraft.getInstance();
+        if ((waitingForWorld || lines.peek() != null && lines.peek().startsWith("openworld")) && ++idleTicks % 100 == 0) {
+            ReverieDevTools.LOG.info("[devscript] waiting; screen={} player={}", mc.screen == null ? "none" : mc.screen.getClass().getName(), mc.player != null);
+        }
+        if (waitingForWorld && mc.screen instanceof net.minecraft.client.gui.screens.BackupConfirmScreen backup) {
+            // One-time "experimental settings" prompt for worlds with datapack dimensions: join without a backup.
+            for (var child : backup.children()) {
+                if (child instanceof net.minecraft.client.gui.components.Button b
+                        && b.getMessage().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t
+                        && t.getKey().equals("selectWorld.backupJoinSkipButton")) {
+                    ReverieDevTools.LOG.info("[devscript] confirming the experimental-settings prompt");
+                    b.onPress();
+                    break;
+                }
+            }
+        }
         if (waitingForWorld) {
             if (mc.player == null || mc.level == null || mc.screen != null || mc.getOverlay() != null) return;
             waitingForWorld = false;
@@ -174,6 +189,36 @@ final class ClientScript {
                 }
             }
             case "close" -> mc.setScreen(null);
+            case "save" -> {
+                var server = mc.getSingleplayerServer();
+                if (server != null) server.execute(() -> {
+                    server.saveEverything(true, true, true);
+                    ReverieDevTools.LOG.info("[devscript] world saved");
+                });
+            }
+            case "crash" -> {
+                // Simulates killing the game process: no save, no shutdown hooks.
+                ReverieDevTools.LOG.info("[devscript] halting the JVM without saving");
+                Runtime.getRuntime().halt(3);
+            }
+            case "loginv" -> {
+                var server = mc.getSingleplayerServer();
+                if (server != null && mc.player != null) {
+                    var uuid = mc.player.getUUID();
+                    server.execute(() -> {
+                        ServerPlayer sp = server.getPlayerList().getPlayer(uuid);
+                        if (sp == null) return;
+                        StringBuilder b = new StringBuilder();
+                        for (int i = 0; i < sp.getInventory().getContainerSize(); i++) {
+                            var st = sp.getInventory().getItem(i);
+                            if (!st.isEmpty()) b.append(i).append('=').append(st.getCount()).append('x')
+                                    .append(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(st.getItem()).getPath()).append(' ');
+                        }
+                        ReverieDevTools.LOG.info("[devscript] inventory[{}] dim={} pos={} : {}", rest, sp.level().dimension().location(),
+                                sp.blockPosition().toShortString(), b);
+                    });
+                }
+            }
             case "logheld" -> {
                 var stack = mc.player.getMainHandItem();
                 var fn = net.minecraft.client.renderer.item.ItemProperties.getProperty(stack, net.minecraft.resources.ResourceLocation.parse(a[1]));
@@ -194,6 +239,7 @@ final class ClientScript {
         }
     }
 
+    private int idleTicks;
     private double lastX;
     private double lastY;
 }

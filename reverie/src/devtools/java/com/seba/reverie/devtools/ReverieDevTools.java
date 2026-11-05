@@ -52,8 +52,15 @@ public final class ReverieDevTools {
     private static void registerTests(net.neoforged.neoforge.event.RegisterGameTestsEvent event) {
         event.register(com.seba.reverie.devtools.test.CoreGameTests.class);
         event.register(com.seba.reverie.devtools.test.MelatoniaGameTests.class);
+        event.register(com.seba.reverie.devtools.test.DreamGameTests.class);
+        // A real joined mock player: Create's login sync cannot talk to a mock connection, so only without Create.
+        if (!com.seba.reverie.compat.Compat.create()) event.register(com.seba.reverie.devtools.test.DreamFlowGameTests.class);
         // Optional-mod tests reference those mods' classes, so they are only registered when present.
         if (com.seba.reverie.compat.Compat.create()) TestRegistrar.create(event);
+    }
+
+    public static void log(String message) {
+        LOG.info("[devtest] {}", message);
     }
 
     static List<String> loadScript() {

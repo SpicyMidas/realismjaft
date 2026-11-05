@@ -14,6 +14,11 @@ public final class ModComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Laced>> LACED =
             COMPONENTS.registerComponentType("laced", b -> b.persistent(Laced.CODEC).networkSynchronized(Laced.STREAM_CODEC));
 
+    /** Marks the item a dreamer carried into the dream (it never comes back as a keepsake). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.util.Unit>> DREAM_ORIGIN =
+            COMPONENTS.registerComponentType("dream_origin", b -> b.persistent(net.minecraft.util.Unit.CODEC)
+                    .networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)));
+
     private ModComponents() {
     }
 }

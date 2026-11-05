@@ -1,0 +1,29 @@
+newworld dream_crash flat 5
+wait 40
+cmd gamerule doDaylightCycle false
+cmd time set 6000
+cmd kill @e[type=!player]
+cmd clear @s
+cmd item replace entity @s weapon.mainhand with minecraft:golden_hoe
+cmd give @s minecraft:diamond 7
+cmd give @s minecraft:cooked_beef 9
+cmd item replace entity @s armor.chest with minecraft:iron_chestplate
+cmd item replace entity @s weapon.offhand with minecraft:torch 32
+cmd setblock 1 -60 2 minecraft:red_bed[facing=south,part=head]
+cmd setblock 1 -60 1 minecraft:red_bed[facing=south,part=foot]
+cmd tp @s 0.5 -60 1.5 0 40
+cmd effect give @s reverie:sleepyness 240
+wait 20
+loginv before
+save
+wait 20
+use 1 -60 1 up
+wait 150
+loginv dreaming
+cmd reverie debug dreamstate @s
+hidegui on
+screenshot dream_arrival
+hidegui off
+save
+wait 60
+crash

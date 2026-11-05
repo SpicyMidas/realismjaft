@@ -39,7 +39,7 @@ public final class MelatoniaGameTests {
                 ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY));
     }
 
-    @GameTest(templateNamespace = "reverie", template = "empty", skyAccess = true, timeoutTicks = 200)
+    @GameTest(templateNamespace = "reverie", template = "empty", skyAccess = true, timeoutTicks = 200, batch = "reverie_time_crop")
     public static void cropGrowsFasterAtNight(GameTestHelper h) {
         BlockPos soil = new BlockPos(1, 0, 1);
         BlockPos crop = soil.above();

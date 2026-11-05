@@ -631,7 +631,18 @@ def melatonia_textures():
     save(zzz, "mob_effect/sleepyness")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures]
+def misc_textures():
+    vig = Image.new("RGBA", (256, 256), T)
+    for y in range(256):
+        for x in range(256):
+            dx, dy = (x - 127.5) / 128, (y - 127.5) / 128
+            d = (dx * dx + dy * dy) ** 0.5
+            a = max(0.0, min(1.0, (d - 0.45) / 0.75)) ** 1.6
+            vig.putpixel((x, y), (8, 6, 16, int(a * 235)))
+    save(vig, "misc/dream_vignette")
+
+
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures]
 
 
 def contact_sheet(out_dir):

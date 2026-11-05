@@ -1,0 +1,10 @@
+openworld dream_crash
+wait 60
+loginv after_restart
+cmd reverie debug dreamstate @s
+screenshot dream_resumed
+cmd reverie wake
+wait 60
+loginv woke
+screenshot dream_woke
+stop
