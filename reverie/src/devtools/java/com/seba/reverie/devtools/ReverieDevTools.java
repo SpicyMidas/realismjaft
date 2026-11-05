@@ -62,6 +62,7 @@ public final class ReverieDevTools {
         }
         // Optional-mod tests reference those mods' classes, so they are only registered when present.
         if (com.seba.reverie.compat.Compat.create()) TestRegistrar.create(event);
+        if (com.seba.reverie.compat.Compat.farmersDelight()) TestRegistrar.farmersDelight(event);
     }
 
     public static void log(String message) {

@@ -1,0 +1,34 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:glass_bottle"
+  },
+  "cookingtime": 300,
+  "experience": 0.5,
+  "ingredients": [
+    {
+      "item": "reverie:melatonia_extract"
+    },
+    {
+      "item": "reverie:melatonia_extract"
+    },
+    {
+      "item": "reverie:melatonia_extract"
+    },
+    {
+      "tag": "c:dusts/glowstone"
+    }
+  ],
+  "recipe_book_tab": "drinks",
+  "result": {
+    "count": 1,
+    "id": "reverie:concentrated_melatonia_extract"
+  }
+}

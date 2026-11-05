@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "item": "farmersdelight:pie_crust"
+    },
+    "e": {
+      "tag": "c:eggs"
+    },
+    "p": {
+      "item": "reverie:melatonia_petals"
+    },
+    "x": {
+      "item": "minecraft:sugar"
+    }
+  },
+  "pattern": [
+    "ppp",
+    "xex",
+    " O "
+  ],
+  "result": {
+    "count": 1,
+    "id": "reverie:dreamy_pie"
+  }
+}

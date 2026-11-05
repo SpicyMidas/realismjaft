@@ -2,6 +2,26 @@
   "values": [
     "reverie:melatonia_cookie",
     "reverie:sleepy_stew",
-    "reverie:drowsy_tea"
+    "reverie:drowsy_tea",
+    {
+      "id": "reverie:lullaby_stew",
+      "required": false
+    },
+    {
+      "id": "reverie:dozing_dumplings",
+      "required": false
+    },
+    {
+      "id": "reverie:dreamy_pie_slice",
+      "required": false
+    },
+    {
+      "id": "reverie:night_bloom_roll",
+      "required": false
+    },
+    {
+      "id": "reverie:melatonia_syrup",
+      "required": false
+    }
   ]
 }

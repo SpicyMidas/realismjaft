@@ -39,6 +39,7 @@ final class ModelGen {
             withExistingParent("lucid_crystal_cluster", "item/generated").texture("layer0", modLoc("block/lucid_crystal_cluster"));
             withExistingParent("eyebloom", "item/generated").texture("layer0", modLoc("block/eyebloom_eye"));
             com.seba.reverie.compat.create.CreateDataGen.itemModels(this);
+            com.seba.reverie.compat.fd.FdDataGen.itemModels(this);
         }
     }
 
@@ -49,6 +50,7 @@ final class ModelGen {
 
         @Override
         protected void registerStatesAndModels() {
+            com.seba.reverie.compat.fd.FdDataGen.blockStates(this);
             getVariantBuilder(ModBlocks.MELATONIA.get()).forAllStates(state -> {
                 int age = state.getValue(MelatoniaCropBlock.AGE);
                 return net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder()

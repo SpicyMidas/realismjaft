@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "reverie:dozing_dumplings",
+      "required": false
+    },
+    {
+      "id": "reverie:night_bloom_roll",
+      "required": false
+    }
+  ]
+}

@@ -38,6 +38,7 @@ public final class ReverieDataGen {
         gen.addProvider(event.includeServer(), new TagGen.Biomes(out, lookup, files));
         gen.addProvider(event.includeServer(), new JsonGen(out, "compat", json -> {
             com.seba.reverie.compat.create.CreateDataGen.json(json);
+            com.seba.reverie.compat.fd.FdDataGen.json(json);
             CoreJson.json(json);
         }));
         BlockTagsProvider blockTags = new TagGen.Blocks(out, lookup, files);

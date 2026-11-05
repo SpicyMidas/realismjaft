@@ -867,6 +867,70 @@ def dreamland_textures():
     save(grid(door, {'o': (70, 40, 70), 'd': DWOOD[1], 'w': (250, 244, 236), 'h': (255, 255, 255)}), "item/lone_door")
 
 
+def fd_textures():
+    """Farmer's Delight dishes (only used when FD is installed)."""
+    P = BLOOM['P']
+    crust = {'o': (112, 66, 34), 'c': (204, 142, 74), 'C': (236, 184, 110)}
+    stew = [
+        "................", "................", "................", "................",
+        "................", "...oooooooooo...", "..owwqmwwPqwwo..", "..omPwwqwmwPwo..",
+        "..owwwPwmwqwwo..", "...bwwwwwwwwb...", "...obbbbbbbbo...", "....obbbbbbo....",
+        ".....obbbbo.....", "......oooo......", "................", "................"]
+    save(grid(stew, {'o': (72, 46, 26), 'b': (128, 84, 46), 'w': (84, 72, 162), 'q': (150, 140, 222),
+                     'm': (156, 96, 64), 'P': P}), "item/lullaby_stew")
+    dumplings = [
+        "................", "................", "................", "................",
+        "......oooo......", ".....oddddo.....", "....odpdpddo....", "....oddddddo....",
+        ".oooooddddooooo.", "oddddoooooodddo.", "odpdpddo.odpdpdo", "oddddddo.oddddo.",
+        ".oooooo...oooo..", "................", "................", "................"]
+    save(grid(dumplings, {'o': (150, 128, 150), 'd': (238, 228, 238), 'p': (186, 150, 222)}), "item/dozing_dumplings")
+    pie = [
+        "................", "................", "................", "................",
+        "................", "....oooooooo....", "..ooCcCcCcCcoo..", ".oCfPfcfPfcfPCo.",
+        ".ocfcfPfcfcfPco.", ".oCPfcfcfPfcfCo.", "..oCcCcCcCcCco..", "..occcccccccco..",
+        "...oooooooooo...", "................", "................", "................"]
+    pal = dict(crust, f=(170, 140, 230), P=P)
+    save(grid(pie, pal), "item/dreamy_pie")
+    slice_ = [
+        "................", "................", "................", "................",
+        "................", "................", "........oo......", "......ooCo......",
+        "....ooCffCo.....", "..ooCfPffCo.....", ".oCffffPfCo.....", ".occcccccco.....",
+        "..oooooooo......", "................", "................", "................"]
+    save(grid(slice_, pal), "item/dreamy_pie_slice")
+    roll = [
+        "................", "................", "................", "................",
+        "................", "....kkkk...kkkk.", "...kwwwwk.kwwwwk", "...kwPPwk.kwPPwk",
+        "...kwPPwk.kwPPwk", "...kwwwwk.kwwwwk", "....kkkk...kkkk.", "................",
+        "................", "................", "................", "................"]
+    save(grid(roll, {'k': (34, 52, 40), 'w': (240, 236, 226), 'P': P}), "item/night_bloom_roll")
+    syrup = [
+        "................", "................", "......cccc......", "......cCCc......",
+        ".......gg.......", ".......gg.......", "......g..g......", ".....gLLLLg.....",
+        "....gLlllllg....", "....gllllllg....", "....gllllldg....", "....gllldddg....",
+        "....gdlldddg....", ".....gddddg.....", "......gggg......", "................"]
+    img = grid(syrup, {'c': (140, 104, 64), 'C': (176, 140, 102), 'g': (190, 210, 232), 'L': (236, 186, 220),
+                       'l': (204, 120, 186), 'd': (140, 70, 140)})
+    img.putpixel((6, 8), rgba((255, 255, 255)))
+    save(img, "item/melatonia_syrup")
+
+    top = Image.new("RGBA", (16, 16), T)
+    for y in range(2, 14):
+        for x in range(2, 14):
+            edge = x in (2, 13) or y in (2, 13)
+            lattice = (x + y) % 4 == 0 or (x - y) % 4 == 0
+            c = crust['c'] if edge else (crust['C'] if lattice else (170, 140, 230))
+            top.putpixel((x, y), rgba(c))
+    for (x, y) in ((5, 4), (9, 6), (6, 9), (11, 10), (4, 11)):
+        top.putpixel((x, y), rgba(P))
+    save(top, "block/dreamy_pie_top")
+    inner = Image.new("RGBA", (16, 16), T)
+    for y in range(12, 16):
+        for x in range(2, 14):
+            c = crust['C'] if y == 12 else (crust['c'] if y == 15 else ((150, 116, 214) if (x + y) % 5 else P))
+            inner.putpixel((x, y), rgba(c))
+    save(inner, "block/dreamy_pie_inner")
+
+
 def shade_textures():
     """Shade silhouette: near-black with a faint violet grain (so it is not a hole in the world), and a pale
     corner used only by the pinprick-eye boxes."""
@@ -880,7 +944,7 @@ def shade_textures():
     save(img, "entity/shade")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures]
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures]
 
 
 def contact_sheet(out_dir):

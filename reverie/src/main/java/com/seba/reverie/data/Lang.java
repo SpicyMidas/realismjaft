@@ -51,6 +51,13 @@ final class Lang {
         s.add("reverie.command.cannot_dream", "%s cannot dream right now.", "%s non puo' sognare ora.");
         s.add("reverie.command.home", "Dream home of %s: %s %s %s", "Casa onirica di %s: %s %s %s");
         s.add(entity(com.seba.reverie.registry.ModEntities.SHADE), "Shade", "Ombra");
+        // Farmer's Delight dishes (keys are harmless without FD)
+        s.add("item.reverie.lullaby_stew", "Lullaby Stew", "Stufato Ninnananna");
+        s.add("item.reverie.dozing_dumplings", "Dozing Dumplings", "Ravioli Sonnecchiosi");
+        s.add("block.reverie.dreamy_pie", "Dreamy Pie", "Torta Sognante");
+        s.add("item.reverie.dreamy_pie_slice", "Slice of Dreamy Pie", "Fetta di Torta Sognante");
+        s.add("item.reverie.night_bloom_roll", "Night-Bloom Roll", "Involtino Fiordinotte");
+        s.add("item.reverie.melatonia_syrup", "Melatonia Syrup", "Sciroppo di Melatonia");
         s.add("reverie.command.shades_cleared", "Removed %s shades.", "Rimosse %s ombre.");
         s.add("reverie.command.shades_count", "%s shades are watching.", "%s ombre stanno guardando.");
         s.add("reverie.command.unknown_event", "Unknown event: %s", "Evento sconosciuto: %s");

@@ -57,6 +57,7 @@ final class RecipeGen extends RecipeProvider {
                 .unlockedBy("has_tuff", has(Items.TUFF))
                 .save(out);
         CreateDataGen.recipes(out);
+        com.seba.reverie.compat.fd.FdDataGen.recipes(out);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.MELATONIA_EXTRACT.get())
                 .requires(ModItems.MELATONIA_PETALS.get(), 3).requires(Items.GLASS_BOTTLE)

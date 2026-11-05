@@ -1,0 +1,25 @@
+newworld fdvis flat 5
+wait 40
+cmd gamerule doDaylightCycle false
+cmd time set 6000
+cmd tp @s 0.5 -60 0.5 180 25
+cmd fill -4 -60 -5 4 -57 -5 minecraft:spruce_planks
+cmd setblock -1 -60 -3 reverie:dreamy_pie[bites=0]
+cmd setblock 0 -60 -3 reverie:dreamy_pie[bites=1]
+cmd setblock 1 -60 -3 reverie:dreamy_pie[bites=2]
+cmd setblock 2 -60 -3 reverie:dreamy_pie[bites=3,facing=east]
+cmd setblock -3 -61 -3 farmersdelight:rich_soil_farmland[moisture=7]
+cmd setblock -3 -60 -3 reverie:melatonia[age=3]
+cmd setblock -2 -61 -3 farmersdelight:rich_soil_farmland[moisture=7]
+cmd setblock -2 -60 -3 reverie:melatonia[age=1]
+cmd summon minecraft:item_frame -3 -58 -4 {Facing:3b,Item:{id:"reverie:lullaby_stew",count:1}}
+cmd summon minecraft:item_frame -2 -58 -4 {Facing:3b,Item:{id:"reverie:dozing_dumplings",count:1}}
+cmd summon minecraft:item_frame -1 -58 -4 {Facing:3b,Item:{id:"reverie:dreamy_pie",count:1}}
+cmd summon minecraft:item_frame 0 -58 -4 {Facing:3b,Item:{id:"reverie:dreamy_pie_slice",count:1}}
+cmd summon minecraft:item_frame 1 -58 -4 {Facing:3b,Item:{id:"reverie:night_bloom_roll",count:1}}
+cmd summon minecraft:item_frame 2 -58 -4 {Facing:3b,Item:{id:"reverie:melatonia_syrup",count:1}}
+cmd give @s reverie:lullaby_stew
+hidegui on
+wait 60
+screenshot fd_visual
+stop

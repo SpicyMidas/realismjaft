@@ -11,4 +11,8 @@ final class TestRegistrar {
         event.register(com.seba.reverie.devtools.test.CreateGameTests.class);
         event.register(com.seba.reverie.devtools.test.RemoteGameTests.class);
     }
+
+    static void farmersDelight(RegisterGameTestsEvent event) {
+        event.register(com.seba.reverie.devtools.test.FdGameTests.class);
+    }
 }

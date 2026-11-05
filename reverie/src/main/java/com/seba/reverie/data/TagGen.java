@@ -74,6 +74,7 @@ final class TagGen {
             tag(ItemTags.PLANKS).add(ModBlocks.DREAMWOOD_PLANKS.get().asItem());
             tag(ItemTags.LEAVES).add(ModBlocks.DREAMWOOD_LEAVES.get().asItem());
             tag(net.neoforged.neoforge.common.Tags.Items.FOODS).add(ModItems.MELATONIA_COOKIE.get(), ModItems.SLEEPY_STEW.get(), ModItems.DROWSY_TEA.get());
+            com.seba.reverie.compat.fd.FdDataGen.itemTags(this::getOrCreateRawBuilder);
         }
     }
 

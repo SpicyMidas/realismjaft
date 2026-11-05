@@ -87,7 +87,9 @@ neoForge {
             data()
             programArguments.addAll '--mod', project.mod_id, '--all',
                     '--output', file('src/generated/resources/').getAbsolutePath(),
-                    '--existing', file('src/main/resources/').getAbsolutePath()
+                    '--existing', file('src/main/resources/').getAbsolutePath(),
+                    // Lets generated models use Farmer's Delight's pie templates and textures.
+                    '--existing-mod', 'farmersdelight'
         }
         configureEach {
             // Pass -Preverie.dev.script=<file> to drive a run with the devtools mod.
