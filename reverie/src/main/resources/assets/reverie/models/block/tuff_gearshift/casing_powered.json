@@ -1,0 +1,128 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "reverie:block/gearshift/casing_side_on",
+    "side": "reverie:block/gearshift/casing_side_on",
+    "end": "reverie:block/gearshift/casing_end",
+    "hole": "reverie:block/gearshift/hole",
+    "boot": "reverie:block/gearshift/boot",
+    "plate": "reverie:block/gearshift/gate_plate"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#end"
+        },
+        "south": {
+          "texture": "#end"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#plate"
+        },
+        "down": {
+          "texture": "#side"
+        }
+      },
+      "name": "casing"
+    },
+    {
+      "from": [
+        6,
+        6,
+        0.25
+      ],
+      "to": [
+        10,
+        10,
+        15.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hole"
+        },
+        "south": {
+          "texture": "#hole"
+        }
+      },
+      "name": "hole_back"
+    },
+    {
+      "from": [
+        6.5,
+        16,
+        6.5
+      ],
+      "to": [
+        9.5,
+        16.5,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            0.5
+          ]
+        },
+        "south": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            0.5
+          ]
+        },
+        "east": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            0.5
+          ]
+        },
+        "west": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            0.5
+          ]
+        },
+        "up": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            6.5,
+            9.5,
+            9.5
+          ]
+        }
+      },
+      "name": "boot"
+    }
+  ]
+}

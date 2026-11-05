@@ -14,7 +14,7 @@ hidegui on
 cmd tp @s 1.5 -59.0 0.2 0 35
 wait 60
 screenshot v3_sport
-cmd tp @s 3.0 -58.8 0.4 -30 40
+cmd tp @s 4.5 -59.2 0.0 0 20
 wait 20
 screenshot v3_pair
 cmd tp @s -1.6 -59.0 0.3 50 30

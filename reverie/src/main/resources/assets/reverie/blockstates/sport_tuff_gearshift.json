@@ -2,10 +2,20 @@
   "multipart": [
     {
       "when": {
-        "axis": "z"
+        "axis": "z",
+        "powered": "false"
       },
       "apply": {
         "model": "reverie:block/sport_tuff_gearshift/casing"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "reverie:block/sport_tuff_gearshift/casing_powered"
       }
     },
     {
@@ -82,28 +92,21 @@
     },
     {
       "when": {
-        "axis": "z",
+        "axis": "x",
         "powered": "false"
       },
       "apply": {
-        "model": "reverie:block/gearshift/dot_off"
+        "model": "reverie:block/sport_tuff_gearshift/casing",
+        "y": 90
       }
     },
     {
       "when": {
-        "axis": "z",
+        "axis": "x",
         "powered": "true"
       },
       "apply": {
-        "model": "reverie:block/gearshift/dot_on"
-      }
-    },
-    {
-      "when": {
-        "axis": "x"
-      },
-      "apply": {
-        "model": "reverie:block/sport_tuff_gearshift/casing",
+        "model": "reverie:block/sport_tuff_gearshift/casing_powered",
         "y": 90
       }
     },
@@ -189,30 +192,21 @@
     },
     {
       "when": {
-        "axis": "x",
+        "axis": "y",
         "powered": "false"
       },
       "apply": {
-        "model": "reverie:block/gearshift/dot_off",
-        "y": 90
+        "model": "reverie:block/sport_tuff_gearshift/casing",
+        "x": 90
       }
     },
     {
       "when": {
-        "axis": "x",
+        "axis": "y",
         "powered": "true"
       },
       "apply": {
-        "model": "reverie:block/gearshift/dot_on",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "axis": "y"
-      },
-      "apply": {
-        "model": "reverie:block/sport_tuff_gearshift/casing",
+        "model": "reverie:block/sport_tuff_gearshift/casing_powered",
         "x": 90
       }
     },
@@ -293,26 +287,6 @@
       },
       "apply": {
         "model": "reverie:block/gearshift/window_r_vertical",
-        "x": 90
-      }
-    },
-    {
-      "when": {
-        "axis": "y",
-        "powered": "false"
-      },
-      "apply": {
-        "model": "reverie:block/gearshift/dot_off",
-        "x": 90
-      }
-    },
-    {
-      "when": {
-        "axis": "y",
-        "powered": "true"
-      },
-      "apply": {
-        "model": "reverie:block/gearshift/dot_on",
         "x": 90
       }
     }

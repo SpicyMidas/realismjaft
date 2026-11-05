@@ -207,109 +207,155 @@ CASING_GREEN = [(60, 70, 60), (74, 86, 72), (88, 101, 84), (100, 114, 95), (114,
 FLECK = (168, 174, 156)
 
 
-def alloy_panel(seed, w=16, h=16):
-    """Dark tuff panel with a faint grain (the casing's inner surface)."""
-    img = ramp_fill(w, h, [ALLOY['out'], ALLOY['dark'], ALLOY['dmid'], ALLOY['olive']], seed, cell=4, jitter=0.2)
-    speckle(img, [ALLOY['blue']], 6 * (w * h) // 256, seed + 1)
+# Create's casing frame (andesite funnel frame / gearshift / gearbox share it), pixel for pixel, recoloured from
+# andesite grey into the Tuff Alloy palette. Letters: the same shades Create uses, '.' = the open centre.
+CREATE_FRAME = [
+    "ABBBCBCBBBCCBBBD", "BEFGFHFGHEEFHHEA", "BF............IA", "BG............EA",
+    "BF............HA", "CH............EJ", "BF............IA", "BG............EA",
+    "CH............EA", "BF............IA", "CF............EJ", "BH............EA",
+    "BH............EA", "BE............IA", "BIEEEEIEEIEEEIIA", "DAAKAAAAKAAAAAAL"]
+FRAME_COLORS = {'A': (78, 81, 71), 'B': (93, 95, 86), 'C': (108, 112, 112), 'D': (66, 69, 60), 'E': (133, 134, 124),
+                'F': (166, 168, 156), 'G': (187, 189, 177), 'H': (148, 148, 139), 'I': (115, 117, 115), 'J': (85, 87, 76),
+                'K': (70, 72, 63), 'L': (43, 45, 39)}
+# Create's red lamp strips (columns 2-3 and 12-13, rows 2-13), off and on, exactly.
+LAMP_OFF = [("2c0300", "2c0300"), ("400101", "2c0300"), ("470102", "400101"), ("580101", "4b0101"), ("4b0101", "580101"),
+            ("580101", "470102"), ("580101", "580101"), ("580101", "400101"), ("4b0101", "580101"), ("400101", "470102"),
+            ("2c0200", "400101"), ("2c0300", "2c0300")]
+LAMP_ON = [("970000", "7d0000"), ("a50000", "970000"), ("cd0000", "ae0000"), ("ae0000", "cd0000"), ("cd0000", "a50000"),
+           ("cd0000", "cd0000"), ("cd0000", "970000"), ("ae0000", "cd0000"), ("cd0000", "a50000"), ("ae0000", "cd0000"),
+           ("970000", "ae0000"), ("7d0000", "970000")]
+# The ring of Create's gearbox shaft hole (rows/cols 4..11); 'b' (the 4x4 core) is left open for the shaft.
+GEARBOX_RING = ["..SSTU..", ".SWXYYXW", "SWXbbbbX", "TXbbbbbY", "TYbbbbbY", "SXbbbbbX", ".SWXYYXW", "..SeTS.."]
+RING_COLORS = {'S': (51, 49, 49), 'T': (66, 65, 65), 'U': (80, 80, 80), 'W': (58, 56, 56), 'X': (26, 25, 25),
+               'Y': (3, 3, 3), 'e': (61, 60, 60)}
+
+
+def hexc(h):
+    return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16))
+
+
+def tuff_art():
+    return Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "art", "tuff.png")).convert("RGBA")
+
+
+def create_casing(interior):
+    """Create's frame around an interior image (16x16, only its centre is used)."""
+    img = interior.copy()
+    for y, row in enumerate(CREATE_FRAME):
+        for x, ch in enumerate(row):
+            if ch != '.':
+                img.putpixel((x, y), rgba(FRAME_COLORS[ch]))
     return img
 
 
-def alloy_frame(img, k=1):
-    """Create-style casing border (2 px at 16 px scale): pale lit upper-left, dark lower-right, dark outline."""
-    n = 16 * k
-    for i in range(n):
-        for j in range(2 * k):
-            lit = ALLOY['hi'] if j < k else ALLOY['light']
-            img.putpixel((i, j), rgba(lit))          # top
-            img.putpixel((j, i), rgba(lit))          # left
-            img.putpixel((i, n - 1 - j), rgba(ALLOY['blue'] if j >= k else ALLOY['dark']))   # bottom
-            img.putpixel((n - 1 - j, i), rgba(ALLOY['blue'] if j >= k else ALLOY['dark']))   # right
-    for i in range(n):
-        img.putpixel((i, 0), rgba(ALLOY['mid']))
-        img.putpixel((0, i), rgba(ALLOY['mid']))
-        img.putpixel((i, n - 1), rgba(ALLOY['out']))
-        img.putpixel((n - 1, i), rgba(ALLOY['out']))
-    # inner shadow line just inside the frame
-    for i in range(2 * k, n - 2 * k):
-        img.putpixel((i, 2 * k), rgba(ALLOY['out']))
-        img.putpixel((2 * k, i), rgba(ALLOY['out']))
-    # rivets at the corners
-    for (x, y) in ((1, 1), (n - 2 * k, 1), (1, n - 2 * k), (n - 2 * k, n - 2 * k)):
-        rect(img, x, y, x + k, y + k, ALLOY['hi'])
+def tuff_panel(seam=True):
+    """Tuff with darker seams at x=4 and x=11 (where Create's boards meet the lamps)."""
+    img = tuff_art()
+    if seam:
+        for y in range(2, 14):
+            for x in (4, 11):
+                r, g, b, a = img.getpixel((x, y))
+                img.putpixel((x, y), (int(r * 0.7), int(g * 0.7), int(b * 0.7), 255))
     return img
 
 
 def gearshift_textures():
     for sport in (False, True):
-        side = alloy_frame(alloy_panel(101 + sport))
-        if sport:
-            # Sport: blue-grey chevrons across the panel.
-            for x in range(3, 13):
-                for y in range(3, 13):
-                    if (x + y) % 5 == 0:
-                        side.putpixel((x, y), rgba(ALLOY['blue_l']))
-        save(side, "block/gearshift/casing_side" + ("_sport" if sport else ""))
+        for on in (False, True):
+            img = create_casing(tuff_panel())
+            lamp = LAMP_ON if on else LAMP_OFF
+            for i, (a, b) in enumerate(lamp):
+                y = 2 + i
+                img.putpixel((2, y), rgba(hexc(a)))
+                img.putpixel((3, y), rgba(hexc(b)))
+                img.putpixel((12, y), rgba(hexc(a)))
+                img.putpixel((13, y), rgba(hexc(b)))
+            if sport:
+                # The sport's red racing stripe across the panel, between the lamps.
+                for x in range(4, 12):
+                    img.putpixel((x, 11), rgba((205, 0, 0) if x % 3 else (240, 40, 30)))
+                    img.putpixel((x, 12), rgba((125, 0, 0)))
+            save(img, "block/gearshift/casing_side" + ("_sport" if sport else "") + ("_on" if on else ""))
 
-    end = alloy_frame(alloy_panel(202))
-    rect(end, 5, 5, 11, 11, T)  # the shaft hole (cutout)
-    for i in range(5, 11):
-        end.putpixel((i, 4), rgba(ALLOY['light']))
-        end.putpixel((4, i), rgba(ALLOY['light']))
-        end.putpixel((i, 11), rgba(ALLOY['out']))
-        end.putpixel((11, i), rgba(ALLOY['out']))
+    # Shaft faces: Create's gearbox face, with tuff instead of planks and the hole open for the shaft.
+    end = create_casing(tuff_panel(seam=False))
+    for dy, row in enumerate(GEARBOX_RING):
+        for dx, ch in enumerate(row):
+            x, y = 4 + dx, 4 + dy
+            if ch == 'b':
+                # only the shaft's own 4x4 is open (the plate behind covers exactly that); the rest of the core is black
+                end.putpixel((x, y), T if 6 <= x <= 9 and 6 <= y <= 9 else rgba((3, 3, 3)))
+            elif ch != '.':
+                end.putpixel((x, y), rgba(RING_COLORS[ch]))
     save(end, "block/gearshift/casing_end")
-    save(Image.new("RGBA", (16, 16), rgba((14, 15, 13))), "block/gearshift/hole")
+    save(Image.new("RGBA", (16, 16), rgba((3, 3, 3))), "block/gearshift/hole")
 
-    bottom = alloy_frame(alloy_panel(303))
-    for z in (5, 8, 11):
-        for x in range(4, 12):
-            bottom.putpixel((x, z), rgba((16, 17, 15)))
-            bottom.putpixel((x, z + 1), rgba(ALLOY['blue']))
-    save(bottom, "block/gearshift/casing_bottom")
+    # Top: the gate plate cut into the tuff. Must match TuffGearshiftRenderer (slots where the rod passes the top).
+    for sport in (False, True):
+        top = create_casing(tuff_panel(seam=False))
+        groove, lip = (24, 25, 22), (160, 162, 151)
+        cols = [3.5, 6.5, 9.5, 12.5] if sport else [4, 8, 12]   # column centres along z (v)
 
-    rod = Image.new("RGBA", (16, 16))
+        cells = set()
+
+        def cut(x0, x1, z0, z1):
+            for x in range(x0, x1):
+                for z in range(z0, z1):
+                    cells.add((x, z))
+
+        def span(c):  # texels of a groove centred at c: two wide on whole pixels, one wide on halves
+            return (int(c) - 1, int(c) + 1) if c == int(c) else (int(c), int(c) + 1)
+
+        r0, r1 = span(8)
+        cut(r0, r1, span(cols[0])[0], span(cols[-1])[1])          # neutral rail along z
+        for i, c in enumerate(cols):
+            z0, z1 = span(c)
+            last = i == len(cols) - 1
+            cut(4 - 1, 8 + 1 if last else 12 + 1, z0, z1)        # rows reach x = 4 (odd gears, R) and x = 12 (even)
+        for (x, z) in cells:
+            top.putpixel((x, z), rgba(groove))
+        for (x, z) in cells:   # a lit lip on the lower/right edge of every groove
+            for (lx, lz) in ((x + 1, z), (x, z + 1)):
+                if (lx, lz) not in cells:
+                    top.putpixel((lx, lz), rgba(lip))
+        save(top, "block/gearshift/gate_plate" + ("_sport" if sport else ""))
+
+    # The stick: a plain rod, a small collar and a knob, one texel per model pixel.
+    rod = Image.new("RGBA", (16, 16), rgba(ALLOY['light']))
     for y in range(16):
-        for x in range(16):
-            rod.putpixel((x, y), rgba([ALLOY['blue'], ALLOY['light'], ALLOY['hi'], ALLOY['light'], ALLOY['mid'], ALLOY['blue'],
-                                       ALLOY['dmid'], ALLOY['blue']][x % 8]))
+        rod.putpixel((7, y), rgba(ALLOY['hi']))
+        rod.putpixel((8, y), rgba(ALLOY['mid']))
     save(rod, "block/gearshift/rod")
-
-    # Regular knob: dark tuff with a pale alloy cap ring; sport: pale alloy ball with a blue-grey band.
-    knob = ramp_fill(16, 16, [ALLOY['out'], ALLOY['dark'], ALLOY['dmid']], 808, cell=4, jitter=0.2)
+    knob = Image.new("RGBA", (16, 16), rgba((52, 54, 47)))
     for x in range(16):
-        knob.putpixel((x, 0), rgba(ALLOY['light']))
-        knob.putpixel((x, 1), rgba(ALLOY['mid']))
+        knob.putpixel((x, 0), rgba((78, 81, 71)))         # top row of the sides: a lighter rim
+    rect(knob, 6, 6, 10, 10, (66, 69, 60))                 # up face
+    knob.putpixel((7, 7), rgba((93, 95, 86)))
     save(knob, "block/gearshift/knob")
-    ball = Image.new("RGBA", (16, 16))
-    for y in range(16):
-        for x in range(16):
-            v = ((x - 5) ** 2 + (y - 5) ** 2) ** 0.5 / 14
-            ball.putpixel((x, y), rgba(mix(ALLOY['hi'], ALLOY['mid'], min(1, v))))
+    sport_knob = Image.new("RGBA", (16, 16), rgba(ALLOY['light']))
     for x in range(16):
-        ball.putpixel((x, 7), rgba(ALLOY['blue']))
-        ball.putpixel((x, 8), rgba(ALLOY['dark']))
-    save(ball, "block/gearshift/knob_sport")
+        sport_knob.putpixel((x, 0), rgba(ALLOY['hi']))
+        sport_knob.putpixel((x, 1), rgba((205, 0, 0)))     # the red band
+        sport_knob.putpixel((x, 2), rgba(ALLOY['mid']))
+    rect(sport_knob, 6, 6, 10, 10, ALLOY['hi'])
+    sport_knob.putpixel((8, 8), rgba((205, 0, 0)))
+    save(sport_knob, "block/gearshift/knob_sport")
+    boot = Image.new("RGBA", (16, 16), rgba((43, 45, 39)))
+    rect(boot, 6, 6, 10, 10, (30, 31, 27))
+    save(boot, "block/gearshift/boot")
 
     frame = noise_fill(16, 16, [ALLOY['out'], (36, 38, 33), ALLOY['dark']], 909)
     save(frame, "block/gearshift/window_frame")
-    # Indicator strips, Create style: dark red off, bright red on.
-    strip_on = Image.new("RGBA", (16, 16), rgba((255, 64, 44)))
-    rect(strip_on, 0, 4, 16, 12, (255, 150, 120))
-    save(strip_on, "block/gearshift/dot_on")
-    save(Image.new("RGBA", (16, 16), rgba((92, 22, 18))), "block/gearshift/dot_off")
-
     # Gear window glyphs, 32x32 so the digit stays crisp on a 4x4 px window.
     for key, ch in (("n", 'N'), ("r", 'R'), ("1", '1'), ("2", '2'), ("3", '3'), ("4", '4'), ("5", '5'), ("6", '6')):
         color = (255, 196, 64) if ch == 'N' else (255, 72, 52) if ch == 'R' else (96, 255, 120)
         g = Image.new("RGBA", (32, 32), rgba((12, 13, 11)))
-        bevel(g, 0, 0, 32, 32, ALLOY['dark'], (4, 4, 4))
+        bevel(g, 0, 0, 32, 32, FRAME_COLORS['C'], (4, 4, 4))
         dim = mix(color, (12, 13, 11), 0.75)
-        draw_glyph(g, FONT5x7, ch, 9, 5, dim, 3)   # soft halo
+        draw_glyph(g, FONT5x7, ch, 9, 5, dim, 3)
         draw_glyph(g, FONT5x7, ch, 8, 5, color, 3)
         save(g, "block/gearshift/gear_" + key)
 
-    gate_plate(sport=False)
-    gate_plate(sport=True)
     gearshift_gui()
 
 
@@ -324,45 +370,16 @@ def brushed(w, h, seed, base=(148, 148, 139)):
     return img
 
 
-# Must match TuffGearshiftRenderer: pivot 4 px up, knob centre height, knob travel per column / row (pixels).
-GATE = {False: {"cols": 3, "col_px": 6.0, "row_px": 6.0, "knob_h": 19.0},
-        True: {"cols": 4, "col_px": 5.0, "row_px": 6.0, "knob_h": 19.75}}
-
-
-def gate_plate(sport):
-    """The whole top face at 32x32: casing frame plus the H-gate slots exactly where the rod passes the top."""
-    k = 2
-    img = brushed(32, 32, 1111 + sport)
-    alloy_frame(img, k)
-    g = GATE[sport]
-    f = (16 - 4) / g["knob_h"]                      # rod displacement at the top face / at the knob
-    rest = (g["cols"] - 1) / 2
-    col_z = [8 + (c - rest) * g["col_px"] * f for c in range(g["cols"])]   # columns run along z (v)
-    row_x = g["row_px"] * f                          # rows are +-row_x along x (u)
-    half = 1.25 if not sport else 1.0                # groove half width (px), the rod is 2 px
-
-    def groove(x0, z0, x1, z1):
-        u0, v0 = int(round((min(x0, x1) - half) * k)), int(round((min(z0, z1) - half) * k))
-        u1, v1 = int(round((max(x0, x1) + half) * k)), int(round((max(z0, z1) + half) * k))
-        rect(img, u0, v0, u1, v1, (18, 19, 17))
-        for u in range(u0, u1):
-            if v1 < 32:
-                img.putpixel((u, v1), rgba(ALLOY['hi']))
-        for v in range(v0, v1):
-            if u1 < 32:
-                img.putpixel((u1, v), rgba(ALLOY['light']))
-
-    groove(8, col_z[0], 8, col_z[-1])                # the neutral rail
-    for c in range(g["cols"]):
-        last = c == g["cols"] - 1
-        groove(8 - row_x, col_z[c], 8 if last else 8 + row_x, col_z[c])   # R (last column) has only the top slot
-    save(img, "block/gearshift/gate_plate" + ("_sport" if sport else ""))
-
-
 def gearshift_gui():
     img = Image.new("RGBA", (256, 256), T)
-    plate = brushed(144, 100, 2222, (140, 141, 132))
-    bevel(plate, 0, 0, 144, 100, ALLOY['hi'], ALLOY['dark'])
+    # The plate is the block's top: tuff inside Create's frame colours.
+    tuff = tuff_art()
+    plate = Image.new("RGBA", (144, 100))
+    for y in range(100):
+        for x in range(144):
+            plate.putpixel((x, y), tuff.getpixel((x % 16, y % 16)))
+    bevel(plate, 0, 0, 144, 100, FRAME_COLORS['G'], FRAME_COLORS['L'])
+    bevel(plate, 1, 1, 143, 99, FRAME_COLORS['F'], FRAME_COLORS['A'])
     for (bx, by) in ((4, 4), (136, 4), (4, 92), (136, 92)):
         rect(plate, bx, by, bx + 4, by + 4, ALLOY['dark'])
         rect(plate, bx, by, bx + 3, by + 3, ALLOY['light'])
@@ -380,12 +397,13 @@ def gearshift_gui():
     # regular knob (0,104): dark tuff with a pale alloy ring
     disc(8, 112, 7.5, lambda x, y, d: ALLOY['light'] if d > 6.3 else mix(ALLOY['dmid'], ALLOY['out'],
                                                                          min(1, ((x - 5) ** 2 + (y - 108) ** 2) ** 0.5 / 10)))
-    # sport knob (16,104): pale alloy ball with a blue-grey band
-    disc(24, 112, 7.5, lambda x, y, d: mix(ALLOY['hi'], ALLOY['mid'], min(1, ((x - 21) ** 2 + (y - 108) ** 2) ** 0.5 / 12)))
+    # sport knob (16,104): the same knob in pale alloy with the red band
+    disc(24, 112, 7.5, lambda x, y, d: ALLOY['hi'] if d > 6.3 else mix(ALLOY['light'], ALLOY['mid'],
+                                                                      min(1, ((x - 21) ** 2 + (y - 108) ** 2) ** 0.5 / 12)))
     for x in range(17, 32):
         for y in (111, 112):
-            if ((x + 0.5 - 24) ** 2 + (y + 0.5 - 112) ** 2) ** 0.5 <= 7.5:
-                img.putpixel((x, y), rgba(ALLOY['blue'] if y == 111 else ALLOY['dark']))
+            if ((x + 0.5 - 24) ** 2 + (y + 0.5 - 112) ** 2) ** 0.5 <= 6.3:
+                img.putpixel((x, y), rgba((205, 0, 0) if y == 111 else (125, 0, 0)))
     # slot ring (32,104) 24x24: the dark collar the stick comes out of
     disc(44, 116, 11.5, lambda x, y, d: None if d < 7.5 else mix(ALLOY['dmid'], ALLOY['out'], (d - 7.5) / 4))
     # lamps (56,104) off and (68,104) on, 12x12

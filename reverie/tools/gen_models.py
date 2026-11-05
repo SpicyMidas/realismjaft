@@ -85,23 +85,21 @@ T = "reverie:block/gearshift/"
 
 
 def casing_elements(sport):
-    """A plain Create-style cube: shaft along z, gate plate on top. The end faces have a shaft hole (cutout) with a
-    dark plate 1 px inside, so Create's spinning shaft never z-fights the face."""
-    e = [box([0, 0, 0], [16, 16, 16], {"north": "end", "south": "end", "east": "side", "west": "side",
-                                        "up": "plate", "down": "bottom"}, name="casing")]
-    e.append(box([5, 5, 1], [11, 11, 15], {"north": "hole", "south": "hole"}, faces=("north", "south"), name="hole_back"))
-    return e
+    """Create's gearshift shape: a full cube; the shaft faces are Create's gearbox face with the hole left open (a dark
+    plate 1 px inside keeps the hole from showing the block's insides), the gate plate on top, a little boot ring
+    where the stick comes out."""
+    return [
+        box([0, 0, 0], [16, 16, 16], {"north": "end", "south": "end", "east": "side", "west": "side",
+                                      "up": "plate", "down": "side"}, name="casing"),
+        box([6, 6, 0.25], [10, 10, 15.75], {"north": "hole", "south": "hole"}, faces=("north", "south"), name="hole_back"),
+        box([6.5, 16, 6.5], [9.5, 16.5, 9.5], "boot", faces=("north", "south", "east", "west", "up"), name="boot"),
+    ]
 
 
-def casing_textures(sport):
-    return {
-        "particle": T + ("casing_side_sport" if sport else "casing_side"),
-        "side": T + ("casing_side_sport" if sport else "casing_side"),
-        "end": T + "casing_end",
-        "bottom": T + "casing_bottom",
-        "hole": T + "hole",
-        "plate": T + ("gate_plate_sport" if sport else "gate_plate"),
-    }
+def casing_textures(sport, powered=False):
+    side = T + "casing_side" + ("_sport" if sport else "") + ("_on" if powered else "")
+    return {"particle": side, "side": side, "end": T + "casing_end", "hole": T + "hole", "boot": T + "boot",
+            "plate": T + ("gate_plate_sport" if sport else "gate_plate")}
 
 
 def window_elements(vertical):
@@ -116,27 +114,15 @@ def window_elements(vertical):
     ]
 
 
-def dot_elements(on):
-    # Create-style indicator strips beside the window (lit while redstone holds the gearshift in R).
-    e = []
-    for x0, x1, face in ((16.01, 16.02, "east"), (-0.02, -0.01, "west")):
-        for z0, z1 in ((3, 4), (12, 13)):
-            e.append(box([x0, 3, z0], [x1, 13, z1], {face: "dot"}, faces=(face,), emissive=on, shade=not on, name="strip"))
-    return e
-
-
 def stick_elements(sport):
-    """A plain rod and knob. The rod starts at the pivot inside the block (4 px up) and comes out through the gate."""
+    """Small and plain, the same shape for both: a thin rod from the pivot (4 px up, inside the block), a collar and a
+    3 px knob. Textures map one texel per pixel. Must match TuffGearshiftRenderer (knob centre at 21)."""
     side = ("north", "south", "east", "west")
-    e = [box([7, 4, 7], [9, 22, 9], "rod", faces=side, name="rod")]
-    full = {f: [0, 0, 16, 16] for f in FACES}
-    if not sport:
-        e.append(box([6, 21, 6], [10, 25, 10], "knob", uv=full, name="knob"))
-    else:
-        e.append(box([6.5, 21.5, 5.5], [9.5, 25.5, 10.5], "knob", uv=full, name="knob"))
-        e.append(box([5.5, 21.5, 6.5], [10.5, 25.5, 9.5], "knob", uv=full, name="knob"))
-        e.append(box([6.5, 21, 6.5], [9.5, 26, 9.5], "knob", uv=full, name="knob"))
-    return e
+    return [
+        box([7.5, 4, 7.5], [8.5, 19.5, 8.5], "rod", faces=side, name="rod"),
+        box([7, 19, 7], [9, 19.5, 9], "rod", name="collar"),
+        box([6.5, 19.5, 6.5], [9.5, 22.5, 9.5], "knob", name="knob"),
+    ]
 
 
 def stick_textures(sport):
@@ -167,33 +153,30 @@ def gearshift():
         for vertical in (False, True):
             write(f"models/block/gearshift/window_{key}{'_vertical' if vertical else ''}.json",
                   model({"glyph": T + "gear_" + key, "particle": T + "window_frame"}, window_elements(vertical)))
-    for on in (False, True):
-        write(f"models/block/gearshift/dot_{'on' if on else 'off'}.json",
-              model({"dot": T + ("dot_on" if on else "dot_off"), "particle": T + "window_frame"}, dot_elements(on)))
 
     for sport in (False, True):
         name = "sport_tuff_gearshift" if sport else "tuff_gearshift"
         write(f"models/block/{name}/casing.json", model(casing_textures(sport), casing_elements(sport)))
+        write(f"models/block/{name}/casing_powered.json", model(casing_textures(sport, True), casing_elements(sport)))
         write(f"models/block/{name}/stick.json", model(stick_textures(sport), stick_elements(sport)))
 
         tex = dict(casing_textures(sport))
         tex.update(stick_textures(sport))
-        tex.update({"particle": T + ("casing_side_sport" if sport else "casing_side"), "glyph": T + "gear_n", "dot": T + "dot_off",
+        tex.update({"particle": T + ("casing_side_sport" if sport else "casing_side"), "glyph": T + "gear_n",
                     "axis": "create:block/axis", "axis_top": "create:block/axis_top"})
-        item_elements = casing_elements(sport) + window_elements(False) + dot_elements(False) + stick_elements(sport) + shaft_elements()
+        item_elements = casing_elements(sport) + window_elements(False) + stick_elements(sport) + shaft_elements()
         write(f"models/item/{name}.json", model(tex, item_elements, display=ITEM_DISPLAY))
 
         parts = []
         rots = {"z": {}, "x": {"y": 90}, "y": {"x": 90}}
         for axis, rot in rots.items():
-            parts.append({"when": {"axis": axis}, "apply": dict({"model": f"reverie:block/{name}/casing"}, **rot)})
+            for powered in (False, True):
+                casing = f"reverie:block/{name}/casing" + ("_powered" if powered else "")
+                parts.append({"when": {"axis": axis, "powered": str(powered).lower()}, "apply": dict({"model": casing}, **rot)})
             for g, key in gears.items():
                 suffix = "_vertical" if axis == "y" else ""
                 parts.append({"when": {"axis": axis, "gear": str(g)},
                               "apply": dict({"model": f"reverie:block/gearshift/window_{key}{suffix}"}, **rot)})
-            for on in (False, True):
-                parts.append({"when": {"axis": axis, "powered": str(on).lower()},
-                              "apply": dict({"model": f"reverie:block/gearshift/dot_{'on' if on else 'off'}"}, **rot)})
         write(f"blockstates/{name}.json", {"multipart": parts})
 
 

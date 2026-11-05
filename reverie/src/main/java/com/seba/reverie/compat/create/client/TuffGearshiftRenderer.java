@@ -51,10 +51,13 @@ public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearsh
     static final float PIVOT_X = 8f;
     static final float PIVOT_Y = 4f;
     static final float PIVOT_Z = 8f;
-    /** Knob travel at the knob (pixels): across to a row, and between columns along the rail. */
-    static final float ROW_OFFSET = 6f;
-    static final float COLUMN_REGULAR = 6f;
-    static final float COLUMN_SPORT = 5f;
+    /** Knob centre height above the pivot (knob at 21 px), and the rod's travel where it passes the top face. */
+    static final float KNOB_HEIGHT = 17f;
+    private static final float TOP_TO_KNOB = KNOB_HEIGHT / (16f - PIVOT_Y);
+    /** Knob travel (pixels) so the rod meets the plate slots: rows 4 px off the rail, columns 4 px (sport 3 px) apart. */
+    static final float ROW_OFFSET = 4f * TOP_TO_KNOB;
+    static final float COLUMN_REGULAR = 4f * TOP_TO_KNOB;
+    static final float COLUMN_SPORT = 3f * TOP_TO_KNOB;
 
     private final RandomSource random = RandomSource.create();
 
@@ -109,7 +112,7 @@ public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearsh
         float time = AnimationTickHolder.getRenderTime(be.getLevel());
 
         boolean sport = layout == GateLayout.SPORT;
-        float knobHeight = sport ? 19.75f : 19f;
+        float knobHeight = KNOB_HEIGHT;
         float dz = (gx - layout.restX) * (sport ? COLUMN_SPORT : COLUMN_REGULAR);
         float dx = gy * ROW_OFFSET;
         float tiltX = (float) Math.toDegrees(Math.atan2(dz, knobHeight));

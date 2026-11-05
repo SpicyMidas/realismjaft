@@ -5,13 +5,12 @@
     "particle": "reverie:block/gearshift/casing_side",
     "side": "reverie:block/gearshift/casing_side",
     "end": "reverie:block/gearshift/casing_end",
-    "bottom": "reverie:block/gearshift/casing_bottom",
     "hole": "reverie:block/gearshift/hole",
+    "boot": "reverie:block/gearshift/boot",
     "plate": "reverie:block/gearshift/gate_plate",
     "rod": "reverie:block/gearshift/rod",
     "knob": "reverie:block/gearshift/knob",
     "glyph": "reverie:block/gearshift/gear_n",
-    "dot": "reverie:block/gearshift/dot_off",
     "axis": "create:block/axis",
     "axis_top": "create:block/axis_top"
   },
@@ -44,21 +43,21 @@
           "texture": "#plate"
         },
         "down": {
-          "texture": "#bottom"
+          "texture": "#side"
         }
       },
       "name": "casing"
     },
     {
       "from": [
-        5,
-        5,
-        1
+        6,
+        6,
+        0.25
       ],
       "to": [
-        11,
-        11,
-        15
+        10,
+        10,
+        15.75
       ],
       "faces": {
         "north": {
@@ -72,6 +71,66 @@
     },
     {
       "from": [
+        6.5,
+        16,
+        6.5
+      ],
+      "to": [
+        9.5,
+        16.5,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            0.5
+          ]
+        },
+        "south": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            0.5
+          ]
+        },
+        "east": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            0.5
+          ]
+        },
+        "west": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            0.5
+          ]
+        },
+        "up": {
+          "texture": "#boot",
+          "uv": [
+            6.5,
+            6.5,
+            9.5,
+            9.5
+          ]
+        }
+      },
+      "name": "boot"
+    },
+    {
+      "from": [
         16.01,
         6,
         6
@@ -130,109 +189,64 @@
     },
     {
       "from": [
-        16.01,
-        3,
-        3
+        7.5,
+        4,
+        7.5
       ],
       "to": [
-        16.02,
-        13,
-        4
+        8.5,
+        19.5,
+        8.5
       ],
       "faces": {
+        "north": {
+          "texture": "#rod",
+          "uv": [
+            7.5,
+            0,
+            8.5,
+            15.5
+          ]
+        },
+        "south": {
+          "texture": "#rod",
+          "uv": [
+            7.5,
+            0,
+            8.5,
+            15.5
+          ]
+        },
         "east": {
-          "texture": "#dot",
+          "texture": "#rod",
           "uv": [
-            12,
-            3,
-            13,
-            13
+            7.5,
+            0,
+            8.5,
+            15.5
           ]
-        }
-      },
-      "name": "strip"
-    },
-    {
-      "from": [
-        16.01,
-        3,
-        12
-      ],
-      "to": [
-        16.02,
-        13,
-        13
-      ],
-      "faces": {
-        "east": {
-          "texture": "#dot",
-          "uv": [
-            3,
-            3,
-            4,
-            13
-          ]
-        }
-      },
-      "name": "strip"
-    },
-    {
-      "from": [
-        -0.02,
-        3,
-        3
-      ],
-      "to": [
-        -0.01,
-        13,
-        4
-      ],
-      "faces": {
+        },
         "west": {
-          "texture": "#dot",
+          "texture": "#rod",
           "uv": [
-            3,
-            3,
-            4,
-            13
+            7.5,
+            0,
+            8.5,
+            15.5
           ]
         }
       },
-      "name": "strip"
-    },
-    {
-      "from": [
-        -0.02,
-        3,
-        12
-      ],
-      "to": [
-        -0.01,
-        13,
-        13
-      ],
-      "faces": {
-        "west": {
-          "texture": "#dot",
-          "uv": [
-            12,
-            3,
-            13,
-            13
-          ]
-        }
-      },
-      "name": "strip"
+      "name": "rod"
     },
     {
       "from": [
         7,
-        4,
+        19,
         7
       ],
       "to": [
         9,
-        22,
+        19.5,
         9
       ],
       "faces": {
@@ -242,7 +256,7 @@
             7,
             0,
             9,
-            16
+            0.5
           ]
         },
         "south": {
@@ -251,7 +265,7 @@
             7,
             0,
             9,
-            16
+            0.5
           ]
         },
         "east": {
@@ -260,7 +274,7 @@
             7,
             0,
             9,
-            16
+            0.5
           ]
         },
         "west": {
@@ -269,76 +283,94 @@
             7,
             0,
             9,
-            16
+            0.5
+          ]
+        },
+        "up": {
+          "texture": "#rod",
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ]
+        },
+        "down": {
+          "texture": "#rod",
+          "uv": [
+            7,
+            7,
+            9,
+            9
           ]
         }
       },
-      "name": "rod"
+      "name": "collar"
     },
     {
       "from": [
-        6,
-        21,
-        6
+        6.5,
+        19.5,
+        6.5
       ],
       "to": [
-        10,
-        25,
-        10
+        9.5,
+        22.5,
+        9.5
       ],
       "faces": {
         "north": {
           "texture": "#knob",
           "uv": [
+            6.5,
             0,
-            0,
-            16,
-            16
+            9.5,
+            3.0
           ]
         },
         "south": {
           "texture": "#knob",
           "uv": [
+            6.5,
             0,
-            0,
-            16,
-            16
+            9.5,
+            3.0
           ]
         },
         "east": {
           "texture": "#knob",
           "uv": [
+            6.5,
             0,
-            0,
-            16,
-            16
+            9.5,
+            3.0
           ]
         },
         "west": {
           "texture": "#knob",
           "uv": [
+            6.5,
             0,
-            0,
-            16,
-            16
+            9.5,
+            3.0
           ]
         },
         "up": {
           "texture": "#knob",
           "uv": [
-            0,
-            0,
-            16,
-            16
+            6.5,
+            6.5,
+            9.5,
+            9.5
           ]
         },
         "down": {
           "texture": "#knob",
           "uv": [
-            0,
-            0,
-            16,
-            16
+            6.5,
+            6.5,
+            9.5,
+            9.5
           ]
         }
       },
