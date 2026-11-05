@@ -51,6 +51,26 @@ final class Lang {
         s.add("reverie.command.cannot_dream", "%s cannot dream right now.", "%s non puo' sognare ora.");
         s.add("reverie.command.home", "Dream home of %s: %s %s %s", "Casa onirica di %s: %s %s %s");
         s.add(entity(com.seba.reverie.registry.ModEntities.SHADE), "Shade", "Ombra");
+        s.add("subtitles.reverie.caption.counting", "Someone is counting", "Qualcuno sta contando");
+        s.add("subtitles.reverie.caption.door_far", "A door closes far away", "Una porta si chiude lontano");
+        s.add("subtitles.reverie.caption.bed_creak", "A bed creaks", "Un letto scricchiola");
+        s.add("subtitles.reverie.caption.footsteps_stop", "Footsteps stop", "Dei passi si fermano");
+        s.add("subtitles.reverie.caption.folding", "Something is being folded", "Qualcosa viene piegato");
+        s.add("subtitles.reverie.caption.clock_backwards", "A clock ticks backwards", "Un orologio ticchetta all'indietro");
+        s.add("reverie.recurring.dandelion", "The Same Dandelion", "Lo Stesso Dente di Leone");
+        s.add("reverie.recurring.key", "A Brass Key", "Una Chiave d'Ottone");
+        s.add("reverie.recurring.boat", "A Paper Boat", "Una Barchetta di Carta");
+        s.add("reverie.recurring.lore", "You have seen this before.", "L'hai gia' visto.");
+        s.add("advancements.reverie.root.title", "Reverie", "Reverie");
+        s.add("advancements.reverie.root.description", "Pick a Melatonia petal. It only opens at night.", "Raccogli un petalo di Melatonia. Si apre solo di notte.");
+        s.add("advancements.reverie.counting_sheep.title", "Counting Sheep", "Contare le Pecore");
+        s.add("advancements.reverie.counting_sheep.description", "Fall asleep and dream.", "Addormentati e sogna.");
+        s.add("advancements.reverie.wide_awake.title", "Wide Awake", "Sveglio");
+        s.add("advancements.reverie.wide_awake.description", "Lie down in a bed inside a dream.", "Sdraiati in un letto dentro un sogno.");
+        s.add("advancements.reverie.souvenir.title", "Souvenir", "Souvenir");
+        s.add("advancements.reverie.souvenir.description", "Wake up still holding something from a dream.", "Svegliati stringendo ancora qualcosa di un sogno.");
+        s.add("advancements.reverie.gear_head.title", "Gear Head", "Testa d'Ingranaggio");
+        s.add("advancements.reverie.gear_head.description", "Place a Tuff Gearshift.", "Piazza un Cambio di Tufo.");
         // Farmer's Delight dishes (keys are harmless without FD)
         s.add("item.reverie.lullaby_stew", "Lullaby Stew", "Stufato Ninnananna");
         s.add("item.reverie.dozing_dumplings", "Dozing Dumplings", "Ravioli Sonnecchiosi");

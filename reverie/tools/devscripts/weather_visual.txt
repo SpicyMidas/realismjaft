@@ -1,0 +1,31 @@
+newworld weather flat 99
+wait 40
+cmd reverie dream Dev
+wait 160
+hidegui on
+cmd gamerule doDaylightCycle false
+cmd reverie debug weather Dev starfall
+look 0 -30
+wait 30
+screenshot weather_starfall
+wait 80
+cmd execute if entity @e[type=minecraft:item,nbt={Item:{id:"reverie:lucid_shard"}}]
+cmd reverie debug weather Dev petal_drift
+look 90 0
+wait 80
+screenshot weather_petals
+cmd reverie debug weather Dev fog_tide
+wait 120
+screenshot weather_fog
+wait 500
+cmd reverie debug weather Dev upward_rain
+wait 50
+look 90 -10
+screenshot weather_rain
+wait 400
+cmd reverie debug weather Dev long_silence
+wait 40
+cmd execute if entity @e[type=minecraft:item,distance=..40]
+cmd reverie wake
+wait 40
+stop

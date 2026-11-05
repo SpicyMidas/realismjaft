@@ -35,10 +35,12 @@ public final class ReverieDataGen {
         gen.addProvider(event.includeServer(), new RecipeGen(out, lookup));
         gen.addProvider(event.includeServer(), LootGen.create(out, lookup));
         gen.addProvider(event.includeServer(), new DataMapGen(out, lookup));
+        gen.addProvider(event.includeServer(), AdvancementGen.create(out, lookup, files));
         gen.addProvider(event.includeServer(), new TagGen.Biomes(out, lookup, files));
         gen.addProvider(event.includeServer(), new JsonGen(out, "compat", json -> {
             com.seba.reverie.compat.create.CreateDataGen.json(json);
             com.seba.reverie.compat.fd.FdDataGen.json(json);
+            AdvancementGen.json(json);
             CoreJson.json(json);
         }));
         BlockTagsProvider blockTags = new TagGen.Blocks(out, lookup, files);

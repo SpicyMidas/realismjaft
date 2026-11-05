@@ -1,0 +1,27 @@
+{
+  "parent": "reverie:counting_sheep",
+  "criteria": {
+    "woke_in_a_dream_bed": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.reverie.wide_awake.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:magenta_bed"
+    },
+    "title": {
+      "translate": "advancements.reverie.wide_awake.title"
+    }
+  },
+  "requirements": [
+    [
+      "woke_in_a_dream_bed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

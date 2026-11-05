@@ -35,7 +35,7 @@ final class DreamlandBiomes {
                 null, SoundEvents.FROG_AMBIENT, 0.0008);
         reg(ctx, DreamlandBiomeKeys.SANDGLASS_DUNES, 0xD6C49B, 0x9E8A6A, 0xC8D6E8, ParticleTypes.WHITE_ASH, 0.004f,
                 null, SoundEvents.NOTE_BLOCK_HAT.value(), 0.0009);
-        reg(ctx, DreamlandBiomeKeys.EYE_MEADOW, 0xB58BC4, 0x7B5A9A, 0xB59AE0, ParticleTypes.SPORE_BLOSSOM_AIR, 0.003f,
+        reg(ctx, DreamlandBiomeKeys.EYE_MEADOW, 0xB58BC4, 0x7B5A9A, 0xB59AE0, ParticleTypes.END_ROD, 0.0012f,
                 null, SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.0004);
         reg(ctx, DreamlandBiomeKeys.UPSIDE_DOWN_TOWN, 0x8C7FA8, 0x5D4F7C, 0x9C90D0, ParticleTypes.END_ROD, 0.0004f,
                 null, SoundEvents.NOTE_BLOCK_CHIME.value(), 0.0014);

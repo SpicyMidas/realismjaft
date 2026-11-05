@@ -78,7 +78,9 @@ public class ShadeRenderer extends EntityRenderer<ShadeEntity> {
                     LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, color);
         }
 
-        if (alpha > 0.6f && ReverieConfig.get(ReverieConfig.SHADE_GLOW) && ShadeLook.staredAt(shade)) {
+        // In a Fog Tide every shade shows its eyes: only silhouettes and dim lights.
+        float tide = com.seba.reverie.client.dreamland.DreamAmbienceClient.fogTide();
+        if (alpha > 0.6f && ReverieConfig.get(ReverieConfig.SHADE_GLOW) && (tide > 0.5f || ShadeLook.staredAt(shade))) {
             ModelPart owner = model.eyeOwner(variant);
             ModelPart eyes = model.eyesOf(variant);
             pose.pushPose();

@@ -29,6 +29,19 @@ public final class DreamlandClient {
         modBus.addListener(DreamlandClient::models);
         modBus.addListener(DreamlandClient::effects);
         NeoForge.EVENT_BUS.addListener(DreamlandClient::fog);
+        modBus.addListener(DreamlandClient::particles);
+        NeoForge.EVENT_BUS.addListener(DreamlandClient::fogColor);
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientTickEvent.Post e) -> {
+            var mc = Minecraft.getInstance();
+            if (mc.level == null || !mc.level.dimension().equals(DreamManager.DREAMLAND)) return;
+            DreamSky.tick();
+            DreamAmbienceClient.tick(mc);
+            LullabyPlayer.tick(mc);
+        });
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut e) -> {
+            DreamSky.reset();
+            LullabyPlayer.reset();
+        });
     }
 
     private static void colorResolvers(RegisterColorHandlersEvent.ColorResolvers event) {
@@ -57,6 +70,21 @@ public final class DreamlandClient {
         event.register(DecorRenderer.PUPIL);
     }
 
+    private static void particles(net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_PETAL.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.PETAL));
+        event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_PAGE.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.PAGE));
+        event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_RAINDROP.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.RAINDROP));
+    }
+
+    /** Fog Tide: the fog turns a pale glowing lavender. */
+    private static void fogColor(ViewportEvent.ComputeFogColor event) {
+        float tide = DreamAmbienceClient.fogTide();
+        if (tide <= 0) return;
+        event.setRed(net.minecraft.util.Mth.lerp(tide, event.getRed(), 0.72f));
+        event.setGreen(net.minecraft.util.Mth.lerp(tide, event.getGreen(), 0.66f));
+        event.setBlue(net.minecraft.util.Mth.lerp(tide, event.getBlue(), 0.92f));
+    }
+
     private static void effects(RegisterDimensionSpecialEffectsEvent event) {
         event.register(Reverie.id("dreamland"), new DreamlandEffects());
     }
@@ -69,6 +97,7 @@ public final class DreamlandClient {
         var biome = mc.level.getBiome(event.getCamera().getBlockPosition());
         boolean voidBetween = biome.is(com.seba.reverie.dreamland.DreamlandBiomeKeys.VOID_BETWEEN);
         float far = event.getFarPlaneDistance() * (voidBetween ? 0.8f : 1.0f);
+        far = net.minecraft.util.Mth.lerp(DreamAmbienceClient.fogTide(), far, Math.min(far, 26f));
         event.setFarPlaneDistance(far);
         event.setNearPlaneDistance(Math.min(event.getNearPlaneDistance(), far * 0.15f));
         event.setCanceled(true);
@@ -94,6 +123,12 @@ public final class DreamlandClient {
         @Override
         public boolean isFoggyAt(int x, int y) {
             return false;
+        }
+
+        @Override
+        public boolean renderSky(net.minecraft.client.multiplayer.ClientLevel level, int ticks, float partialTick, org.joml.Matrix4f modelViewMatrix,
+                                 net.minecraft.client.Camera camera, org.joml.Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
+            return DreamSky.render(level, partialTick, modelViewMatrix, camera, setupFog);
         }
     }
 }

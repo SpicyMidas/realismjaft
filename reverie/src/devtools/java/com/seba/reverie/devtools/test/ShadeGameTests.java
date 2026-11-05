@@ -89,8 +89,9 @@ public final class ShadeGameTests {
                     h.assertTrue(target[0] != null, "no grounded shade to approach");
                     Vec3 from = target[0].position();
                     Vec3 dir = p[0].position().subtract(from).multiply(1, 0, 1).normalize();
+                    // At the shade's own height: the flee radius is a 3D distance and shades stand on other islands too.
                     Vec3 at = from.add(dir.scale(flee - 4));
-                    p[0].teleportTo(dream, at.x, p[0].getY(), at.z, p[0].getYRot(), p[0].getXRot());
+                    p[0].teleportTo(dream, at.x, from.y, at.z, p[0].getYRot(), p[0].getXRot());
                 })
                 .thenIdle(30)
                 .thenExecute(() -> {

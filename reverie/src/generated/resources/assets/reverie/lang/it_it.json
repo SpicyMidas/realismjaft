@@ -1,4 +1,14 @@
 {
+  "advancements.reverie.counting_sheep.description": "Addormentati e sogna.",
+  "advancements.reverie.counting_sheep.title": "Contare le Pecore",
+  "advancements.reverie.gear_head.description": "Piazza un Cambio di Tufo.",
+  "advancements.reverie.gear_head.title": "Testa d'Ingranaggio",
+  "advancements.reverie.root.description": "Raccogli un petalo di Melatonia. Si apre solo di notte.",
+  "advancements.reverie.root.title": "Reverie",
+  "advancements.reverie.souvenir.description": "Svegliati stringendo ancora qualcosa di un sogno.",
+  "advancements.reverie.souvenir.title": "Souvenir",
+  "advancements.reverie.wide_awake.description": "Sdraiati in un letto dentro un sogno.",
+  "advancements.reverie.wide_awake.title": "Sveglio",
   "biome.reverie.cloudreach": "Cimanuvola",
   "biome.reverie.eye_meadow": "Prato degli Occhi",
   "biome.reverie.hollow_spires": "Guglie Cave",
@@ -86,5 +96,15 @@
   "reverie.latch_remote.tooltip.frequency": "Frequenza: %s + %s",
   "reverie.latch_remote.tooltip.hint": "Clic destro: acceso/spento. Accovacciato: frequenza",
   "reverie.latch_remote.tooltip.off": "Inattivo",
-  "reverie.latch_remote.tooltip.on": "In trasmissione"
+  "reverie.latch_remote.tooltip.on": "In trasmissione",
+  "reverie.recurring.boat": "Una Barchetta di Carta",
+  "reverie.recurring.dandelion": "Lo Stesso Dente di Leone",
+  "reverie.recurring.key": "Una Chiave d'Ottone",
+  "reverie.recurring.lore": "L'hai gia' visto.",
+  "subtitles.reverie.caption.bed_creak": "Un letto scricchiola",
+  "subtitles.reverie.caption.clock_backwards": "Un orologio ticchetta all'indietro",
+  "subtitles.reverie.caption.counting": "Qualcuno sta contando",
+  "subtitles.reverie.caption.door_far": "Una porta si chiude lontano",
+  "subtitles.reverie.caption.folding": "Qualcosa viene piegato",
+  "subtitles.reverie.caption.footsteps_stop": "Dei passi si fermano"
 }

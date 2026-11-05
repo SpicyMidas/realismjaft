@@ -146,6 +146,12 @@ final class ClientScript {
                     mc.player.xRotO = mc.player.getXRot();
                 }
             }
+            case "farewell" -> {
+                // farewell TICKS PROGRESS: pretend the Farewell started, PROGRESS (0..1) of the way through.
+                int total = Integer.parseInt(a[1]);
+                com.seba.reverie.client.DreamEffectsClient.farewellTotal = total;
+                com.seba.reverie.client.DreamEffectsClient.farewellTicks = (int) (total * (1 - Float.parseFloat(a[2])));
+            }
             case "lookshade" -> {
                 // lookshade [variant]: aim at the nearest Shade (optionally of one variant) and log what was found.
                 if (mc.player != null && mc.level != null) {

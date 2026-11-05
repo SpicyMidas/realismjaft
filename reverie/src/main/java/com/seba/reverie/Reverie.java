@@ -43,6 +43,8 @@ public final class Reverie {
         ModWorldgen.BIOME_SOURCES.register(modBus);
         com.seba.reverie.registry.ModAttachments.ATTACHMENTS.register(modBus);
         com.seba.reverie.registry.ModEntities.ENTITIES.register(modBus);
+        com.seba.reverie.registry.ModParticles.PARTICLES.register(modBus);
+        com.seba.reverie.registry.ModSounds.SOUNDS.register(modBus);
         modBus.addListener(com.seba.reverie.network.ReverieNetwork::register);
         ModCreativeTab.TABS.register(modBus);
         ModCreativeTab.add(ModItems.TUFF_ALLOY);
@@ -63,6 +65,9 @@ public final class Reverie {
         com.seba.reverie.dream.DreamEvents.init();
         com.seba.reverie.dream.DreamManager.addListener(new com.seba.reverie.dreamland.MemoryIsland());
         com.seba.reverie.shade.ShadeCrowdManager.init();
+        com.seba.reverie.dreamland.DreamWeather.init();
+        com.seba.reverie.dreamland.RecurringObjects.init();
+        com.seba.reverie.dream.DreamAdvancements.init();
         modBus.addListener(ReverieDataGen::gather);
 
         // Optional integrations: their classes are only touched behind these checks.

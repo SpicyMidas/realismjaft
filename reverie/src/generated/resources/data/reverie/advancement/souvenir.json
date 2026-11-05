@@ -1,0 +1,27 @@
+{
+  "parent": "reverie:counting_sheep",
+  "criteria": {
+    "kept_something": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.reverie.souvenir.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "reverie:lucid_shard"
+    },
+    "title": {
+      "translate": "advancements.reverie.souvenir.title"
+    }
+  },
+  "requirements": [
+    [
+      "kept_something"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

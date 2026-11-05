@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "petals": {
+      "conditions": {
+        "items": [
+          {
+            "items": "reverie:melatonia_petals"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "reverie:textures/block/lucid_stone.png",
+    "description": {
+      "translate": "advancements.reverie.root.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "reverie:melatonia_petals"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.reverie.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "petals"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

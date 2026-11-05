@@ -1,0 +1,38 @@
+newworld sky flat 99
+wait 40
+cmd reverie dream Dev
+wait 160
+hidegui on
+cmd gamerule doDaylightCycle false
+look 180 -8
+wait 10
+screenshot sky_eye_closed
+look 308 -30
+wait 5
+screenshot sky_planet
+look 120 -45
+wait 5
+screenshot sky_stars
+farewell 800 0.3
+cmd kill @e[type=reverie:shade]
+look 180 -8
+wait 2
+screenshot sky_eye_half
+farewell 800 0.95
+cmd kill @e[type=reverie:shade]
+wait 2
+screenshot sky_eye_open
+cmd tp @s ~ ~ ~ 0 0
+look 0 -20
+wait 2
+screenshot sky_moon_before
+cmd tp @s ~ ~ ~20
+wait 1
+cmd tp @s ~ ~ ~20
+wait 1
+cmd tp @s ~ ~ ~5
+wait 40
+look 180 -20
+wait 2
+screenshot sky_moon_after_walk_south
+stop

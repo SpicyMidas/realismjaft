@@ -1,5 +1,7 @@
 package com.seba.reverie.client;
 
+import com.seba.reverie.ReverieConfig;
+import com.seba.reverie.dreamland.DreamWeather;
 import com.seba.reverie.network.ShadeEventPayload;
 import com.seba.reverie.shade.ShadeCrowdManager;
 
@@ -24,6 +26,10 @@ public final class DreamEffectsClient {
     public static int hushTicks;
     public static int farewellTicks;
     public static int farewellTotal = 1;
+    /** Current dream weather (DreamWeather.Kind id, 0 = none) and its timer. */
+    public static int weather;
+    public static int weatherTicks;
+    public static int weatherTotal = 1;
 
     private DreamEffectsClient() {
     }
@@ -38,11 +44,24 @@ public final class DreamEffectsClient {
     static void reset() {
         hushTicks = 0;
         farewellTicks = 0;
+        weather = 0;
+        weatherTicks = 0;
     }
 
-    /** True while the world should be quiet (The Hush; later also The Long Silence). */
+    /** True while the world should be quiet (The Hush, The Long Silence). */
     public static boolean silenced() {
-        return hushTicks > 0;
+        return hushTicks > 0 || weatherIs(DreamWeather.Kind.LONG_SILENCE);
+    }
+
+    public static boolean weatherIs(DreamWeather.Kind kind) {
+        return weatherTicks > 0 && weather == kind.id;
+    }
+
+    /** 0..1..0 envelope of the current weather: fades in and out over {@code ramp} ticks. */
+    public static float weatherStrength(int ramp) {
+        if (weatherTicks <= 0) return 0;
+        int elapsed = weatherTotal - weatherTicks;
+        return Math.min(1f, Math.min(elapsed, weatherTicks) / (float) ramp);
     }
 
     static void onEvent(ShadeEventPayload payload) {
@@ -60,6 +79,30 @@ public final class DreamEffectsClient {
                 farewellTotal = Math.max(1, payload.durationTicks());
             }
             default -> {
+                DreamWeather.Kind kind = DreamWeather.Kind.byId(payload.event());
+                if (kind != null) startWeather(mc, kind, payload.durationTicks());
+            }
+        }
+    }
+
+    private static void startWeather(Minecraft mc, DreamWeather.Kind kind, int duration) {
+        weather = kind.id;
+        weatherTicks = duration;
+        weatherTotal = Math.max(1, duration);
+        if (mc.player == null) return;
+        var rng = mc.player.getRandom();
+        switch (kind) {
+            case LONG_SILENCE -> {
+                mc.getMusicManager().stopPlaying();
+                mc.getSoundManager().stop(null, SoundSource.AMBIENT);
+                // A single far-off sound; MASTER so the ducking leaves it alone.
+                double a = rng.nextDouble() * Math.PI * 2;
+                var p = mc.player.position();
+                mc.getSoundManager().play(new net.minecraft.client.resources.sounds.SimpleSoundInstance(
+                        net.minecraft.sounds.SoundEvents.BELL_BLOCK, SoundSource.MASTER, 0.5f, 0.5f, rng,
+                        p.x + Math.cos(a) * 40, p.y + 10, p.z + Math.sin(a) * 40));
+            }
+            default -> {
             }
         }
     }
@@ -67,6 +110,7 @@ public final class DreamEffectsClient {
     private static void tick(ClientTickEvent.Post event) {
         if (hushTicks > 0) hushTicks--;
         if (farewellTicks > 0) farewellTicks--;
+        if (weatherTicks > 0 && --weatherTicks == 0) weather = 0;
         if (!DreamClient.dreaming) reset();
     }
 
@@ -82,7 +126,10 @@ public final class DreamEffectsClient {
     }
 
     private static void onMusic(SelectMusicEvent event) {
-        if (silenced()) event.setMusic(null);
+        // In Dreamland the procedural lullaby replaces the game's music.
+        var level = Minecraft.getInstance().level;
+        boolean dreamland = level != null && level.dimension().equals(com.seba.reverie.dream.DreamManager.DREAMLAND);
+        if (silenced() || dreamland && ReverieConfig.get(ReverieConfig.LULLABY)) event.setMusic(null);
     }
 
     /** A sound played at a fraction of its volume. Tickable sounds are left alone (the engine ticks them by type). */

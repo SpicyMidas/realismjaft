@@ -1,0 +1,26 @@
+{
+  "parent": "reverie:root",
+  "criteria": {
+    "dreamed": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.reverie.counting_sheep.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "reverie:concentrated_melatonia_extract"
+    },
+    "title": {
+      "translate": "advancements.reverie.counting_sheep.title"
+    }
+  },
+  "requirements": [
+    [
+      "dreamed"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

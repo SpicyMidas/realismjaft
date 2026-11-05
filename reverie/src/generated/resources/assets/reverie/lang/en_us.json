@@ -1,4 +1,14 @@
 {
+  "advancements.reverie.counting_sheep.description": "Fall asleep and dream.",
+  "advancements.reverie.counting_sheep.title": "Counting Sheep",
+  "advancements.reverie.gear_head.description": "Place a Tuff Gearshift.",
+  "advancements.reverie.gear_head.title": "Gear Head",
+  "advancements.reverie.root.description": "Pick a Melatonia petal. It only opens at night.",
+  "advancements.reverie.root.title": "Reverie",
+  "advancements.reverie.souvenir.description": "Wake up still holding something from a dream.",
+  "advancements.reverie.souvenir.title": "Souvenir",
+  "advancements.reverie.wide_awake.description": "Lie down in a bed inside a dream.",
+  "advancements.reverie.wide_awake.title": "Wide Awake",
   "biome.reverie.cloudreach": "Cloudreach",
   "biome.reverie.eye_meadow": "Eye Meadow",
   "biome.reverie.hollow_spires": "Hollow Spires",
@@ -86,5 +96,15 @@
   "reverie.latch_remote.tooltip.frequency": "Frequency: %s + %s",
   "reverie.latch_remote.tooltip.hint": "Right-click: on/off. Sneak: set frequency",
   "reverie.latch_remote.tooltip.off": "Idle",
-  "reverie.latch_remote.tooltip.on": "Transmitting"
+  "reverie.latch_remote.tooltip.on": "Transmitting",
+  "reverie.recurring.boat": "A Paper Boat",
+  "reverie.recurring.dandelion": "The Same Dandelion",
+  "reverie.recurring.key": "A Brass Key",
+  "reverie.recurring.lore": "You have seen this before.",
+  "subtitles.reverie.caption.bed_creak": "A bed creaks",
+  "subtitles.reverie.caption.clock_backwards": "A clock ticks backwards",
+  "subtitles.reverie.caption.counting": "Someone is counting",
+  "subtitles.reverie.caption.door_far": "A door closes far away",
+  "subtitles.reverie.caption.folding": "Something is being folded",
+  "subtitles.reverie.caption.footsteps_stop": "Footsteps stop"
 }

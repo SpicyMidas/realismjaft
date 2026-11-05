@@ -867,6 +867,107 @@ def dreamland_textures():
     save(grid(door, {'o': (70, 40, 70), 'd': DWOOD[1], 'w': (250, 244, 236), 'h': (255, 255, 255)}), "item/lone_door")
 
 
+def particle_textures():
+    """Dream petals (three tints), paper pages and an upward raindrop streak."""
+    petal = [
+        "........", "...pp...", "..pPPp..", ".pPqqPp.", ".pPqqPp.", "..pPPp..", "...pp...", "........"]
+    for i, a in enumerate(((128, 110, 214), (226, 150, 196), (170, 156, 240))):
+        save(grid(petal, {'p': mix(a, (40, 30, 80), 0.25), 'P': a, 'q': mix(a, (255, 255, 255), 0.45)}), f"particle/dream_petal_{i}")
+    page = [
+        "........", ".wwwwww.", ".wllllw.", ".wwwwww.", ".wllllw.", ".wwwwww.", ".wllwww.", "........"]
+    save(grid(page, {'w': (236, 230, 214), 'l': (150, 140, 170)}), "particle/dream_page_0")
+    page2 = [r[::-1] for r in page]
+    save(grid(page2, {'w': (222, 216, 236), 'l': (130, 120, 160)}), "particle/dream_page_1")
+    drop = [
+        "...ww...", "...wb...", "...bb...", "...bb...", "...b....", "...b....", "........", "........"]
+    save(grid(drop, {'w': (230, 240, 255), 'b': (150, 180, 240)}), "particle/dream_raindrop_0")
+
+
+def sky_textures():
+    """Dreamland sky: a moon atlas (full, gibbous, half, crescent), a ringed planet and the Eye (4 frames)."""
+    import math as m
+    moon = Image.new("RGBA", (64, 16), T)
+    craters = value_noise(16, 16, 4242, cell=3)
+    for k in range(4):
+        for y in range(16):
+            for x in range(16):
+                dx, dy = x - 7.5, y - 7.5
+                if dx * dx + dy * dy > 7.2 * 7.2:
+                    continue
+                lit = True
+                if k == 1:
+                    lit = (dx + 11) ** 2 + dy * dy > 7.4 * 7.4
+                elif k == 2:
+                    lit = dx > 0
+                elif k == 3:
+                    lit = (dx + 3.2) ** 2 + dy * dy > 7.2 * 7.2
+                c = mix((236, 230, 214), (186, 178, 196), craters[y][x] * 0.8)
+                moon.putpixel((k * 16 + x, y), rgba(c) if lit else (60, 58, 110, 70))
+    save(moon, "environment/dream_moon")
+
+    planet = Image.new("RGBA", (64, 32), T)
+    ring = lambda x, y: ((x - 31.5) / 29.0) ** 2 + ((y - 15.5) / 6.5) ** 2
+    def ring_px(x, y):
+        r = ring(x, y)
+        if 0.72 < r < 1.0:
+            return rgba(mix((238, 214, 170), (196, 170, 222), (r - 0.72) / 0.28), 200)
+        return None
+    for y in range(32):
+        for x in range(64):
+            if y < 16 and ring_px(x, y):
+                planet.putpixel((x, y), ring_px(x, y))
+    for y in range(32):
+        for x in range(64):
+            dx, dy = x - 31.5, y - 15.5
+            if dx * dx + dy * dy <= 11.5 * 11.5:
+                band = 0.5 + 0.5 * m.sin(dy * 0.9 + m.sin(dx * 0.3) * 0.8)
+                shade = max(0.45, 1 - (dx + dy) / 30.0)
+                c = mix((180, 140, 210), (240, 196, 176), band)
+                planet.putpixel((x, y), rgba(tuple(int(v * shade) for v in c)))
+    for y in range(16, 32):
+        for x in range(64):
+            if ring_px(x, y):
+                planet.putpixel((x, y), ring_px(x, y))
+    save(planet, "environment/dream_planet")
+
+    eye = Image.new("RGBA", (64, 128), T)
+    lid = (30, 22, 46)
+    for k in range(4):
+        oy = k * 32
+        openness = [0.0, 0.25, 0.6, 1.0][k]
+        for x in range(4, 60):
+            t = (x - 32) / 28.0
+            curve = (1 - t * t)
+            top = 16 - curve * 11 * openness
+            bot = 16 + curve * 7 * max(openness, 0.12)
+            for y in range(32):
+                if top <= y <= bot and openness > 0:
+                    dx, dy = x - 32, y - 16
+                    d = m.hypot(dx, dy * 1.1)
+                    if d < 2.6:
+                        c = (8, 4, 16, 255)
+                    elif d < 7.5:
+                        c = rgba(mix((120, 70, 190), (60, 30, 110), d / 7.5))
+                    else:
+                        c = rgba((206, 196, 230), 235)
+                    eye.putpixel((x, oy + y), c)
+            # lids and lashes
+            for (yy, w) in ((top, 1), (bot, 1)):
+                iy = int(round(yy))
+                if 0 <= iy < 32:
+                    eye.putpixel((x, oy + iy), rgba(lid))
+            if x % 5 == 0 and curve > 0.2:
+                for l in range(1, 4):
+                    ly = int(round(bot + l)) if openness == 0 else int(round(top - l))
+                    lx = x + (l if t > 0 else -l) // 2
+                    if 0 <= ly < 32 and 0 <= lx < 64:
+                        eye.putpixel((lx, oy + ly), rgba(lid))
+        if openness == 1.0:
+            eye.putpixel((34, oy + 13), rgba((255, 255, 255)))
+            eye.putpixel((35, oy + 13), rgba((255, 255, 255)))
+    save(eye, "environment/dream_eye")
+
+
 def fd_textures():
     """Farmer's Delight dishes (only used when FD is installed)."""
     P = BLOOM['P']
@@ -944,7 +1045,7 @@ def shade_textures():
     save(img, "entity/shade")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures]
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures]
 
 
 def contact_sheet(out_dir):

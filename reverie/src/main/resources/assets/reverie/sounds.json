@@ -1,0 +1,56 @@
+{
+  "caption.counting": {
+    "subtitle": "subtitles.reverie.caption.counting",
+    "sounds": [
+      {
+        "name": "minecraft:block.note_block.hat",
+        "type": "event"
+      }
+    ]
+  },
+  "caption.door_far": {
+    "subtitle": "subtitles.reverie.caption.door_far",
+    "sounds": [
+      {
+        "name": "minecraft:block.wooden_door.close",
+        "type": "event"
+      }
+    ]
+  },
+  "caption.bed_creak": {
+    "subtitle": "subtitles.reverie.caption.bed_creak",
+    "sounds": [
+      {
+        "name": "minecraft:block.wooden_trapdoor.open",
+        "type": "event"
+      }
+    ]
+  },
+  "caption.footsteps_stop": {
+    "subtitle": "subtitles.reverie.caption.footsteps_stop",
+    "sounds": [
+      {
+        "name": "minecraft:block.stone.step",
+        "type": "event"
+      }
+    ]
+  },
+  "caption.folding": {
+    "subtitle": "subtitles.reverie.caption.folding",
+    "sounds": [
+      {
+        "name": "minecraft:item.book.page_turn",
+        "type": "event"
+      }
+    ]
+  },
+  "caption.clock_backwards": {
+    "subtitle": "subtitles.reverie.caption.clock_backwards",
+    "sounds": [
+      {
+        "name": "minecraft:block.tripwire.click_on",
+        "type": "event"
+      }
+    ]
+  }
+}

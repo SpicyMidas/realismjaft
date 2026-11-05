@@ -1,0 +1,46 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "parent": "reverie:root",
+  "criteria": {
+    "placed": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "reverie:tuff_gearshift",
+                  "reverie:sport_tuff_gearshift"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.reverie.gear_head.description"
+    },
+    "frame": "task",
+    "icon": {
+      "id": "reverie:tuff_gearshift"
+    },
+    "title": {
+      "translate": "advancements.reverie.gear_head.title"
+    }
+  },
+  "requirements": [
+    [
+      "placed"
+    ]
+  ]
+}
