@@ -127,30 +127,17 @@ GOLD = [(122, 76, 18), (186, 128, 30), (232, 182, 54), (252, 226, 112)]
 IRON = [(110, 110, 110), (170, 170, 170), (216, 216, 216), (240, 240, 240)]
 
 
+# The new Tuff Alloy look (tools/art/tuff_alloy.png, hand-made): cool sage-grey highlights, blue-grey mids, dark olive
+# edges. Every gearshift accent is taken from it.
+ALLOY = {
+    'out': (43, 45, 39), 'dark': (66, 69, 60), 'dmid': (78, 81, 71), 'mid': (148, 148, 139), 'blue': (108, 112, 112),
+    'blue_l': (115, 117, 115), 'light': (187, 189, 177), 'hi': (226, 228, 218), 'olive': (90, 90, 80),
+}
+
+
 def tuff_alloy():
-    pal = {
-        'o': (38, 44, 38), 'd': TUFF_GREEN[1], 'b': TUFF_GREEN[2], 'l': TUFF_GREEN[3], 'h': TUFF_GREEN[4],
-        's': TUFF_GREEN[5], 'g': GOLD[2], 'G': GOLD[3], 'i': IRON[2], 'I': IRON[3], 'f': (172, 176, 160),
-    }
-    rows = [
-        "................",
-        "................",
-        "................",
-        "................",
-        "......oooooooo..",
-        ".....ohshhlhlbo.",
-        "....ohhlGhlhlbdo",
-        "...ohlhlhlfhbdo.",
-        "..oshhlhIhlbddo.",
-        ".obbbbbbbbbbdo..",
-        "obgbdbbibbbddo..",
-        "obbbbdbbbGbdo...",
-        "odbibbbdbbddo...",
-        ".ooooooooooo....",
-        "................",
-        "................",
-    ]
-    save(grid(rows, pal), "item/tuff_alloy")
+    art = os.path.join(os.path.dirname(os.path.abspath(__file__)), "art", "tuff_alloy.png")
+    save(Image.open(art).convert("RGBA"), "item/tuff_alloy")
 
 
 # ---------------------------------------------------------------- tiny bitmap fonts
@@ -220,119 +207,103 @@ CASING_GREEN = [(60, 70, 60), (74, 86, 72), (88, 101, 84), (100, 114, 95), (114,
 FLECK = (168, 174, 156)
 
 
-def casing_base(seed):
-    img = ramp_fill(16, 16, CASING_GREEN, seed, cell=4, jitter=0.25)
-    speckle(img, [FLECK, (150, 156, 140)], 9, seed + 3)
+def alloy_panel(seed, w=16, h=16):
+    """Dark tuff panel with a faint grain (the casing's inner surface)."""
+    img = ramp_fill(w, h, [ALLOY['out'], ALLOY['dark'], ALLOY['dmid'], ALLOY['olive']], seed, cell=4, jitter=0.2)
+    speckle(img, [ALLOY['blue']], 6 * (w * h) // 256, seed + 1)
+    return img
+
+
+def alloy_frame(img, k=1):
+    """Create-style casing border (2 px at 16 px scale): pale lit upper-left, dark lower-right, dark outline."""
+    n = 16 * k
+    for i in range(n):
+        for j in range(2 * k):
+            lit = ALLOY['hi'] if j < k else ALLOY['light']
+            img.putpixel((i, j), rgba(lit))          # top
+            img.putpixel((j, i), rgba(lit))          # left
+            img.putpixel((i, n - 1 - j), rgba(ALLOY['blue'] if j >= k else ALLOY['dark']))   # bottom
+            img.putpixel((n - 1 - j, i), rgba(ALLOY['blue'] if j >= k else ALLOY['dark']))   # right
+    for i in range(n):
+        img.putpixel((i, 0), rgba(ALLOY['mid']))
+        img.putpixel((0, i), rgba(ALLOY['mid']))
+        img.putpixel((i, n - 1), rgba(ALLOY['out']))
+        img.putpixel((n - 1, i), rgba(ALLOY['out']))
+    # inner shadow line just inside the frame
+    for i in range(2 * k, n - 2 * k):
+        img.putpixel((i, 2 * k), rgba(ALLOY['out']))
+        img.putpixel((2 * k, i), rgba(ALLOY['out']))
+    # rivets at the corners
+    for (x, y) in ((1, 1), (n - 2 * k, 1), (1, n - 2 * k), (n - 2 * k, n - 2 * k)):
+        rect(img, x, y, x + k, y + k, ALLOY['hi'])
     return img
 
 
 def gearshift_textures():
-    # Side panels: the visible region is 2..14; a recessed panel line frames it.
     for sport in (False, True):
-        img = casing_base(101)
-        line = (44, 52, 44)
-        for i in range(3, 13):
-            img.putpixel((i, 3), rgba(line))
-            img.putpixel((i, 12), rgba(line))
-            img.putpixel((3, i), rgba(line))
-            img.putpixel((12, i), rgba(line))
-        for i in range(4, 12):  # lit lip under the groove (light from upper left)
-            img.putpixel((i, 4), rgba(CASING_GREEN[4]))
-            img.putpixel((4, i), rgba(CASING_GREEN[4]))
+        side = alloy_frame(alloy_panel(101 + sport))
         if sport:
-            for x in range(2, 14):
-                img.putpixel((x, 6), rgba(RED[2]))
-                img.putpixel((x, 7), rgba(RED[1]))
-            for x in range(2, 14, 3):
-                img.putpixel((x, 6), rgba(RED[3]))
-        save(img, "block/gearshift/casing_side" + ("_sport" if sport else ""))
+            # Sport: blue-grey chevrons across the panel.
+            for x in range(3, 13):
+                for y in range(3, 13):
+                    if (x + y) % 5 == 0:
+                        side.putpixel((x, y), rgba(ALLOY['blue_l']))
+        save(side, "block/gearshift/casing_side" + ("_sport" if sport else ""))
 
-    top = casing_base(202)
-    for x in range(16):
-        top.putpixel((x, 2), rgba(CASING_GREEN[4]))
-    save(top, "block/gearshift/casing_top")
+    end = alloy_frame(alloy_panel(202))
+    rect(end, 5, 5, 11, 11, T)  # the shaft hole (cutout)
+    for i in range(5, 11):
+        end.putpixel((i, 4), rgba(ALLOY['light']))
+        end.putpixel((4, i), rgba(ALLOY['light']))
+        end.putpixel((i, 11), rgba(ALLOY['out']))
+        end.putpixel((11, i), rgba(ALLOY['out']))
+    save(end, "block/gearshift/casing_end")
+    save(Image.new("RGBA", (16, 16), rgba((14, 15, 13))), "block/gearshift/hole")
 
-    vent = casing_base(303)
+    bottom = alloy_frame(alloy_panel(303))
     for z in (5, 8, 11):
         for x in range(4, 12):
-            vent.putpixel((x, z), rgba((18, 22, 18)))
-            vent.putpixel((x, z + 1), rgba(CASING_GREEN[4]))
-        vent.putpixel((3, z), rgba((40, 46, 40)))
-        vent.putpixel((12, z), rgba((40, 46, 40)))
-    save(vent, "block/gearshift/casing_vent")
-
-    flange = ramp_fill(16, 16, [(48, 56, 48), (58, 67, 57), (68, 78, 66), (78, 89, 75)], 404, cell=4)
-    speckle(flange, [FLECK], 5, 405)
-    bevel(flange, 0, 0, 16, 16, (98, 110, 92), (34, 40, 34))
-    bevel(flange, 1, 1, 15, 15, (84, 96, 80), (44, 52, 44))
-    save(flange, "block/gearshift/flange")
-
-    gold = noise_fill(16, 16, [GOLD[1], GOLD[2], GOLD[2], GOLD[3]], 505, [1, 3, 3, 1])
-    save(gold, "block/gearshift/gold_inlay")
-    for name, pal in (("brass", BRASS[0:4]), ("brass_polished", BRASS[1:5])):
-        b = ramp_fill(16, 16, pal, 606 if name == "brass" else 607, cell=2, jitter=0.1)
-        for x in range(0, 16, 5):
-            b.putpixel((x, x % 16), rgba(pal[-1]))
-        save(b, "block/gearshift/" + name)
-
-    bolt = Image.new("RGBA", (16, 16), rgba(STEEL[2]))
-    for y in range(16):
-        for x in range(16):
-            v = (x + y) / 30.0
-            bolt.putpixel((x, y), rgba(mix(STEEL[4], STEEL[1], v)))
-    save(bolt, "block/gearshift/bolt")
-
-    leather = ramp_fill(16, 16, LEATHER, 707, cell=2, jitter=0.3)
-    for i in range(0, 16, 2):  # stitch rows
-        leather.putpixel((i, 0), rgba(STITCH))
-        leather.putpixel((i + 1, 15), rgba(STITCH))
-        leather.putpixel((0, i), rgba(STITCH))
-        leather.putpixel((15, i + 1), rgba(STITCH))
-    save(leather, "block/gearshift/leather")
+            bottom.putpixel((x, z), rgba((16, 17, 15)))
+            bottom.putpixel((x, z + 1), rgba(ALLOY['blue']))
+    save(bottom, "block/gearshift/casing_bottom")
 
     rod = Image.new("RGBA", (16, 16))
     for y in range(16):
         for x in range(16):
-            rod.putpixel((x, y), rgba(STEEL[[1, 3, 4, 3, 2, 1, 1, 2][x % 8]]))
+            rod.putpixel((x, y), rgba([ALLOY['blue'], ALLOY['light'], ALLOY['hi'], ALLOY['light'], ALLOY['mid'], ALLOY['blue'],
+                                       ALLOY['dmid'], ALLOY['blue']][x % 8]))
     save(rod, "block/gearshift/rod")
 
-    knob = ramp_fill(16, 16, [(14, 14, 16), (24, 24, 28), (34, 34, 40), (48, 48, 56)], 808, cell=4, jitter=0.2)
+    # Regular knob: dark tuff with a pale alloy cap ring; sport: pale alloy ball with a blue-grey band.
+    knob = ramp_fill(16, 16, [ALLOY['out'], ALLOY['dark'], ALLOY['dmid']], 808, cell=4, jitter=0.2)
     for x in range(16):
-        knob.putpixel((x, 0), rgba((70, 70, 80)))
-    # tiny gold shift pattern on the knob top (visible on the up face)
-    for y in range(5, 11):
-        knob.putpixel((8, y), rgba(GOLD[2]))
-    for x in range(5, 12):
-        knob.putpixel((x, 8), rgba(GOLD[2]))
-    for x in (5, 11):
-        for y in range(5, 11):
-            knob.putpixel((x, y), rgba(GOLD[2]))
+        knob.putpixel((x, 0), rgba(ALLOY['light']))
+        knob.putpixel((x, 1), rgba(ALLOY['mid']))
     save(knob, "block/gearshift/knob")
-
     ball = Image.new("RGBA", (16, 16))
     for y in range(16):
         for x in range(16):
             v = ((x - 5) ** 2 + (y - 5) ** 2) ** 0.5 / 14
-            ball.putpixel((x, y), rgba(mix(STEEL[4], STEEL[1], min(1, v))))
+            ball.putpixel((x, y), rgba(mix(ALLOY['hi'], ALLOY['mid'], min(1, v))))
     for x in range(16):
-        ball.putpixel((x, 7), rgba(RED[2]))
-        ball.putpixel((x, 8), rgba(RED[1]))
-    draw_glyph(ball, FONT3x5, 'S', 6, 2, (240, 240, 240))
+        ball.putpixel((x, 7), rgba(ALLOY['blue']))
+        ball.putpixel((x, 8), rgba(ALLOY['dark']))
     save(ball, "block/gearshift/knob_sport")
 
-    frame = noise_fill(16, 16, [(24, 28, 24), (30, 34, 30), (36, 40, 36)], 909)
+    frame = noise_fill(16, 16, [ALLOY['out'], (36, 38, 33), ALLOY['dark']], 909)
     save(frame, "block/gearshift/window_frame")
-    dot_on = Image.new("RGBA", (16, 16), rgba((255, 60, 40)))
-    rect(dot_on, 4, 4, 12, 12, (255, 150, 120))
-    save(dot_on, "block/gearshift/dot_on")
-    save(Image.new("RGBA", (16, 16), rgba((70, 18, 16))), "block/gearshift/dot_off")
+    # Indicator strips, Create style: dark red off, bright red on.
+    strip_on = Image.new("RGBA", (16, 16), rgba((255, 64, 44)))
+    rect(strip_on, 0, 4, 16, 12, (255, 150, 120))
+    save(strip_on, "block/gearshift/dot_on")
+    save(Image.new("RGBA", (16, 16), rgba((92, 22, 18))), "block/gearshift/dot_off")
 
     # Gear window glyphs, 32x32 so the digit stays crisp on a 4x4 px window.
     for key, ch in (("n", 'N'), ("r", 'R'), ("1", '1'), ("2", '2'), ("3", '3'), ("4", '4'), ("5", '5'), ("6", '6')):
         color = (255, 196, 64) if ch == 'N' else (255, 72, 52) if ch == 'R' else (96, 255, 120)
-        g = Image.new("RGBA", (32, 32), rgba((10, 12, 10)))
-        bevel(g, 0, 0, 32, 32, (40, 44, 40), (4, 4, 4))
-        dim = mix(color, (10, 12, 10), 0.75)
+        g = Image.new("RGBA", (32, 32), rgba((12, 13, 11)))
+        bevel(g, 0, 0, 32, 32, ALLOY['dark'], (4, 4, 4))
+        dim = mix(color, (12, 13, 11), 0.75)
         draw_glyph(g, FONT5x7, ch, 9, 5, dim, 3)   # soft halo
         draw_glyph(g, FONT5x7, ch, 8, 5, color, 3)
         save(g, "block/gearshift/gear_" + key)
@@ -342,72 +313,60 @@ def gearshift_textures():
     gearshift_gui()
 
 
-def brushed(w, h, seed, base=(150, 156, 150)):
+def brushed(w, h, seed, base=(148, 148, 139)):
     rnd = random.Random(seed)
     img = Image.new("RGBA", (w, h))
     for y in range(h):
-        row = rnd.randint(-10, 10)
+        row = rnd.randint(-8, 8)
         for x in range(w):
-            v = row + rnd.randint(-6, 6)
+            v = row + rnd.randint(-5, 5)
             img.putpixel((x, y), rgba(tuple(max(0, min(255, c + v)) for c in base)))
     return img
 
 
+# Must match TuffGearshiftRenderer: pivot 4 px up, knob centre height, knob travel per column / row (pixels).
+GATE = {False: {"cols": 3, "col_px": 6.0, "row_px": 6.0, "knob_h": 19.0},
+        True: {"cols": 4, "col_px": 5.0, "row_px": 6.0, "knob_h": 19.75}}
+
+
 def gate_plate(sport):
-    # 64x64; the plate face uses u in [0, cols_px*k] and v in [0, 64]. Rail runs along v (the shaft axis).
-    img = brushed(64, 64, 1111 + sport, (140, 146, 138))
-    k = 64 / (12 if sport else 10)          # texels per model pixel
-    uw = int(round(6 * k))                    # used width in texels
-    columns = 4 if sport else 3
-    rest = (columns - 1) / 2
-    col_v = [int(round((6 if sport else 5) * k + (c - rest) * 3 * k)) for c in range(columns)]
-    rail_u = uw // 2
-    groove, lip = (26, 30, 28), (196, 200, 192)
-    gw = 2
-    top_u, bot_u = int(round(1.1 * k)), int(round(4.9 * k))
+    """The whole top face at 32x32: casing frame plus the H-gate slots exactly where the rod passes the top."""
+    k = 2
+    img = brushed(32, 32, 1111 + sport)
+    alloy_frame(img, k)
+    g = GATE[sport]
+    f = (16 - 4) / g["knob_h"]                      # rod displacement at the top face / at the knob
+    rest = (g["cols"] - 1) / 2
+    col_z = [8 + (c - rest) * g["col_px"] * f for c in range(g["cols"])]   # columns run along z (v)
+    row_x = g["row_px"] * f                          # rows are +-row_x along x (u)
+    half = 1.25 if not sport else 1.0                # groove half width (px), the rod is 2 px
 
-    def vgroove(u, v0, v1):
-        rect(img, u - gw, v0, u + gw, v1, groove)
-        for v in range(v0, v1):
-            if u + gw < 64:
-                img.putpixel((u + gw, v), rgba(lip))
-
-    def ugroove(v, u0, u1):
-        rect(img, u0, v - gw, u1, v + gw, groove)
+    def groove(x0, z0, x1, z1):
+        u0, v0 = int(round((min(x0, x1) - half) * k)), int(round((min(z0, z1) - half) * k))
+        u1, v1 = int(round((max(x0, x1) + half) * k)), int(round((max(z0, z1) + half) * k))
+        rect(img, u0, v0, u1, v1, (18, 19, 17))
         for u in range(u0, u1):
-            if v + gw < 64:
-                img.putpixel((u, v + gw), rgba(lip))
+            if v1 < 32:
+                img.putpixel((u, v1), rgba(ALLOY['hi']))
+        for v in range(v0, v1):
+            if u1 < 32:
+                img.putpixel((u1, v), rgba(ALLOY['light']))
 
-    vgroove(rail_u, col_v[0] - gw, col_v[-1] + gw)
-    for c in range(columns):
-        has_top = True
-        has_bot = c < columns - 1
-        u0 = top_u if has_top else rail_u
-        u1 = bot_u if has_bot else rail_u
-        ugroove(col_v[c], u0, u1 + 1)
-        labels = []
-        if c == columns - 1:
-            labels.append(('R', top_u))
-        else:
-            labels.append((str(c * 2 + 1), top_u))
-            labels.append((str(c * 2 + 2), bot_u))
-        for ch, u in labels:
-            lv = col_v[c] + 4 if col_v[c] < 40 else col_v[c] - 14
-            draw_glyph(img, FONT3x5, ch, u - 3, lv, (20, 24, 22), 2)
-    draw_glyph(img, FONT3x5, 'N', rail_u + 4, int(round((6 if sport else 5) * k)) - 5, (90, 70, 20), 2)
-    # bezel around the used area
-    bevel(img, 0, 0, uw, 64, (210, 214, 206), (70, 74, 70))
+    groove(8, col_z[0], 8, col_z[-1])                # the neutral rail
+    for c in range(g["cols"]):
+        last = c == g["cols"] - 1
+        groove(8 - row_x, col_z[c], 8 if last else 8 + row_x, col_z[c])   # R (last column) has only the top slot
     save(img, "block/gearshift/gate_plate" + ("_sport" if sport else ""))
 
 
 def gearshift_gui():
     img = Image.new("RGBA", (256, 256), T)
-    plate = brushed(144, 100, 2222, (132, 140, 130))
-    bevel(plate, 0, 0, 144, 100, (190, 196, 186), (60, 64, 60))
+    plate = brushed(144, 100, 2222, (140, 141, 132))
+    bevel(plate, 0, 0, 144, 100, ALLOY['hi'], ALLOY['dark'])
     for (bx, by) in ((4, 4), (136, 4), (4, 92), (136, 92)):
-        rect(plate, bx, by, bx + 4, by + 4, STEEL[1])
-        rect(plate, bx, by, bx + 3, by + 3, STEEL[3])
-        plate.putpixel((bx + 1, by + 1), rgba(STEEL[4]))
+        rect(plate, bx, by, bx + 4, by + 4, ALLOY['dark'])
+        rect(plate, bx, by, bx + 3, by + 3, ALLOY['light'])
+        plate.putpixel((bx + 1, by + 1), rgba(ALLOY['hi']))
     img.paste(plate, (0, 0))
 
     def disc(cx, cy, r, color_fn):
@@ -418,24 +377,17 @@ def gearshift_gui():
                 if c is not None and d <= r:
                     img.putpixel((x, y), rgba(c))
 
-    # regular knob (0,104): black with gold collar and a gold shift pattern on top
-    disc(8, 112, 7.5, lambda x, y, d: GOLD[1] if d > 6.5 else mix((70, 70, 80), (10, 10, 12), min(1, ((x - 5) ** 2 + (y - 108) ** 2) ** 0.5 / 10)))
-    for y in range(109, 116):
-        img.putpixel((8, y), rgba(GOLD[2]))
-    for x in range(5, 12):
-        img.putpixel((x, 112), rgba(GOLD[2]))
-    for y in range(109, 116):
-        img.putpixel((5, y), rgba(GOLD[2]))
-        img.putpixel((11, y), rgba(GOLD[2]))
-    # sport knob (16,104): metal ball, red band, S
-    disc(24, 112, 7.5, lambda x, y, d: mix(STEEL[4], STEEL[0], min(1, ((x - 21) ** 2 + (y - 108) ** 2) ** 0.5 / 12)))
+    # regular knob (0,104): dark tuff with a pale alloy ring
+    disc(8, 112, 7.5, lambda x, y, d: ALLOY['light'] if d > 6.3 else mix(ALLOY['dmid'], ALLOY['out'],
+                                                                         min(1, ((x - 5) ** 2 + (y - 108) ** 2) ** 0.5 / 10)))
+    # sport knob (16,104): pale alloy ball with a blue-grey band
+    disc(24, 112, 7.5, lambda x, y, d: mix(ALLOY['hi'], ALLOY['mid'], min(1, ((x - 21) ** 2 + (y - 108) ** 2) ** 0.5 / 12)))
     for x in range(17, 32):
         for y in (111, 112):
             if ((x + 0.5 - 24) ** 2 + (y + 0.5 - 112) ** 2) ** 0.5 <= 7.5:
-                img.putpixel((x, y), rgba(RED[2] if y == 111 else RED[1]))
-    draw_glyph(img, FONT3x5, 'S', 23, 105, (245, 245, 245))
-    # leather boot ring (32,104) 24x24
-    disc(44, 116, 11.5, lambda x, y, d: None if d < 7.5 else (STITCH if abs(d - 9.5) < 0.5 and (x + y) % 3 == 0 else mix(LEATHER[3], LEATHER[0], (d - 7.5) / 4)))
+                img.putpixel((x, y), rgba(ALLOY['blue'] if y == 111 else ALLOY['dark']))
+    # slot ring (32,104) 24x24: the dark collar the stick comes out of
+    disc(44, 116, 11.5, lambda x, y, d: None if d < 7.5 else mix(ALLOY['dmid'], ALLOY['out'], (d - 7.5) / 4))
     # lamps (56,104) off and (68,104) on, 12x12
     disc(62, 110, 5.5, lambda x, y, d: (90, 24, 20) if d > 4.5 else (60, 14, 12))
     disc(74, 110, 5.5, lambda x, y, d: (120, 30, 20) if d > 4.5 else mix((255, 220, 200), (255, 50, 30), min(1, d / 4)))
@@ -867,6 +819,17 @@ def dreamland_textures():
     save(grid(door, {'o': (70, 40, 70), 'd': DWOOD[1], 'w': (250, 244, 236), 'h': (255, 255, 255)}), "item/lone_door")
 
 
+def paper_glider_texture():
+    """A folded paper glider seen from above, with a lilac fold stripe."""
+    rows = [
+        "................", "................", ".......w........", "......wWw.......",
+        ".....wWfWw......", "....wWWfWWw.....", "...wWWWfWWWw....", "..wWWWWfWWWWw...",
+        ".wWWWWWfWWWWWw..", "wWWWWWWfWWWWWWw.", ".ooooowfwooooo..", "......wfw.......",
+        "......wfw.......", "......oso.......", ".......s........", "................"]
+    save(grid(rows, {'w': (214, 208, 196), 'W': (240, 236, 226), 'f': (176, 150, 214), 'o': (150, 144, 136),
+                     's': (124, 96, 66)}), "item/paper_glider")
+
+
 def fauna_textures():
     """Lucid Moth: wings up, wings down, and a soft glow cell (48x16). A snore Z particle."""
     import math as m
@@ -1115,7 +1078,7 @@ def shade_textures():
     save(img, "entity/shade")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture, fauna_textures]
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture, fauna_textures, paper_glider_texture]
 
 
 def contact_sheet(out_dir):

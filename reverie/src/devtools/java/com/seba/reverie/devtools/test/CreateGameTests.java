@@ -66,9 +66,9 @@ public final class CreateGameTests {
                 .thenIdle(5)
                 .thenExecute(() -> expect(h, "N", 0))
                 .thenExecute(() -> box(h).select(1)).thenIdle(4).thenExecute(() -> expect(h, "1", 64 * (float) ReverieConfig.gearRatio(1) * Math.signum(box(h).getSpeed())))
-                .thenExecute(() -> box(h).select(2)).thenIdle(4).thenExecute(() -> expect(h, "2", box(h).getSpeed() * 1.5f))
-                .thenExecute(() -> box(h).select(3)).thenIdle(4).thenExecute(() -> expect(h, "3", box(h).getSpeed() * 2f))
-                .thenExecute(() -> box(h).select(4)).thenIdle(4).thenExecute(() -> expect(h, "4", box(h).getSpeed() * 2.5f))
+                .thenExecute(() -> box(h).select(2)).thenIdle(4).thenExecute(() -> expect(h, "2", box(h).getSpeed() * (float) ReverieConfig.gearRatio(2)))
+                .thenExecute(() -> box(h).select(3)).thenIdle(4).thenExecute(() -> expect(h, "3", box(h).getSpeed() * (float) ReverieConfig.gearRatio(3)))
+                .thenExecute(() -> box(h).select(4)).thenIdle(4).thenExecute(() -> expect(h, "4", box(h).getSpeed() * (float) ReverieConfig.gearRatio(4)))
                 .thenExecute(() -> h.assertFalse(box(h).select(5), "regular gearshift accepted gear 5"))
                 .thenExecute(() -> box(h).select(GateLayout.R)).thenIdle(4).thenExecute(() -> expect(h, "R", -box(h).getSpeed()))
                 .thenExecute(() -> box(h).select(2)).thenIdle(4)
@@ -85,8 +85,11 @@ public final class CreateGameTests {
                 .thenExecute(() -> h.setBlock(BELOW, Blocks.AIR)).thenIdle(4)
                 .thenExecute(() -> {
                     h.assertTrue(box(h).effectiveGear() == 2, "did not return to the remembered gear");
-                    expect(h, "back to 2", box(h).getSpeed() * 1.5f);
+                    expect(h, "back to 2", box(h).getSpeed() * (float) ReverieConfig.gearRatio(2));
+                    // A gear that would run faster than Create allows is refused (64 rpm x4 = 256 is fine, 128 x4 is not).
+                    ((CreativeMotorBlockEntity) h.getBlockEntity(MOTOR)).generatedSpeed.setValue(128);
                 })
+                .thenIdle(4)
                 // Save/reload keeps the gear.
                 .thenExecute(() -> {
                     var registries = h.getLevel().registryAccess();
@@ -94,7 +97,12 @@ public final class CreateGameTests {
                     BlockState state = h.getBlockState(BOX);
                     var copy = new TuffGearshiftBlockEntity(CreateContent.GEARSHIFT_BE.get(), h.absolutePos(BOX), state);
                     copy.loadWithComponents(tag, registries);
-                    h.assertTrue(copy.selectedGear() == 2 && Math.abs(copy.appliedRatio() - 1.5f) < 1e-4, "NBT round trip lost the gear");
+                    h.assertTrue(copy.selectedGear() == 2 && Math.abs(copy.appliedRatio() - (float) ReverieConfig.gearRatio(2)) < 1e-4,
+                            "NBT round trip lost the gear");
+                    var player = fakePlayer(h);
+                    player.moveTo(h.absoluteVec(BOX.above().getCenter()));
+                    var fast = CreateNetwork.applySelection(player, h.absolutePos(BOX), 4);
+                    h.assertTrue(fast == CreateNetwork.Selection.TOO_FAST, "an over-speed gear was accepted: " + fast);
                 })
                 .thenSucceed();
     }
@@ -106,8 +114,8 @@ public final class CreateGameTests {
                 .thenIdle(3)
                 .thenExecute(() -> ((CreativeMotorBlockEntity) h.getBlockEntity(MOTOR)).generatedSpeed.setValue(32))
                 .thenIdle(5)
-                .thenExecute(() -> box(h).select(5)).thenIdle(4).thenExecute(() -> expect(h, "5", box(h).getSpeed() * 3f))
-                .thenExecute(() -> box(h).select(6)).thenIdle(4).thenExecute(() -> expect(h, "6", box(h).getSpeed() * 4f))
+                .thenExecute(() -> box(h).select(5)).thenIdle(4).thenExecute(() -> expect(h, "5", box(h).getSpeed() * (float) ReverieConfig.gearRatio(5)))
+                .thenExecute(() -> box(h).select(6)).thenIdle(4).thenExecute(() -> expect(h, "6", box(h).getSpeed() * (float) ReverieConfig.gearRatio(6)))
                 .thenExecute(() -> box(h).select(GateLayout.N)).thenIdle(4).thenExecute(() -> expect(h, "N", 0))
                 .thenExecute(() -> {
                     var player = fakePlayer(h);
@@ -121,7 +129,7 @@ public final class CreateGameTests {
                     h.assertTrue(CreateNetwork.applySelection(player, h.absolutePos(BOX), 4) == CreateNetwork.Selection.TOO_FAR, "out of range accepted");
                 })
                 .thenIdle(4)
-                .thenExecute(() -> expect(h, "3 via payload path", box(h).getSpeed() * 2f))
+                .thenExecute(() -> expect(h, "3 via payload path", box(h).getSpeed() * (float) ReverieConfig.gearRatio(3)))
                 .thenSucceed();
     }
 
@@ -142,7 +150,7 @@ public final class CreateGameTests {
                 .thenExecute(() -> KineticBlockEntity.switchToBlockState(h.getLevel(), h.absolutePos(BOX),
                         h.getBlockState(BOX).setValue(BlockStateProperties.AXIS, Direction.Axis.X)))
                 .thenIdle(4)
-                .thenExecute(() -> expect(h, "3 after rotating back", box(h).getSpeed() * 2f))
+                .thenExecute(() -> expect(h, "3 after rotating back", box(h).getSpeed() * (float) ReverieConfig.gearRatio(3)))
                 .thenExecute(() -> h.destroyBlock(BOX)).thenIdle(3)
                 .thenExecute(() -> h.assertTrue(Math.abs(shaftSpeed(h)) < 1e-3, "shaft still turning after the gearshift was broken"))
                 .thenSucceed();

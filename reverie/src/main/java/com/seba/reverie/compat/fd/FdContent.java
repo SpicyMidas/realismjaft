@@ -31,15 +31,15 @@ public final class FdContent {
 
     static final FoodProperties LULLABY_STEW_FOOD = new FoodProperties.Builder().nutrition(12).saturationModifier(0.8f)
             .effect(() -> new MobEffectInstance(vectorwing.farmersdelight.common.registry.ModEffects.COMFORT, 6000), 1f)
-            .effect(dizzy(600), 1f).build();
+            .effect(dizzy(1200), 1f).build();
     static final FoodProperties DOZING_DUMPLINGS_FOOD = new FoodProperties.Builder().nutrition(8).saturationModifier(0.9f)
-            .effect(dizzy(400), 1f).build();
+            .effect(dizzy(800), 1f).build();
     static final FoodProperties DREAMY_PIE_SLICE_FOOD = new FoodProperties.Builder().nutrition(3).saturationModifier(0.3f).fast()
-            .effect(dizzy(200), 1f).build();
+            .effect(dizzy(400), 1f).build();
     static final FoodProperties NIGHT_BLOOM_ROLL_FOOD = new FoodProperties.Builder().nutrition(7).saturationModifier(0.6f)
-            .effect(dizzy(160), 0.6f).build();
+            .effect(dizzy(320), 0.6f).build();
     static final FoodProperties MELATONIA_SYRUP_FOOD = new FoodProperties.Builder().nutrition(2).saturationModifier(0.2f).alwaysEdible()
-            .effect(dizzy(300), 1f).build();
+            .effect(dizzy(600), 1f).build();
 
     public static final DeferredItem<Item> DREAMY_PIE_SLICE = ITEMS.register("dreamy_pie_slice",
             () -> new ConsumableItem(ModItems.foodItem(DREAMY_PIE_SLICE_FOOD), true));

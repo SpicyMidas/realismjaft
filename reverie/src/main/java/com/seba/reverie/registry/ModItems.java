@@ -26,25 +26,25 @@ public final class ModItems {
     public static final DeferredItem<DreamFoodItem> MELATONIA_EXTRACT = ITEMS.register("melatonia_extract",
             () -> new DreamFoodItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder()
                     .nutrition(1).saturationModifier(0.1f).alwaysEdible().usingConvertsTo(Items.GLASS_BOTTLE)
-                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 400), 1f).build()), true));
+                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 800), 1f).build()), true));
     public static final DeferredItem<DreamFoodItem> CONCENTRATED_MELATONIA_EXTRACT = ITEMS.register("concentrated_melatonia_extract",
             () -> new DreamFoodItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder()
                     .nutrition(1).saturationModifier(0.1f).alwaysEdible().usingConvertsTo(Items.GLASS_BOTTLE)
                     .effect(() -> new MobEffectInstance(ModEffects.SLEEPYNESS, 4800), 1f)
-                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 200), 1f).build()), true));
+                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 400), 1f).build()), true));
 
     public static final DeferredItem<DreamFoodItem> MELATONIA_COOKIE = ITEMS.register("melatonia_cookie",
             () -> new DreamFoodItem(new Item.Properties().food(new FoodProperties.Builder()
                     .nutrition(2).saturationModifier(0.1f)
-                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 160), 0.6f).build()), false));
+                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 320), 0.6f).build()), false));
     public static final DeferredItem<DreamFoodItem> DROWSY_TEA = ITEMS.register("drowsy_tea",
             () -> new DreamFoodItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder()
                     .nutrition(3).saturationModifier(0.4f).alwaysEdible().usingConvertsTo(Items.GLASS_BOTTLE)
-                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 240), 1f).build()), true));
+                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 480), 1f).build()), true));
     public static final DeferredItem<DreamFoodItem> SLEEPY_STEW = ITEMS.register("sleepy_stew",
             () -> new DreamFoodItem(new Item.Properties().stacksTo(1).food(new FoodProperties.Builder()
                     .nutrition(7).saturationModifier(0.8f).usingConvertsTo(Items.BOWL)
-                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 300), 1f).build()), false));
+                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 600), 1f).build()), false));
 
     // --- Dreamland
     public static final DeferredItem<Item> LUCID_SHARD = ITEMS.registerSimpleItem("lucid_shard", new Item.Properties());
@@ -55,6 +55,8 @@ public final class ModItems {
     public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> LUCID_MOTH_SPAWN_EGG = ITEMS.register(
             "lucid_moth_spawn_egg", () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.LUCID_MOTH,
                     0x2E2A55, 0xBFEFFF, new Item.Properties()));
+    public static final DeferredItem<com.seba.reverie.content.PaperGliderItem> PAPER_GLIDER = ITEMS.register("paper_glider",
+            () -> new com.seba.reverie.content.PaperGliderItem(new Item.Properties().durability(300)));
     public static final DeferredItem<com.seba.reverie.content.DreamCatcherItem> DREAM_CATCHER = ITEMS.register("dream_catcher",
             () -> new com.seba.reverie.content.DreamCatcherItem(new Item.Properties().stacksTo(1)));
     public static final java.util.List<DeferredItem<? extends Item>> DREAM_BLOCK_ITEMS = new java.util.ArrayList<>();
@@ -66,6 +68,11 @@ public final class ModItems {
                 ModBlocks.LUCID_CRYSTAL_ORE, ModBlocks.LUCID_CRYSTAL_CLUSTER, ModBlocks.PILLOW_CLOUD, ModBlocks.MIRROR_WATER,
                 ModBlocks.HOURGLASS_SAND, ModBlocks.FLOATING_LANTERN, ModBlocks.MELTED_CLOCK, ModBlocks.EYEBLOOM,
                 ModBlocks.SLEEP_BELL, ModBlocks.SANDGLASS_CORE}) {
+            if (block == ModBlocks.FLOATING_LANTERN) {
+                DREAM_BLOCK_ITEMS.add(ITEMS.register("floating_lantern",
+                        () -> new com.seba.reverie.content.FloatingLanternItem(ModBlocks.FLOATING_LANTERN.get(), new Item.Properties())));
+                continue;
+            }
             DREAM_BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(block));
         }
     }

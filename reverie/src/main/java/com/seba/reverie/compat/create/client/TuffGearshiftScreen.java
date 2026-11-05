@@ -52,6 +52,11 @@ public class TuffGearshiftScreen extends Screen {
     private float top;
     private float scale = 1f;
     private int ticks;
+    private int tooFastFlash;
+    /** What is drawn: glides along the gate toward the drag point or the animator, frame by frame. */
+    private final float[] shown = new float[2];
+    private boolean shownSet;
+    private long lastFrame;
 
     public TuffGearshiftScreen(BlockPos pos) {
         super(Component.translatable("reverie.gearshift.screen.title"));
@@ -96,6 +101,7 @@ public class TuffGearshiftScreen extends Screen {
         }
         ticksSinceCommit++;
         if (refuseFlash > 0) refuseFlash--;
+        if (tooFastFlash > 0) tooFastFlash--;
         wallShake *= 0.7f;
         if (!dragging) {
             int want = be.isLocked() ? GateLayout.R : committed;
@@ -162,8 +168,8 @@ public class TuffGearshiftScreen extends Screen {
         if (button == 0 && knob != null) {
             float px = panelX(mouseX);
             float py = panelY(mouseY);
-            float kx = gateToPanelX(knobX(1));
-            float ky = gateToPanelY(knobY(1));
+            float kx = gateToPanelX(shownSet ? shown[0] : knobX(1));
+            float ky = gateToPanelY(shownSet ? shown[1] : knobY(1));
             if ((px - kx) * (px - kx) + (py - ky) * (py - ky) <= 13 * 13) {
                 TuffGearshiftBlockEntity be = blockEntity();
                 if (be != null && be.isLocked()) {
@@ -198,7 +204,15 @@ public class TuffGearshiftScreen extends Screen {
             uiSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.9f, 0.08f);
         }
         int at = layout.gearAt(dragPos[0], dragPos[1]);
-        if (at > 0 && at != committed) commit(at);
+        if (at > 0 && at != committed) {
+            if (be != null && be.wouldOverspeed(at)) {
+                // The gear would spin faster than Create allows: the gate pushes back.
+                dragPos[1] = Math.signum(dragPos[1]) * 0.7f;
+                tooFast(be);
+            } else {
+                commit(at);
+            }
+        }
         return true;
     }
 
@@ -232,6 +246,10 @@ public class TuffGearshiftScreen extends Screen {
                 return true;
             }
             if (layout.isValid(gear) && !dragging) {
+                if (be != null && gear != committed && be.wouldOverspeed(gear)) {
+                    tooFast(be);
+                    return true;
+                }
                 if (gear != committed) commit(gear);
                 knob.moveTo(gear, false);
             }
@@ -260,6 +278,37 @@ public class TuffGearshiftScreen extends Screen {
         uiSound(SoundEvents.CHAIN_HIT, 0.6f, 0.4f);
     }
 
+    private void tooFast(TuffGearshiftBlockEntity be) {
+        if (tooFastFlash > 0) return;
+        tooFastFlash = 24;
+        refuse(be);
+    }
+
+    /** Moves {@link #shown} toward the knob's target along the gate (never across the plate), by real frame time. */
+    private void glide(float pt) {
+        float tx = dragging ? dragPos[0] : knob.x(pt);
+        float ty = dragging ? dragPos[1] : knob.y(pt);
+        long now = net.minecraft.Util.getNanos();
+        float dt = lastFrame == 0 ? 0 : Math.min(0.1f, (now - lastFrame) / 1.0e9f);
+        lastFrame = now;
+        if (!shownSet) {
+            shown[0] = tx;
+            shown[1] = ty;
+            shownSet = true;
+            return;
+        }
+        float follow = 1f - (float) Math.exp(-dt * (dragging ? 30f : 45f));
+        java.util.List<float[]> path = new java.util.ArrayList<>();
+        path.add(new float[]{shown[0], shown[1]});
+        boolean sameColumn = Math.abs(shown[0] - tx) < 1e-3f;
+        if (!sameColumn && Math.abs(shown[1]) > 1e-3f) path.add(new float[]{shown[0], 0});
+        if (!sameColumn && Math.abs(ty) > 1e-3f) path.add(new float[]{tx, 0});
+        path.add(new float[]{tx, ty});
+        float[] p = GateLayout.along(path, GateLayout.length(path) * follow);
+        shown[0] = p[0];
+        shown[1] = p[1];
+    }
+
     private static void uiSound(SoundEvent sound, float pitch, float volume) {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
     }
@@ -285,14 +334,14 @@ public class TuffGearshiftScreen extends Screen {
     }
 
     private void drawFrame(GuiGraphics g, TuffGearshiftBlockEntity be) {
-        // Panel body: dark tuff casing with a lighter bevel and gold inlay.
-        g.fill(0, 0, W, H, 0xFF2A2F2A);
-        g.fill(1, 1, W - 1, H - 1, 0xFF4A5348);
-        g.fill(2, 2, W - 2, H - 2, 0xFF3A4239);
-        g.fill(2, 2, W - 2, 3, 0xFF62705F);
-        g.fill(2, H - 3, W - 2, H - 2, 0xFF262B26);
-        g.fill(4, 13, W - 4, 14, 0xFFB8892C);
-        g.drawString(font, be.getBlockState().getBlock().getName(), 6, 4, 0xFFE8E4D0, false);
+        // Panel body: dark tuff casing with a lighter bevel and a pale alloy inlay.
+        g.fill(0, 0, W, H, 0xFF2B2D27);
+        g.fill(1, 1, W - 1, H - 1, 0xFF4E5147);
+        g.fill(2, 2, W - 2, H - 2, 0xFF42453C);
+        g.fill(2, 2, W - 2, 3, 0xFF6C7070);
+        g.fill(2, H - 3, W - 2, H - 2, 0xFF2B2D27);
+        g.fill(4, 13, W - 4, 14, 0xFFBBBDB1);
+        g.drawString(font, be.getBlockState().getBlock().getName(), 6, 4, 0xFFE2E4DA, false);
         // Plate: the metal texture, recessed.
         g.fill(PLATE_X - 1, PLATE_Y - 1, PLATE_X + PLATE_W + 1, PLATE_Y + PLATE_H + 1, 0xFF1C201C);
         g.blit(TEX, PLATE_X, PLATE_Y, PLATE_W, PLATE_H, 0, 0, 144, 100, 256, 256);
@@ -338,9 +387,10 @@ public class TuffGearshiftScreen extends Screen {
     }
 
     private void drawKnob(GuiGraphics g, float pt) {
-        float shake = (float) Math.sin(ticks * 2.1 + pt * 2.1) * 1.6f * wallShake;
-        float x = gateToPanelX(knobX(pt)) + shake;
-        float y = gateToPanelY(knobY(pt));
+        glide(pt);
+        float shake = (float) Math.sin((ticks + pt) * 2.1) * 1.6f * wallShake;
+        float x = gateToPanelX(shown[0]) + shake;
+        float y = gateToPanelY(shown[1]);
         var pose = g.pose();
         pose.pushPose();
         pose.translate(x, y, 0);
@@ -377,7 +427,10 @@ public class TuffGearshiftScreen extends Screen {
         g.drawString(font, TuffGearshiftBlockEntity.formatRpm(out), x0 + w - 5 - font.width(TuffGearshiftBlockEntity.formatRpm(out)), ty + 18, 0xFFE0E0E0, false);
         g.drawCenteredString(font, Component.translatable("reverie.gearshift.screen.rpm"), x0 + w / 2, ty + 28, 0xFF707070);
         String ratio = TuffGearshiftBlockEntity.formatRatio(be.appliedRatio());
-        g.drawCenteredString(font, ratio, x0 + w / 2, ty + 40, 0xFFD0B060);
+        g.drawCenteredString(font, ratio, x0 + w / 2, ty + 40, 0xFFE2E4DA);
+        if (tooFastFlash > 0 && (tooFastFlash / 3) % 2 == 0) {
+            g.drawCenteredString(font, Component.translatable("reverie.gearshift.screen.too_fast"), x0 + w / 2, ty + 51, 0xFFFF6050);
+        }
 
         boolean lit = be.isLocked() && (refuseFlash == 0 || (refuseFlash / 2) % 2 == 0);
         int lampY = PLATE_Y + PLATE_H - 16;

@@ -53,7 +53,7 @@ public final class Lacing {
         if (entity.level().isClientSide) return;
         int level = level(event.getItem());
         if (level <= 0 || !event.getItem().has(DataComponents.FOOD)) return;
-        entity.addEffect(new MobEffectInstance(ModEffects.DIZZINESS, level >= 2 ? 400 : 300));
+        entity.addEffect(new MobEffectInstance(ModEffects.DIZZINESS, level >= 2 ? 800 : 600));
         if (level >= 2) entity.addEffect(new MobEffectInstance(ModEffects.SLEEPYNESS, 2400));
         if (entity.level() instanceof ServerLevel server) {
             server.sendParticles(VIOLET, entity.getX(), entity.getEyeY() - 0.2, entity.getZ(), 10, 0.25, 0.2, 0.25, 0.02);

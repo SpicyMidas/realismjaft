@@ -63,8 +63,23 @@ public class TuffGearshiftBlockEntity extends SplitShaftBlockEntity {
 
     @Override
     public float getRotationSpeedModifier(Direction face) {
-        if (hasSource() && face != getSourceFacing()) return appliedRatio;
+        if (hasSource() && face != getSourceFacing()) {
+            // Governor: never hand Create a speed above its limit (it would break the block).
+            float in = Math.abs(getSpeed());
+            float max = maxSpeed();
+            if (in > 0 && Math.abs(appliedRatio) * in > max) return Math.signum(appliedRatio) * (max / in);
+            return appliedRatio;
+        }
         return 1;
+    }
+
+    static float maxSpeed() {
+        return com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.maxRotationSpeed.get();
+    }
+
+    /** True if shifting into {@code gear} at the current input speed would exceed Create's speed limit. */
+    public boolean wouldOverspeed(int gear) {
+        return hasSource() && Math.abs(getSpeed() * ratioFor(gear)) > maxSpeed() + 1e-3f;
     }
 
     /** Server: the player picked a gear in the GUI (already validated). Returns false if nothing changed. */

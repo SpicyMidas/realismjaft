@@ -21,10 +21,13 @@ Without them Reverie works on its own. Their content simply does not exist, and 
 
 1. **Find Wild Melatonia** in forests, plains and meadows (pale violet flowers). Break it for seeds (and sometimes a
    petal), then plant the seeds on farmland. It grows faster at night and in the dark, and slower in full sun.
-2. **Melatonia Extract**: 3 Petals + a Glass Bottle. Drinking it makes you Dizzy for 20 s.
+2. **Melatonia Extract**: 3 Petals + a Glass Bottle. Drinking it makes you Dizzy for 40 s. Dizziness is a real
+   nuisance: the horizon bends and doubles, you walk slower (and sometimes much slower), and now and then your
+   controls flip for a few seconds.
 3. **Concentrated Melatonia Extract**: 3 Extracts + Glowstone Dust (returns 2 bottles). Drinking it gives
    **Sleepyness** for 4 minutes.
-4. While Sleepy, **sleep in any bed, at any time**. Whatever you hold goes with you into the dream. Everything else
+4. While Sleepy your eyes keep closing: the world dims and, in the dark behind your eyelids, you may glimpse the
+   Shades waiting. **Sleep in any bed, at any time**. Whatever you hold goes with you into the dream. Everything else
    stays behind, safe (see *Your items are safe* below).
 5. A dream lasts 5 minutes. It ends when the time runs out, when you fall into the void, when you die, or when you
    lie down in a bed inside the dream (the Great Bed islands are the kind way out). You wake in your bed with your
@@ -52,8 +55,9 @@ Sleepy Stew are the plain recipes.
   and The Long Silence.
 - **Shades**: a crowd of harmless silhouettes always 28 to 52 blocks away, watching. Walk toward one and it is gone.
   Now and then the whole crowd does something stranger, and once in a while one of them is shaped like you.
-- Odd subtitles from nowhere (turn subtitles on), a procedural lullaby, and one recurring object that the dream
-  keeps returning to.
+- Odd subtitles from nowhere (turn subtitles on), soft hums, drones and far bells per biome, a procedural lullaby
+  (bass, harp arpeggios and a bell melody that never repeats the same song), and one recurring object that the
+  dream keeps returning to.
 
 ### Create: Tuff Gearshifts and the Latch Remote
 
@@ -63,6 +67,9 @@ Sleepy Stew are the plain recipes.
   the config.
 - **Latch Remote**: a Linked Controller that latches. One click turns the signal on, the next turns it off.
   Sneak-use it in the air to set its frequency pair, or sneak-click a Redstone Link to copy that link's frequencies.
+
+**Paper Glider** (paper and sticks): hold use while in the air to drift down slowly, forward where you look. The fall
+does not hurt, and in Dreamland it carries you from island to island. **Floating Lanterns** can be placed in mid-air.
 
 **Dream Catcher** (sticks, string, feathers and a Lucid Shard): hold it as you fall asleep and one thing you find in
 that dream has at least an even chance to come back with you. The catcher itself stays in the dream.
@@ -122,7 +129,7 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `dream.maxKeepsakes` | 1 | Most stacks brought back from one dream |
 | `dream.backupsKeptPerPlayer` | 20 | Backup files kept per player |
 | `dream.memoryIsland` | true | Build the Memory Island |
-| `gearshift.gearRatios` | [1, 1.5, 2, 2.5, 3, 4] | Forward ratios (the regular gearshift uses the first four) |
+| `gearshift.gearRatios` | [1, 2, 3, 4, 5, 6] | Forward ratios: gear N turns N times faster (the regular gearshift uses the first four). A gear that would exceed Create's max speed is refused |
 | `gearshift.reverseRatio` | -1.0 | Ratio of R |
 | `melatonia.nightBloomerGrowthBoost` | true | Faster growth at night and in the dark, slower in full sun |
 | `melatonia.wildMelatoniaFrequency` | 24 | 1 patch in N chunks, 0 = none (needs a restart) |
@@ -167,7 +174,8 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 - **The Impossible Stairs** are drawn, not built: you cannot walk on them. Their last flight is re-solved every
   frame along the rays from your eye, so the four climbing flights close into a loop from wherever you stand. Seen
   from below, where no climbing solution exists, the last flight comes down instead.
-- **Shader packs.** With an Iris or Oculus shader pack active, the aurora uses its plain fallback.
+- **Shader packs.** With an Iris or Oculus shader pack active, the aurora and the Dizziness and Sleepyness screen
+  effects use their plain fallbacks.
 - **Recipe viewers** (checked with JEI) list the extracts, foods, Cooking Pot and Cutting Board recipes. Lacing is
   a special crafting recipe (any food + an Extract), so viewers do not list it.
 - The Paper Whale is a sky object rather than an entity.

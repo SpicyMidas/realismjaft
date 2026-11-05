@@ -59,6 +59,10 @@ final class RecipeGen extends RecipeProvider {
                 .save(out);
         CreateDataGen.recipes(out);
         com.seba.reverie.compat.fd.FdDataGen.recipes(out);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, ModItems.PAPER_GLIDER.get())
+                .pattern("PPP").pattern("P/P").pattern(" / ")
+                .define('P', Items.PAPER).define('/', Items.STICK)
+                .unlockedBy("has_paper", has(Items.PAPER)).save(out);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DREAM_CATCHER.get())
                 .pattern("/S/").pattern("SLS").pattern("F F")
                 .define('/', Items.STICK).define('S', Items.STRING).define('L', ModItems.LUCID_SHARD.get()).define('F', Items.FEATHER)

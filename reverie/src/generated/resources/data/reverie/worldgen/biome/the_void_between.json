@@ -2,11 +2,16 @@
   "carvers": {},
   "downfall": 0.0,
   "effects": {
+    "additions_sound": {
+      "sound": "reverie:ambient.far_bell",
+      "tick_chance": 5.0E-4
+    },
+    "ambient_sound": "reverie:ambient.void_wind",
     "fog_color": 5524124,
     "mood_sound": {
       "block_search_extent": 8,
       "offset": 2.0,
-      "sound": "minecraft:ambient.cave",
+      "sound": "reverie:ambient.far_bell",
       "tick_delay": 6000
     },
     "particle": {

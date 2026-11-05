@@ -36,7 +36,7 @@ public final class CreateNetwork {
         registrar.playToServer(SelectGearPayload.TYPE, SelectGearPayload.CODEC, CreateNetwork::handleSelectGear);
     }
 
-    public enum Selection { APPLIED, UNCHANGED, NOT_LOADED, TOO_FAR, NO_GEARSHIFT, LOCKED, INVALID_GEAR }
+    public enum Selection { APPLIED, UNCHANGED, NOT_LOADED, TOO_FAR, NO_GEARSHIFT, LOCKED, INVALID_GEAR, TOO_FAST }
 
     private static void handleSelectGear(SelectGearPayload msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
@@ -56,6 +56,7 @@ public final class CreateNetwork {
         if (!(level.getBlockEntity(pos) instanceof TuffGearshiftBlockEntity be)) return Selection.NO_GEARSHIFT;
         if (be.isLocked()) return Selection.LOCKED; // redstone holds it in R
         if (!be.layout().isValid(gear)) return Selection.INVALID_GEAR;
+        if (be.wouldOverspeed(gear)) return Selection.TOO_FAST;
         return be.select(gear) ? Selection.APPLIED : Selection.UNCHANGED;
     }
 }

@@ -1,0 +1,47 @@
+newworld effects normal 4242
+wait 80
+cmd time set 6000
+cmd gamerule doDaylightCycle false
+hidegui on
+look 0 0
+wait 10
+screenshot fx_normal
+cmd effect give @s reverie:dizziness 60
+wait 60
+screenshot fx_dizzy_a
+wait 37
+screenshot fx_dizzy_b
+cmd effect clear @s
+cmd effect give @s reverie:sleepyness 120
+wait 140
+screenshot fx_sleepy_1
+wait 12
+screenshot fx_sleepy_2
+wait 12
+screenshot fx_sleepy_3
+wait 12
+screenshot fx_sleepy_4
+wait 12
+screenshot fx_sleepy_5
+cmd effect clear @s
+cmd give @s reverie:floating_lantern 4
+cmd give @s reverie:paper_glider
+wait 5
+look 0 -20
+cmd item replace entity @s weapon.mainhand with reverie:floating_lantern 4
+wait 5
+useitem
+wait 10
+cmd fill ~-3 ~0 ~-3 ~3 ~6 ~6 minecraft:air replace reverie:floating_lantern
+cmd item replace entity @s weapon.mainhand with reverie:paper_glider
+cmd tp @s ~ ~30 ~
+wait 2
+holdkey use on
+wait 20
+cmd data get entity @s Pos[1]
+wait 40
+cmd data get entity @s Pos[1]
+holdkey use off
+wait 20
+cmd data get entity @s Pos[1]
+stop

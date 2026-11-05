@@ -85,50 +85,11 @@ T = "reverie:block/gearshift/"
 
 
 def casing_elements(sport):
-    e = []
-    # End flanges (16x16, 1.5 deep) with a 6x6 shaft hole, bolts at the corners and a brass collar.
-    for z0, z1, bz0, bz1, cz0, cz1 in ((0.5, 2, 0, 1, 0, 1.5), (14, 15.5, 15, 16, 14.5, 16)):
-        e.append(box([0, 0, z0], [16, 5, z1], "flange", name="flange"))
-        e.append(box([0, 11, z0], [16, 16, z1], "flange", name="flange"))
-        e.append(box([0, 5, z0], [5, 11, z1], "flange", name="flange"))
-        e.append(box([11, 5, z0], [16, 11, z1], "flange", name="flange"))
-        for bx, by in ((1, 1), (13, 1), (1, 13), (13, 13)):
-            e.append(box([bx, by, bz0], [bx + 2, by + 2, bz1], "bolt", name="bolt"))
-        e.append(box([5, 5, cz0], [11, 6, cz1], "collar", name="collar"))
-        e.append(box([5, 10, cz0], [11, 11, cz1], "collar", name="collar"))
-        e.append(box([5, 6, cz0], [6, 10, cz1], "collar", name="collar"))
-        e.append(box([10, 6, cz0], [11, 10, cz1], "collar", name="collar"))
-    # Body core between the flanges, stepped so the long edges can carry 45 degree gold chamfers.
-    e.append(box([2, 1, 2], [14, 14, 14], {"north": None, "south": None, "east": "side", "west": "side",
-                                           "up": "top", "down": "vent"}, name="core"))
-    e.append(box([1, 2, 2], [15, 14, 14], {"north": None, "south": None, "east": "side", "west": "side",
-                                           "up": "top", "down": "vent"}, name="core_wide"))
-    r = 0.7071
-    for cx, cy, angle, up in ((1.5, 1.5, -45, False), (14.5, 1.5, 45, False), (1.5, 14.5, 45, True), (14.5, 14.5, -45, True)):
-        y0, y1 = (cy - 0.6, cy) if up else (cy, cy + 0.6)
-        e.append(box([cx - r, y0, 2], [cx + r, y1, 14], "gold", name="gold_chamfer",
-                     rotation={"origin": [cx, cy, 8], "axis": "z", "angle": angle}))
-    # Top rim around the recessed gate plate.
-    if sport:
-        e.append(box([2, 14, 2], [5, 15, 14], "top", name="rim"))
-        e.append(box([11, 14, 2], [14, 15, 14], "top", name="rim"))
-        plate = ([5, 14, 2], [11, 14.05, 14], [0, 0, 8, 16])
-    else:
-        e.append(box([2, 14, 2], [5, 15, 14], "top", name="rim"))
-        e.append(box([11, 14, 2], [14, 15, 14], "top", name="rim"))
-        e.append(box([5, 14, 2], [11, 15, 3], "top", name="rim"))
-        e.append(box([5, 14, 13], [11, 15, 14], "top", name="rim"))
-        plate = ([5, 14, 3], [11, 14.05, 13], [0, 0, 9.6, 16])
-    e.append(box(plate[0], plate[1], {"up": "plate", "north": None, "south": None, "east": None, "west": None, "down": None},
-                 uv={"up": plate[2]}, name="gate_plate"))
-    # Static leather boot base (the upper boot and the stick are animated by the renderer).
-    e.append(box([5, 14, 5], [11, 15, 11], "leather", name="boot_base"))
-    # Gear window frames on both stick-less sides (+X / -X); the glyph is a separate multipart model.
-    for x0, x1 in ((15, 15.5), (0.5, 1)):
-        e.append(box([x0, 5, 5], [x1, 6, 11], "collar", name="window_frame"))
-        e.append(box([x0, 10, 5], [x1, 11, 11], "collar", name="window_frame"))
-        e.append(box([x0, 6, 5], [x1, 10, 6], "collar", name="window_frame"))
-        e.append(box([x0, 6, 10], [x1, 10, 11], "collar", name="window_frame"))
+    """A plain Create-style cube: shaft along z, gate plate on top. The end faces have a shaft hole (cutout) with a
+    dark plate 1 px inside, so Create's spinning shaft never z-fights the face."""
+    e = [box([0, 0, 0], [16, 16, 16], {"north": "end", "south": "end", "east": "side", "west": "side",
+                                        "up": "plate", "down": "bottom"}, name="casing")]
+    e.append(box([5, 5, 1], [11, 11, 15], {"north": "hole", "south": "hole"}, faces=("north", "south"), name="hole_back"))
     return e
 
 
@@ -136,78 +97,50 @@ def casing_textures(sport):
     return {
         "particle": T + ("casing_side_sport" if sport else "casing_side"),
         "side": T + ("casing_side_sport" if sport else "casing_side"),
-        "top": T + "casing_top",
-        "vent": T + "casing_vent",
-        "flange": T + "flange",
-        "bolt": T + "bolt",
-        "collar": T + ("brass_polished" if sport else "brass"),
-        "gold": T + "gold_inlay",
+        "end": T + "casing_end",
+        "bottom": T + "casing_bottom",
+        "hole": T + "hole",
         "plate": T + ("gate_plate_sport" if sport else "gate_plate"),
-        "leather": T + "leather",
-        "frame": T + "window_frame",
     }
 
 
 def window_elements(vertical):
-    # East glyph faces +X, west glyph faces -X; for axis=y the model is rotated x=90 so the face is turned back.
+    # The gear window in the middle of each side (+x and -x); axis=y models are rotated x=90, so the face is turned back.
     east_rot = {"east": 270} if vertical else None
     west_rot = {"west": 90} if vertical else None
     return [
-        box([15.05, 6, 6], [15.1, 10, 10], {"east": "glyph"}, faces=("east",), uv={"east": [0, 0, 16, 16]},
+        box([16.01, 6, 6], [16.02, 10, 10], {"east": "glyph"}, faces=("east",), uv={"east": [0, 0, 16, 16]},
             emissive=True, shade=False, face_rot=east_rot, name="glyph"),
-        box([0.9, 6, 6], [0.95, 10, 10], {"west": "glyph"}, faces=("west",), uv={"west": [0, 0, 16, 16]},
+        box([-0.02, 6, 6], [-0.01, 10, 10], {"west": "glyph"}, faces=("west",), uv={"west": [0, 0, 16, 16]},
             emissive=True, shade=False, face_rot=west_rot, name="glyph"),
     ]
 
 
 def dot_elements(on):
-    return [
-        box([15, 11.5, 10.5], [15.5, 12.5, 11.5], "dot", emissive=on, shade=not on, name="powered_dot"),
-        box([0.5, 11.5, 4.5], [1, 12.5, 5.5], "dot", emissive=on, shade=not on, name="powered_dot"),
-    ]
-
-
-def boot_upper_elements():
-    return [
-        box([5.5, 15, 5.5], [10.5, 16, 10.5], "leather", name="boot_mid"),
-        box([6, 16, 6], [10, 17, 10], "leather", name="boot_top"),
-    ]
-
-
-def rod(y0, y1):
-    rot = {"origin": [8, (y0 + y1) / 2, 8], "axis": "y", "angle": 45}
-    return [
-        box([7.25, y0, 7.25], [8.75, y1, 8.75], "rod", faces=("north", "south", "east", "west"), name="rod"),
-        box([7.25, y0, 7.25], [8.75, y1, 8.75], "rod", faces=("north", "south", "east", "west"), rotation=rot, name="rod"),
-    ]
+    # Create-style indicator strips beside the window (lit while redstone holds the gearshift in R).
+    e = []
+    for x0, x1, face in ((16.01, 16.02, "east"), (-0.02, -0.01, "west")):
+        for z0, z1 in ((3, 4), (12, 13)):
+            e.append(box([x0, 3, z0], [x1, 13, z1], {face: "dot"}, faces=(face,), emissive=on, shade=not on, name="strip"))
+    return e
 
 
 def stick_elements(sport):
-    if not sport:
-        e = rod(15.5, 21)
-        e.append(box([6.75, 20.5, 6.75], [9.25, 21, 9.25], "collar", name="knob_collar"))
-        e.append(box([6.5, 21, 6.5], [9.5, 24, 9.5], {"north": "knob", "south": "knob", "east": "knob", "west": "knob",
-                                                       "up": "knob", "down": "knob"},
-                     uv={"up": [0, 0, 16, 16], "north": [0, 0, 16, 10], "south": [0, 0, 16, 10],
-                         "east": [0, 0, 16, 10], "west": [0, 0, 16, 10]}, name="knob"))
-        return e
-    e = rod(15.5, 22.5)
-    e.append(box([6.75, 22, 6.75], [9.25, 22.5, 9.25], "collar", name="knob_collar"))
+    """A plain rod and knob. The rod starts at the pivot inside the block (4 px up) and comes out through the gate."""
+    side = ("north", "south", "east", "west")
+    e = [box([7, 4, 7], [9, 22, 9], "rod", faces=side, name="rod")]
     full = {f: [0, 0, 16, 16] for f in FACES}
-    e.append(box([6.25, 22.75, 6.75], [9.75, 25.75, 9.25], "knob", uv=full, name="ball"))
-    e.append(box([6.75, 22.75, 6.25], [9.25, 25.75, 9.75], "knob", uv=full, name="ball"))
-    e.append(box([6.75, 22.5, 6.75], [9.25, 26, 9.25], "knob", uv=full, name="ball"))
+    if not sport:
+        e.append(box([6, 21, 6], [10, 25, 10], "knob", uv=full, name="knob"))
+    else:
+        e.append(box([6.5, 21.5, 5.5], [9.5, 25.5, 10.5], "knob", uv=full, name="knob"))
+        e.append(box([5.5, 21.5, 6.5], [10.5, 25.5, 9.5], "knob", uv=full, name="knob"))
+        e.append(box([6.5, 21, 6.5], [9.5, 26, 9.5], "knob", uv=full, name="knob"))
     return e
 
 
 def stick_textures(sport):
-    return {
-        "particle": T + "rod",
-        "rod": T + "rod",
-        "collar": T + ("brass_polished" if sport else "gold_inlay"),
-        "knob": T + ("knob_sport" if sport else "knob"),
-        "leather": T + "leather",
-    }
+    return {"particle": T + "rod", "rod": T + "rod", "knob": T + ("knob_sport" if sport else "knob")}
 
 
 ITEM_DISPLAY = {
@@ -237,8 +170,6 @@ def gearshift():
     for on in (False, True):
         write(f"models/block/gearshift/dot_{'on' if on else 'off'}.json",
               model({"dot": T + ("dot_on" if on else "dot_off"), "particle": T + "window_frame"}, dot_elements(on)))
-    write("models/block/tuff_gearshift/boot_upper.json",
-          model({"leather": T + "leather", "particle": T + "leather"}, boot_upper_elements()))
 
     for sport in (False, True):
         name = "sport_tuff_gearshift" if sport else "tuff_gearshift"
@@ -246,16 +177,10 @@ def gearshift():
         write(f"models/block/{name}/stick.json", model(stick_textures(sport), stick_elements(sport)))
 
         tex = dict(casing_textures(sport))
-        tex.update({"rod": T + "rod", "knob": T + ("knob_sport" if sport else "knob"),
-                    "glyph": T + "gear_n", "dot": T + "dot_off",
+        tex.update(stick_textures(sport))
+        tex.update({"particle": T + ("casing_side_sport" if sport else "casing_side"), "glyph": T + "gear_n", "dot": T + "dot_off",
                     "axis": "create:block/axis", "axis_top": "create:block/axis_top"})
-        stick = stick_elements(sport)
-        for el in stick:
-            if el.get("name") == "knob_collar" and not sport:
-                for f in el["faces"].values():
-                    f["texture"] = "#gold"
-        item_elements = casing_elements(sport) + window_elements(False) + dot_elements(False) \
-            + boot_upper_elements() + stick + shaft_elements()
+        item_elements = casing_elements(sport) + window_elements(False) + dot_elements(False) + stick_elements(sport) + shaft_elements()
         write(f"models/item/{name}.json", model(tex, item_elements, display=ITEM_DISPLAY))
 
         parts = []

@@ -28,21 +28,21 @@ final class DreamlandBiomes {
 
     static void bootstrap(BootstrapContext<Biome> ctx) {
         reg(ctx, DreamlandBiomeKeys.PILLOW_FIELDS, 0x9B8BD6, 0x6E5BB8, 0x9FB6FF, ParticleTypes.END_ROD, 0.0006f,
-                null, SoundEvents.AMETHYST_BLOCK_CHIME, 0.0012);
+                com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.AMETHYST_BLOCK_CHIME, 0.0012);
         reg(ctx, DreamlandBiomeKeys.HOLLOW_SPIRES, 0x5A5878, 0x4A4570, 0x7C7AB8, ParticleTypes.ASH, 0.002f,
-                SoundEvents.AMBIENT_BASALT_DELTAS_LOOP, SoundEvents.AMETHYST_BLOCK_RESONATE, 0.0015);
+                com.seba.reverie.registry.ModSounds.SPIRE_DRONE, com.seba.reverie.registry.ModSounds.GLASS_HUM, 0.0015);
         reg(ctx, DreamlandBiomeKeys.MIRROR_MARSH, 0x6FA4B8, 0x4D6E98, 0x7FD0E0, ParticleTypes.GLOW, 0.006f,
-                null, SoundEvents.FROG_AMBIENT, 0.0008);
+                com.seba.reverie.registry.ModSounds.MARSH_HUM, SoundEvents.FROG_AMBIENT, 0.0008);
         reg(ctx, DreamlandBiomeKeys.SANDGLASS_DUNES, 0xD6C49B, 0x9E8A6A, 0xC8D6E8, ParticleTypes.WHITE_ASH, 0.004f,
-                null, SoundEvents.NOTE_BLOCK_HAT.value(), 0.0009);
+                com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.NOTE_BLOCK_HAT.value(), 0.0009);
         reg(ctx, DreamlandBiomeKeys.EYE_MEADOW, 0xB58BC4, 0x7B5A9A, 0xB59AE0, ParticleTypes.END_ROD, 0.0012f,
-                null, SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.0004);
+                com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.0004);
         reg(ctx, DreamlandBiomeKeys.UPSIDE_DOWN_TOWN, 0x8C7FA8, 0x5D4F7C, 0x9C90D0, ParticleTypes.END_ROD, 0.0004f,
-                null, SoundEvents.NOTE_BLOCK_CHIME.value(), 0.0014);
+                com.seba.reverie.registry.ModSounds.TOWN_HUM, SoundEvents.NOTE_BLOCK_CHIME.value(), 0.0014);
         reg(ctx, DreamlandBiomeKeys.CLOUDREACH, 0xC9CFF2, 0x8E9CEB, 0xD0DCFF, ParticleTypes.END_ROD, 0.0008f,
-                null, SoundEvents.AMETHYST_BLOCK_CHIME, 0.0006);
+                com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.AMETHYST_BLOCK_CHIME, 0.0006);
         reg(ctx, DreamlandBiomeKeys.VOID_BETWEEN, 0x544A9C, 0x3F3A88, 0x5E58C8, ParticleTypes.END_ROD, 0.0004f,
-                null, null, 0);
+                com.seba.reverie.registry.ModSounds.VOID_WIND, com.seba.reverie.registry.ModSounds.FAR_BELL, 0.0005);
     }
 
     /** Sleepwalking Sheep drift over the soft biomes. */
@@ -62,7 +62,8 @@ final class DreamlandBiomes {
         BiomeSpecialEffects.Builder effects = new BiomeSpecialEffects.Builder()
                 .fogColor(fog).skyColor(sky).waterColor(water).waterFogColor(fog)
                 .ambientParticle(new AmbientParticleSettings(particle, particleChance))
-                .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS);
+                // In the dark a far bell, not cave noises.
+                .ambientMoodSound(new AmbientMoodSettings(com.seba.reverie.registry.ModSounds.FAR_BELL, 6000, 8, 2.0));
         if (loop != null) effects.ambientLoopSound(holder(loop));
         if (additions != null) effects.ambientAdditionsSound(new AmbientAdditionsSettings(holder(additions), additionChance));
         ctx.register(key, new Biome.BiomeBuilder()

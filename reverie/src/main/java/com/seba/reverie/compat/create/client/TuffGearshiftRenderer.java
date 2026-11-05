@@ -33,27 +33,28 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 /**
- * Spinning shaft halves (same approach as Create's split shaft) plus the animated gearstick. The stick, upper
- * boot and knob are separate baked models posed from {@link GearstickAnimator} in the shared {@link GateLayout}.
+ * Spinning shaft halves (same approach as Create's split shaft) plus the animated gearstick: a plain rod and knob,
+ * one baked model posed from {@link GearstickAnimator} in the shared {@link GateLayout}.
  */
 public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearshiftBlockEntity> {
     public static final ModelResourceLocation STICK_REGULAR = ModelResourceLocation.standalone(Reverie.id("block/tuff_gearshift/stick"));
     public static final ModelResourceLocation STICK_SPORT = ModelResourceLocation.standalone(Reverie.id("block/sport_tuff_gearshift/stick"));
-    public static final ModelResourceLocation BOOT_UPPER = ModelResourceLocation.standalone(Reverie.id("block/tuff_gearshift/boot_upper"));
 
     /** Set when the Flywheel visual for the shafts registered; otherwise this renderer draws the shafts itself. */
     static volatile boolean visualRegistered;
     private static boolean stickFailureLogged;
 
     /**
-     * Pivot of the stick in canonical model space (pixels): below the plate inside the casing, so the rod sweeps
-     * through the boot like a real lever. Must match tools/gen_models.py.
+     * Pivot of the stick in canonical model space (pixels): deep inside the casing, so the rod passes the top face
+     * exactly where tools/gen_textures.py cuts the gate slots (GATE there must match these numbers).
      */
     static final float PIVOT_X = 8f;
-    static final float PIVOT_Y = 10f;
+    static final float PIVOT_Y = 4f;
     static final float PIVOT_Z = 8f;
-    /** Knob travel at the knob (pixels): between columns along the rail, and across to a row. */
-    static final float ROW_OFFSET = 2.4f;
+    /** Knob travel at the knob (pixels): across to a row, and between columns along the rail. */
+    static final float ROW_OFFSET = 6f;
+    static final float COLUMN_REGULAR = 6f;
+    static final float COLUMN_SPORT = 5f;
 
     private final RandomSource random = RandomSource.create();
 
@@ -108,8 +109,8 @@ public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearsh
         float time = AnimationTickHolder.getRenderTime(be.getLevel());
 
         boolean sport = layout == GateLayout.SPORT;
-        float knobHeight = sport ? 14.25f : 12.5f;
-        float dz = (gx - layout.restX) * (sport ? 2.4f : 3.0f);
+        float knobHeight = sport ? 19.75f : 19f;
+        float dz = (gx - layout.restX) * (sport ? COLUMN_SPORT : COLUMN_REGULAR);
         float dx = gy * ROW_OFFSET;
         float tiltX = (float) Math.toDegrees(Math.atan2(dz, knobHeight));
         float tiltZ = (float) -Math.toDegrees(Math.atan2(dx, knobHeight));
@@ -134,21 +135,9 @@ public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearsh
 
         var models = Minecraft.getInstance().getModelManager();
         BakedModel stick = models.getModel(sport ? STICK_SPORT : STICK_REGULAR);
-        BakedModel boot = models.getModel(BOOT_UPPER);
 
         ms.pushPose();
         orientToAxis(ms, state.getValue(BlockStateProperties.AXIS));
-
-        // Upper boot: flexes toward the tilt (rotates part of the way and squashes slightly).
-        ms.pushPose();
-        pivot(ms, tiltX * 0.35f, tiltZ * 0.35f);
-        float squash = 1f - Math.min(0.12f, (Math.abs(tiltX) + Math.abs(tiltZ)) / 400f);
-        ms.translate(PIVOT_X / 16f, PIVOT_Y / 16f, PIVOT_Z / 16f);
-        ms.scale(1f, squash, 1f);
-        ms.translate(-PIVOT_X / 16f, -PIVOT_Y / 16f, -PIVOT_Z / 16f);
-        renderBaked(ms, buffer, state, boot, light, overlay);
-        ms.popPose();
-
         ms.pushPose();
         pivot(ms, tiltX, tiltZ);
         renderBaked(ms, buffer, state, stick, light, overlay);

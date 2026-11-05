@@ -233,6 +233,11 @@ final class ClientScript {
                 }
             }
             case "close" -> mc.setScreen(null);
+            case "holdkey" -> {
+                // holdkey use|attack on|off: hold a mouse key down (e.g. to keep using an item).
+                var map = a[1].equals("attack") ? mc.options.keyAttack : mc.options.keyUse;
+                net.minecraft.client.KeyMapping.set(map.getKey(), a[2].equals("on"));
+            }
             case "inventory" -> {
                 if (mc.player != null) mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
             }

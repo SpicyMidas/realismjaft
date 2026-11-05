@@ -31,7 +31,6 @@ public final class CreateClientCompat {
     private static void models(ModelEvent.RegisterAdditional event) {
         event.register(TuffGearshiftRenderer.STICK_REGULAR);
         event.register(TuffGearshiftRenderer.STICK_SPORT);
-        event.register(TuffGearshiftRenderer.BOOT_UPPER);
     }
 
     private static void screens(net.neoforged.neoforge.client.event.RegisterMenuScreensEvent event) {

@@ -8,11 +8,12 @@
       },
       "tick_chance": 9.0E-4
     },
+    "ambient_sound": "reverie:ambient.dream_hum",
     "fog_color": 14075035,
     "mood_sound": {
       "block_search_extent": 8,
       "offset": 2.0,
-      "sound": "minecraft:ambient.cave",
+      "sound": "reverie:ambient.far_bell",
       "tick_delay": 6000
     },
     "particle": {

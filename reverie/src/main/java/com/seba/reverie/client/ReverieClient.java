@@ -17,6 +17,7 @@ public final class ReverieClient {
         DreamClient.init(modBus);
         DreamEffectsClient.init();
         modBus.addListener(com.seba.reverie.client.shader.ReverieShaders::onRegisterShaders);
+        com.seba.reverie.client.shader.ScreenEffects.init(modBus);
         com.seba.reverie.client.shade.ShadeClient.init(modBus);
         com.seba.reverie.client.dreamland.DreamlandClient.init(modBus);
         if (Compat.create()) CreateClientCompat.init(modBus);

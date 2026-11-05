@@ -8,36 +8,27 @@
   "elements": [
     {
       "from": [
-        15,
-        11.5,
-        10.5
+        16.01,
+        3,
+        3
       ],
       "to": [
-        15.5,
-        12.5,
-        11.5
+        16.02,
+        13,
+        4
       ],
       "faces": {
-        "north": {
-          "texture": "#dot"
-        },
-        "south": {
-          "texture": "#dot"
-        },
         "east": {
-          "texture": "#dot"
-        },
-        "west": {
-          "texture": "#dot"
-        },
-        "up": {
-          "texture": "#dot"
-        },
-        "down": {
-          "texture": "#dot"
+          "texture": "#dot",
+          "uv": [
+            12,
+            3,
+            13,
+            13
+          ]
         }
       },
-      "name": "powered_dot",
+      "name": "strip",
       "shade": false,
       "neoforge_data": {
         "block_light": 15,
@@ -46,36 +37,85 @@
     },
     {
       "from": [
-        0.5,
-        11.5,
-        4.5
+        16.01,
+        3,
+        12
       ],
       "to": [
-        1,
-        12.5,
-        5.5
+        16.02,
+        13,
+        13
       ],
       "faces": {
-        "north": {
-          "texture": "#dot"
-        },
-        "south": {
-          "texture": "#dot"
-        },
         "east": {
-          "texture": "#dot"
-        },
-        "west": {
-          "texture": "#dot"
-        },
-        "up": {
-          "texture": "#dot"
-        },
-        "down": {
-          "texture": "#dot"
+          "texture": "#dot",
+          "uv": [
+            3,
+            3,
+            4,
+            13
+          ]
         }
       },
-      "name": "powered_dot",
+      "name": "strip",
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "from": [
+        -0.02,
+        3,
+        3
+      ],
+      "to": [
+        -0.01,
+        13,
+        4
+      ],
+      "faces": {
+        "west": {
+          "texture": "#dot",
+          "uv": [
+            3,
+            3,
+            4,
+            13
+          ]
+        }
+      },
+      "name": "strip",
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "from": [
+        -0.02,
+        3,
+        12
+      ],
+      "to": [
+        -0.01,
+        13,
+        13
+      ],
+      "faces": {
+        "west": {
+          "texture": "#dot",
+          "uv": [
+            12,
+            3,
+            13,
+            13
+          ]
+        }
+      },
+      "name": "strip",
       "shade": false,
       "neoforge_data": {
         "block_light": 15,

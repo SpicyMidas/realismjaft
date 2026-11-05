@@ -3,17 +3,15 @@
   "downfall": 0.0,
   "effects": {
     "additions_sound": {
-      "sound": {
-        "sound_id": "minecraft:block.amethyst_block.resonate"
-      },
+      "sound": "reverie:ambient.glass_hum",
       "tick_chance": 0.0015
     },
-    "ambient_sound": "minecraft:ambient.basalt_deltas.loop",
+    "ambient_sound": "reverie:ambient.spire_drone",
     "fog_color": 5920888,
     "mood_sound": {
       "block_search_extent": 8,
       "offset": 2.0,
-      "sound": "minecraft:ambient.cave",
+      "sound": "reverie:ambient.far_bell",
       "tick_delay": 6000
     },
     "particle": {

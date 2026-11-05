@@ -36,6 +36,16 @@ public final class DreamClient {
     private static int fadeTicks;
     private static int fadeLength = 1;
     private static int eyelidTimer;
+    // Heavy blinks: -1 = eyes open; otherwise ticks into the current blink.
+    private static int blinkTick = -1;
+    private static int blinkLength = 70;
+    private static float blinkDepth = 1f;
+    private static int nextBlink = 120;
+    private static float lid;
+    private static float lidPrev;
+    private static float dark;
+    private static float glimpse;
+    private static final java.util.Random RNG = new java.util.Random();
     private static int flashTicks;
     private static int awakeTicks;
 
@@ -99,10 +109,10 @@ public final class DreamClient {
         if (fadeHold > 0) fadeHold--;
         else if (fadeTicks > 0) fadeTicks--;
         if (dreaming && ticksLeft > 0) ticksLeft--;
+        lidPrev = lid;
         if (mc.player != null && !dreaming && mc.player.hasEffect(ModEffects.SLEEPYNESS) && !mc.player.isSleeping()) {
             awakeTicks++;
-            if (eyelidTimer > 0) eyelidTimer--;
-            else if (awakeTicks % 400 == 200) eyelidTimer = 50;
+            sleepyTick();
             if (awakeTicks % 600 == 300 && mc.level != null) {
                 // An occasional yawn.
                 mc.level.playLocalSound(mc.player.getX(), mc.player.getEyeY(), mc.player.getZ(), SoundEvents.FOX_SLEEP,
@@ -111,7 +121,53 @@ public final class DreamClient {
         } else {
             awakeTicks = 0;
             eyelidTimer = 0;
+            blinkTick = -1;
+            lid = Math.max(0, lid - 0.1f);
+            dark = Math.max(0, dark - 0.05f);
+            glimpse = Math.max(0, glimpse - 0.1f);
         }
+        var fx = com.seba.reverie.client.shader.ScreenEffects.SLEEPY;
+        boolean on = ReverieConfig.get(ReverieConfig.EYELID_OVERLAY);
+        fx.dark = on ? dark : 0;
+        fx.glimpse = on ? glimpse : 0;
+    }
+
+    /** Heavy, irregular blinks; sometimes the eyes stay shut a moment, and in that dark the Shades stand. */
+    private static void sleepyTick() {
+        dark += (0.42f - dark) * 0.03f;
+        if (blinkTick < 0) {
+            if (--nextBlink <= 0) {
+                blinkTick = 0;
+                boolean microSleep = RNG.nextInt(4) == 0;
+                blinkLength = microSleep ? 110 : 55 + RNG.nextInt(30);
+                blinkDepth = microSleep ? 1f : 0.65f + RNG.nextFloat() * 0.3f;
+                nextBlink = 120 + RNG.nextInt(220);
+                var fx = com.seba.reverie.client.shader.ScreenEffects.SLEEPY;
+                fx.glimpseX = 0.15f + RNG.nextFloat() * 0.7f;
+                fx.seed = RNG.nextFloat() * 100f;
+            }
+            lid = Math.max(0, lid - 0.05f);
+            glimpse = Math.max(0, glimpse - 0.04f);
+            return;
+        }
+        float t = ++blinkTick / (float) blinkLength;
+        // close slowly (ease in), hold, open a little faster
+        float shape = t < 0.45f ? smooth(t / 0.45f) : t < 0.65f ? 1f : 1f - smooth((t - 0.65f) / 0.35f);
+        lid = shape * blinkDepth;
+        float wantGlimpse = lid > 0.4f ? Math.min(1f, (lid - 0.4f) / 0.3f) : 0f;
+        glimpse += (wantGlimpse - glimpse) * 0.12f;
+        dark = Math.max(dark, 0.42f + 0.3f * lid);
+        if (blinkTick >= blinkLength) blinkTick = -1;
+    }
+
+    private static float smooth(float x) {
+        x = Mth.clamp(x, 0, 1);
+        return x * x * (3 - 2 * x);
+    }
+
+    /** Eyelid position 0..1 for this frame (for the shader and the fallback). */
+    static float lid(float partial) {
+        return Mth.lerp(partial, lidPrev, lid);
     }
 
     private static void layers(RegisterGuiLayersEvent event) {
@@ -143,12 +199,13 @@ public final class DreamClient {
             g.setColor(1f, 1f, 1f, 1f);
         }
 
-        if (eyelidTimer > 0 && ReverieConfig.get(ReverieConfig.EYELID_OVERLAY)) {
-            float t = 1f - (eyelidTimer - pt) / 50f;
-            float close = Mth.sin(Mth.clamp(t, 0f, 1f) * Mth.PI) * 0.42f;
-            int lid = (int) (h * close);
-            g.fillGradient(0, 0, w, lid, 0xF0100A14, 0xC0100A14);
-            g.fillGradient(0, h - lid, w, h, 0xC0100A14, 0xF0100A14);
+        float lidNow = ReverieConfig.get(ReverieConfig.EYELID_OVERLAY) ? lid(pt) : 0f;
+        com.seba.reverie.client.shader.ScreenEffects.SLEEPY.lid = lidNow;
+        if (lidNow > 0.005f && !com.seba.reverie.client.shader.ScreenEffects.sleepyAvailable()) {
+            // Plain fallback: two gradient lids.
+            int lidPx = (int) (h * lidNow * 0.5f);
+            g.fillGradient(0, 0, w, lidPx, 0xF0100A14, 0xC0100A14);
+            g.fillGradient(0, h - lidPx, w, h, 0xC0100A14, 0xF0100A14);
         }
 
         if (flashTicks > 0) {
