@@ -867,6 +867,29 @@ def dreamland_textures():
     save(grid(door, {'o': (70, 40, 70), 'd': DWOOD[1], 'w': (250, 244, 236), 'h': (255, 255, 255)}), "item/lone_door")
 
 
+def paper_whale_texture():
+    """A paper whale: pale folded paper, a darker fold line, a tiny eye. Faces right."""
+    import math as m
+    img = Image.new("RGBA", (64, 32), T)
+    for x in range(64):
+        t = x / 63.0
+        # body: thick at the head (right), tapering to the tail flukes (left)
+        half = 9 * m.sin(min(1, t * 1.3) * m.pi * 0.5) * (1 - max(0, t - 0.85) * 3)
+        cy = 16 + m.sin(t * 3.0) * 1.5
+        for y in range(32):
+            if abs(y - cy) <= half:
+                fold = abs(y - (cy + half * 0.15)) < 0.6
+                facet = (int(x / 7) + (1 if y < cy else 0)) % 2
+                c = (214, 210, 226) if facet else (236, 232, 244)
+                if fold:
+                    c = (170, 164, 190)
+                img.putpixel((x, y), rgba(c, 230))
+    for (x, y) in ((2, 10), (3, 11), (4, 12), (2, 21), (3, 20), (4, 19), (5, 13), (5, 18)):
+        img.putpixel((x, y), rgba((222, 218, 234), 230))
+    img.putpixel((52, 14), rgba((60, 50, 90)))
+    save(img, "environment/paper_whale")
+
+
 def dream_catcher_texture():
     """A willow hoop with a web, a lucid shard at its heart and two feathers."""
     rows = [
@@ -1057,7 +1080,7 @@ def shade_textures():
     save(img, "entity/shade")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture]
+GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture]
 
 
 def contact_sheet(out_dir):

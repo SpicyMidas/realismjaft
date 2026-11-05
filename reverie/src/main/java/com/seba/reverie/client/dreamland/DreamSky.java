@@ -40,6 +40,7 @@ public final class DreamSky {
     private static final ResourceLocation MOON = Reverie.id("textures/environment/dream_moon.png");
     private static final ResourceLocation PLANET = Reverie.id("textures/environment/dream_planet.png");
     private static final ResourceLocation EYE = Reverie.id("textures/environment/dream_eye.png");
+    private static final ResourceLocation WHALE = Reverie.id("textures/environment/paper_whale.png");
 
     private static final int STARS = 640;
     private static final int CONSTELLATIONS = 7;
@@ -161,12 +162,66 @@ public final class DreamSky {
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
                 GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         stars(m, level.getGameTime(), time);
+        aurora(m, time);
         streaks(m, partial);
 
         RenderSystem.defaultBlendFunc();
         planet(m, time);
+        whale(m, time);
         moons(m, time, partial);
         eye(m, level, camera);
+    }
+
+    /** Aurora ribbons: slow curtains of colour high in the sky, brighter in Cloudreach. */
+    private static void aurora(Matrix4f m, float time) {
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        float strength = 0.42f * closeness * closeness;
+        for (int ribbon = 0; ribbon < 2; ribbon++) {
+            float az0 = ribbon == 0 ? 0.6f : 3.4f;
+            float base = ribbon == 0 ? 0.62f : 0.78f;
+            int segments = 72;
+            for (int i = 0; i < segments; i++) {
+                float t0 = i / (float) segments;
+                float t1 = (i + 1) / (float) segments;
+                float[] c0 = auroraColor(t0, time, ribbon, strength);
+                float[] c1 = auroraColor(t1, time, ribbon, strength);
+                double a0 = az0 + t0 * 1.9 + Math.sin(time * 0.004 + t0 * 5 + ribbon) * 0.08;
+                double a1 = az0 + t1 * 1.9 + Math.sin(time * 0.004 + t1 * 5 + ribbon) * 0.08;
+                double e0 = base + Math.sin(t0 * 7 + time * 0.006 + ribbon) * 0.06;
+                double e1 = base + Math.sin(t1 * 7 + time * 0.006 + ribbon) * 0.06;
+                float[] top0 = {c0[0], c0[1], c0[2], 0};
+                float[] top1 = {c1[0], c1[1], c1[2], 0};
+                vertex(b, m, dir(a0, e0), c0);
+                vertex(b, m, dir(a1, e1), c1);
+                vertex(b, m, dir(a1, e1 + 0.22), top1);
+                vertex(b, m, dir(a0, e0 + 0.22), top0);
+            }
+        }
+        draw(b);
+    }
+
+    private static float[] auroraColor(float t, float time, int ribbon, float strength) {
+        float wave = 0.5f + 0.5f * Mth.sin(t * 9 + time * 0.01f + ribbon * 2);
+        float edge = Mth.sin(t * Mth.PI); // fades at both ends
+        float rays = 0.45f + 0.55f * Math.abs(Mth.sin(t * 41 + time * 0.015f + ribbon)); // curtain streaks
+        float r = Mth.lerp(wave, 0.25f, 0.70f);
+        float g = Mth.lerp(wave, 1.00f, 0.45f);
+        float bl = Mth.lerp(wave, 0.70f, 1.00f);
+        return new float[]{r, g, bl, strength * edge * rays};
+    }
+
+    /** The Paper Whale: a huge, slow, folded-paper silhouette swimming across the sky (purely visual). */
+    private static void whale(Matrix4f m, float time) {
+        double orbit = time / 12000.0 * Mth.TWO_PI; // one crossing every ten minutes
+        double az = orbit + 1.1;
+        double el = Math.toRadians(22 + 6 * Math.sin(orbit * 3));
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, WHALE);
+        BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        float bob = Mth.sin(time * 0.01f) * 0.05f;
+        texturedQuad(b, m, dir(az, el), 22 * closeness, 11 * closeness, bob, 0, 0, 1, 1, 0.7f);
+        draw(b);
     }
 
     private static Vec3 dir(double az, double el) {

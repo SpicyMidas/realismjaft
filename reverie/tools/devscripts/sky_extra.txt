@@ -1,0 +1,16 @@
+newworld skyx flat 99
+wait 40
+cmd gamerule doDaylightCycle false
+cmd reverie dream Dev
+wait 120
+hidegui on
+look 253 -25
+wait 5
+screenshot sky_whale
+look 265 -45
+wait 5
+screenshot sky_aurora1
+look 60 -50
+wait 5
+screenshot sky_aurora2
+stop

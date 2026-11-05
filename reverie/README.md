@@ -44,8 +44,8 @@ Sleepy Stew are the plain recipes.
   Nowhere, hanging houses, the Sleep Bell Grove, hourglasses with time bubbles, a giant clock, the Impossible
   Stairs, and a **Memory Island**: a scrambled echo of the room you fell asleep in.
 - The sky: stars that slowly gather into constellations that are never the same twice, three moons of the wrong
-  sizes (the big one trails behind you as you walk), a ringed planet, and a closed Eye on the horizon that opens
-  as the dream ends.
+  sizes (the big one trails behind you as you walk), a ringed planet, aurora curtains, a paper whale swimming
+  slowly past, and a closed Eye on the horizon that opens as the dream ends.
 - Dream weather: Starfall (sometimes a star lands and leaves a Lucid Shard), Petal Drift, Fog Tide, Upward Rain,
   and The Long Silence.
 - **Shades**: a crowd of harmless silhouettes always 28 to 52 blocks away, watching. Walk toward one and it is gone.
@@ -166,8 +166,8 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
   not a true Penrose illusion: perspective on a block grid cannot hide that seam.
 - **Recipe viewers** (checked with JEI) list the extracts, foods, Cooking Pot and Cutting Board recipes. Lacing is
   a special crafting recipe (any food + an Extract), so viewers do not list it.
-- Dream fauna (sleepwalking sheep, lucid moths, the paper whale) and aurora ribbons, stretch goals in the design,
-  are not in this version.
+- The Sleepwalking Sheep and Lucid Moths (stretch goals in the design) are not in this version. The Paper Whale is
+  there, as a sky object rather than an entity.
 
 ## Building from source
 
