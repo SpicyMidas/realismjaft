@@ -49,6 +49,10 @@ repositories {
         forRepository { maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' } }
         filter { includeGroup 'maven.modrinth' }
     }
+    exclusiveContent {
+        forRepository { maven { name = 'BlameJared (JEI)'; url = 'https://maven.blamejared.com' } }
+        filter { includeGroup 'mezz.jei' }
+    }
 }
 
 // none | create | all
@@ -136,6 +140,10 @@ dependencies {
     }
     if (compat == 'all') {
         localRuntime("maven.modrinth:farmers-delight:${farmersdelight_version}") { transitive = false }
+    }
+    // -Preverie.jei=true: run with JEI to check how the recipes show in a recipe viewer (dev only, never required).
+    if (providers.gradleProperty('reverie.jei').getOrElse('false') == 'true') {
+        localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}") { transitive = false }
     }
 }
 

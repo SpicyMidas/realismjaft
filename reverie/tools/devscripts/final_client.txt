@@ -1,0 +1,13 @@
+newworld final_${COMPAT} normal 2026
+wait 80
+cmd time set 13000
+cmd reverie dream Dev
+wait 300
+hidegui on
+look 180 -10
+wait 10
+screenshot final_dream_${COMPAT}
+cmd reverie wake
+wait 80
+screenshot final_awake_${COMPAT}
+stop

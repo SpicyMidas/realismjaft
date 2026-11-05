@@ -1,0 +1,22 @@
+newworld jei2 flat 7
+wait 60
+cmd clear @s
+cmd give @s reverie:concentrated_melatonia_extract
+cmd give @s reverie:melatonia_extract
+wait 20
+inventory
+wait 10
+cursorslot 0
+wait 5
+presskey 82
+wait 20
+screenshot jei_concentrated
+close
+inventory
+wait 10
+cursorslot 1
+wait 5
+presskey 82
+wait 20
+screenshot jei_extract
+stop

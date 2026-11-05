@@ -1,0 +1,35 @@
+newworld jei flat 7
+wait 60
+cmd gamemode survival
+cmd clear @s
+cmd give @s reverie:concentrated_melatonia_extract
+cmd give @s reverie:lullaby_stew
+cmd give @s reverie:melatonia_petals
+cmd give @s reverie:dreamy_pie
+wait 20
+inventory
+wait 20
+screenshot jei_inventory
+cursorslot 0
+wait 5
+presskey 82
+wait 20
+screenshot jei_concentrated
+close
+inventory
+wait 10
+cursorslot 1
+wait 5
+presskey 82
+wait 20
+screenshot jei_stew
+close
+inventory
+wait 10
+cursorslot 2
+wait 5
+presskey 85
+wait 20
+screenshot jei_petals_uses
+close
+stop

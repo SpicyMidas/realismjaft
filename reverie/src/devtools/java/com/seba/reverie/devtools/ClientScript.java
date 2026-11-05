@@ -233,6 +233,40 @@ final class ClientScript {
                 }
             }
             case "close" -> mc.setScreen(null);
+            case "inventory" -> {
+                if (mc.player != null) mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+            }
+            case "cursorslot" -> {
+                // cursorslot N: put the real cursor over hotbar slot N of the open container screen.
+                if (mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> cs) {
+                    int n = Integer.parseInt(a[1]);
+                    var slot = cs.getMenu().slots.stream()
+                            .filter(sl -> sl.container instanceof net.minecraft.world.entity.player.Inventory && sl.getContainerSlot() == n)
+                            .findFirst().orElse(null);
+                    if (slot == null) return;
+                    double scale = mc.getWindow().getGuiScale();
+                    double px = (cs.getGuiLeft() + slot.x + 8) * scale;
+                    double py = (cs.getGuiTop() + slot.y + 8) * scale;
+                    org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), px, py);
+                    // Under Xvfb the move callback may not fire; set the handler's own position too.
+                    try {
+                        for (String f : new String[]{"xpos", "ypos"}) {
+                            var field = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
+                            field.setAccessible(true);
+                            field.setDouble(mc.mouseHandler, f.equals("xpos") ? px : py);
+                        }
+                    } catch (ReflectiveOperationException e) {
+                        ReverieDevTools.LOG.warn("[devscript] cannot move the mouse", e);
+                    }
+                }
+            }
+            case "presskey" -> {
+                // A real key press through the keyboard handler, so mods listening to key events see it.
+                long w = mc.getWindow().getWindow();
+                int code = Integer.parseInt(a[1]);
+                mc.keyboardHandler.keyPress(w, code, 0, org.lwjgl.glfw.GLFW.GLFW_PRESS, 0);
+                mc.keyboardHandler.keyPress(w, code, 0, org.lwjgl.glfw.GLFW.GLFW_RELEASE, 0);
+            }
             case "tpbiome", "tpshape" -> {
                 var server = mc.getSingleplayerServer();
                 if (server == null || mc.player == null) return;
