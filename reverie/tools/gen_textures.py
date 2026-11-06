@@ -321,12 +321,18 @@ def gearshift_side(sport, on):
 
 
 def gate_plate(sport, on):
-    """The top: the side turned so the board runs across it (it wraps around the shaft axis, as on Create's), with the
-    gate cut into the board. Must match TuffGearshiftRenderer: rail at x 7-8, rows end at x 4 and 12, columns at
-    z 5/8/11 (two texels wide), sport at single texels 4/6/9/11."""
+    """The top: the side turned so the board runs across it (it wraps around the shaft axis, as on Create's), widened
+    to the whole inside of the frame, with the gate cut into it. Regular and sport differ only in the number of
+    columns. Must match TuffGearshiftRenderer: rail at x 7-8, odd gears and R toward x 12, even toward x 4; columns at
+    z 4/8/12 (sport 3/6/10/13), all two texels wide."""
     top = gearshift_side(sport, on).rotate(90)
+    # widen the board over the tuff strips: two more board rows each side, Create's plank pixels shifted along the grain
+    for x in range(2, 14):
+        for z, src, k in ((2, 9, 0.72), (3, 10, 1.0), (12, 5, 1.0), (13, 6, 0.72)):
+            r, g, b, _ = top.getpixel(((x + 5) % 16, src))
+            top.putpixel((x, z), (int(r * k), int(g * k), int(b * k), 255))
     groove, groove_dark = (46, 31, 14), (24, 16, 7)
-    cols = [4.5, 6.5, 9.5, 11.5] if sport else [5, 8, 11]
+    cols = [3, 6, 10, 13] if sport else [4, 8, 12]
     cells = set()
 
     def cut(x0, x1, z0, z1):
@@ -334,20 +340,17 @@ def gate_plate(sport, on):
             for z in range(z0, z1):
                 cells.add((x, z))
 
-    def span(c):  # texels of a groove centred at c: two wide on whole pixels, one wide on halves
-        return (int(c) - 1, int(c) + 1) if c == int(c) else (int(c), int(c) + 1)
-
-    cut(7, 9, span(cols[0])[0], span(cols[-1])[1])                 # neutral rail along z
+    cut(7, 9, cols[0] - 1, cols[-1] + 1)                           # neutral rail along z
     for i, c in enumerate(cols):
-        z0, z1 = span(c)
-        cut(3, 9 if i == len(cols) - 1 else 13, z0, z1)            # rows reach x = 4 (odd gears, R) and x = 12 (even)
+        last = i == len(cols) - 1
+        cut(7 if last else 3, 13, c - 1, c + 1)                    # odd gears and R reach x = 12, even gears x = 4
     stripe = {rgba(c) for c in SPORT_STRIPE}
     for (x, z) in cells:   # cut into the wood: dark brown, deeper in the shadow of the upper/left edge
         shadow = (x - 1, z) not in cells or (x, z - 1) not in cells
         top.putpixel((x, z), rgba(groove_dark if shadow else groove))
     for (x, z) in cells:   # a light wooden lip on the lower/right edge of every groove
         for (lx, lz) in ((x + 1, z), (x, z + 1)):
-            if (lx, lz) not in cells and 4 <= lz <= 11 and top.getpixel((lx, lz)) not in stripe:
+            if (lx, lz) not in cells and 2 <= lz <= 13 and 2 <= lx <= 13 and top.getpixel((lx, lz)) not in stripe:
                 top.putpixel((lx, lz), rgba(WOOD_LIGHT))
     return top
 
@@ -364,26 +367,44 @@ def gearshift_textures():
     save(create_casing(Image.new("RGBA", (16, 16), T)), "block/gearshift/casing_frame")
     save(create_pixels(CREATE_GEARBOX, RING_TUFF), "block/gearshift/casing_gearbox")
 
-    # The stick: a plain rod, a small collar and a knob, one texel per model pixel.
-    rod = Image.new("RGBA", (16, 16), rgba(ALLOY['light']))
-    for y in range(16):
-        rod.putpixel((7, y), rgba(ALLOY['hi']))
-        rod.putpixel((8, y), rgba(ALLOY['mid']))
+    # The stick: a plain rod, a small collar and a knob, one texel per model pixel (UVs in tools/gen_models.py), with a
+    # little shading in the block's own alloy palette: light from above, darker underneath.
+    knob_base = (52, 54, 47)
+    rod = Image.new("RGBA", (16, 16), rgba(ALLOY['mid']))
+    for y, c in enumerate((ALLOY['mid'], ALLOY['hi'], ALLOY['light'], FRAME_COLORS['F'], ALLOY['mid'])):
+        rod.putpixel((7, y), rgba(c))                      # rod: only rows 0-3 show above the plate
+    for (x, y), c in {(10, 0): FRAME_COLORS['B'], (11, 0): FRAME_COLORS['A'],       # collar sides
+                      (10, 2): FRAME_COLORS['C'], (11, 2): FRAME_COLORS['B'],       # collar top
+                      (10, 3): FRAME_COLORS['B'], (11, 3): FRAME_COLORS['A']}.items():
+        rod.putpixel((x, y), rgba(c))
     save(rod, "block/gearshift/rod")
-    knob = Image.new("RGBA", (16, 16), rgba((52, 54, 47)))
-    for x in range(16):
-        knob.putpixel((x, 0), rgba((78, 81, 71)))         # top row of the sides: a lighter rim
-    rect(knob, 6, 6, 10, 10, (66, 69, 60))                 # up face
-    knob.putpixel((7, 7), rgba((93, 95, 86)))
-    save(knob, "block/gearshift/knob")
-    sport_knob = Image.new("RGBA", (16, 16), rgba(ALLOY['light']))
-    for x in range(16):
-        sport_knob.putpixel((x, 0), rgba(ALLOY['hi']))
-        sport_knob.putpixel((x, 1), rgba((205, 0, 0)))     # the red band
-        sport_knob.putpixel((x, 2), rgba(ALLOY['mid']))
-    rect(sport_knob, 6, 6, 10, 10, ALLOY['hi'])
-    sport_knob.putpixel((8, 8), rgba((205, 0, 0)))
-    save(sport_knob, "block/gearshift/knob_sport")
+
+    def knob_texture(sides, top, bottom):
+        img = Image.new("RGBA", (16, 16), rgba(bottom))
+        for y, row in enumerate(sides):
+            for x, c in enumerate(row):
+                img.putpixel((6 + x, y), rgba(c))
+        for y, row in enumerate(top):
+            for x, c in enumerate(row):
+                img.putpixel((6 + x, 6 + y), rgba(c))
+        return img
+
+    a = ALLOY
+    save(knob_texture(sides=[(a['dmid'], FRAME_COLORS['B'], a['dmid']),
+                             (a['dark'], knob_base, knob_base),
+                             (knob_base, a['out'], a['out'])],
+                      top=[(a['dmid'], a['dmid'], a['dark']),
+                           (a['dmid'], FRAME_COLORS['B'], a['dark']),
+                           (a['dark'], a['dark'], knob_base)],
+                      bottom=a['out']), "block/gearshift/knob")
+    red, red_hi, red_lo = (205, 0, 0), (232, 40, 28), (150, 0, 0)
+    save(knob_texture(sides=[(a['hi'], a['hi'], a['light']),
+                             (red_hi, red, red_lo),
+                             (a['light'], a['mid'], a['mid'])],
+                      top=[(a['hi'], a['hi'], a['light']),
+                           (a['hi'], red, a['light']),
+                           (a['light'], a['light'], a['mid'])],
+                      bottom=a['mid']), "block/gearshift/knob_sport")
 
     frame = noise_fill(16, 16, [ALLOY['out'], (36, 38, 33), ALLOY['dark']], 909)
     save(frame, "block/gearshift/window_frame")

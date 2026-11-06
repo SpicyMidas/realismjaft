@@ -54,15 +54,18 @@ public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearsh
     /** Knob centre height above the pivot (knob at 21 px), and the rod's travel where it passes the top face. */
     static final float KNOB_HEIGHT = 17f;
     private static final float TOP_TO_KNOB = KNOB_HEIGHT / (16f - PIVOT_Y);
-    /** Knob travel (pixels) so the rod meets the plate slots: rows 4 px off the rail. */
+    /**
+     * Knob travel (pixels) so the rod meets the plate slots: rows 4 px off the rail. The top row of the GUI (odd gears
+     * and R) is toward +x, so that seen from the side the columns run 1/2 ... R left to right with odd gears away
+     * from the viewer, exactly as on screen.
+     */
     static final float ROW_OFFSET = 4f * TOP_TO_KNOB;
     /**
-     * Where the rod crosses the top face for each column, in pixels from the middle. The gate is cut into the wooden
-     * board (z 4..11 of gate_plate in tools/gen_textures.py): regular columns 3 px apart, sport columns on single
-     * texels 4, 6, 9 and 11.
+     * Where the rod crosses the top face for each column, in pixels from the middle (gate_plate in
+     * tools/gen_textures.py, two-texel grooves): regular columns at z 4/8/12, sport at z 3/6/10/13.
      */
-    private static final float REGULAR_SPACING = 3f;
-    private static final float[] SPORT_COLUMNS = {-3.5f, -1.5f, 1.5f, 3.5f};
+    private static final float REGULAR_SPACING = 4f;
+    private static final float[] SPORT_COLUMNS = {-5f, -2f, 2f, 5f};
 
     private final RandomSource random = RandomSource.create();
 
@@ -126,7 +129,7 @@ public class TuffGearshiftRenderer extends KineticBlockEntityRenderer<TuffGearsh
         boolean sport = layout == GateLayout.SPORT;
         float knobHeight = KNOB_HEIGHT;
         float dz = columnAtTop(layout, gx) * TOP_TO_KNOB;
-        float dx = gy * ROW_OFFSET;
+        float dx = -gy * ROW_OFFSET;
         float tiltX = (float) Math.toDegrees(Math.atan2(dz, knobHeight));
         float tiltZ = (float) -Math.toDegrees(Math.atan2(dx, knobHeight));
 

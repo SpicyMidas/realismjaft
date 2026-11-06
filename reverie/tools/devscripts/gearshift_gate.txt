@@ -1,0 +1,21 @@
+newworld gearshift_gate flat 7
+wait 40
+cmd time set noon
+cmd gamerule doDaylightCycle false
+cmd kill @e[type=!player]
+cmd setblock 4 -60 0 reverie:tuff_gearshift[axis=z,gear=1]
+cmd setblock 4 -60 2 reverie:tuff_gearshift[axis=z,gear=4]
+cmd setblock 4 -60 4 reverie:tuff_gearshift[axis=z,gear=7]
+cmd setblock 6 -60 0 reverie:sport_tuff_gearshift[axis=z,gear=1]
+cmd setblock 6 -60 2 reverie:sport_tuff_gearshift[axis=z,gear=6]
+cmd setblock 6 -60 4 reverie:sport_tuff_gearshift[axis=z,gear=7]
+cmd setblock 6 -60 6 reverie:sport_tuff_gearshift[axis=z,gear=0]
+cmd gamemode spectator
+hidegui on
+cmd tp @s 1.6 -56.4 3.5 -90 52
+wait 100
+screenshot gate_from_west
+cmd tp @s 5.5 -55.0 3.5 -90 89
+wait 20
+screenshot gate_top
+stop

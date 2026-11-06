@@ -124,10 +124,13 @@ def stick_elements(sport):
     """Small and plain, the same shape for both: a thin rod from the pivot (4 px up, inside the block), a collar and a
     3 px knob. Textures map one texel per pixel. Must match TuffGearshiftRenderer (knob centre at 21)."""
     side = ("north", "south", "east", "west")
+    # explicit UVs so every model pixel gets exactly one texel (the half-pixel positions would otherwise split texels)
     return [
-        box([7.5, 4, 7.5], [8.5, 19.5, 8.5], "rod", faces=side, name="rod"),
-        box([7, 19, 7], [9, 19.5, 9], "rod", name="collar"),
-        box([6.5, 19.5, 6.5], [9.5, 22.5, 9.5], "knob", name="knob"),
+        box([7.5, 4, 7.5], [8.5, 19.5, 8.5], "rod", faces=side, uv={f: [7, 0, 8, 15.5] for f in side}, name="rod"),
+        box([7, 19, 7], [9, 19.5, 9], "rod", uv=dict({f: [10, 0, 12, 1] for f in side}, up=[10, 2, 12, 4], down=[10, 2, 12, 4]),
+            name="collar"),
+        box([6.5, 19.5, 6.5], [9.5, 22.5, 9.5], "knob", uv=dict({f: [6, 0, 9, 3] for f in side}, up=[6, 6, 9, 9], down=[6, 10, 9, 13]),
+            name="knob"),
     ]
 
 
