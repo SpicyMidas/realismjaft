@@ -1,0 +1,526 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "paper": "reverie:item/paper_glider_sheet",
+    "particle": "reverie:item/paper_glider_sheet"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        1,
+        0
+      ],
+      "to": [
+        8,
+        1.25,
+        18
+      ],
+      "faces": {
+        "north": {
+          "texture": "#paper",
+          "uv": [
+            8,
+            14.75,
+            11,
+            15
+          ]
+        },
+        "south": {
+          "texture": "#paper",
+          "uv": [
+            5,
+            14.75,
+            8,
+            15
+          ]
+        },
+        "east": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            14.75,
+            16,
+            15
+          ]
+        },
+        "west": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            14.75,
+            16,
+            15
+          ]
+        },
+        "up": {
+          "texture": "#paper",
+          "uv": [
+            5,
+            0,
+            8,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#paper",
+          "uv": [
+            5,
+            0,
+            8,
+            16
+          ]
+        }
+      },
+      "name": "wing_l0"
+    },
+    {
+      "from": [
+        2,
+        1.5,
+        6
+      ],
+      "to": [
+        5,
+        1.75,
+        18
+      ],
+      "faces": {
+        "north": {
+          "texture": "#paper",
+          "uv": [
+            11,
+            14.25,
+            14,
+            14.5
+          ]
+        },
+        "south": {
+          "texture": "#paper",
+          "uv": [
+            2,
+            14.25,
+            5,
+            14.5
+          ]
+        },
+        "east": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            14.25,
+            12,
+            14.5
+          ]
+        },
+        "west": {
+          "texture": "#paper",
+          "uv": [
+            4,
+            14.25,
+            16,
+            14.5
+          ]
+        },
+        "up": {
+          "texture": "#paper",
+          "uv": [
+            2,
+            4,
+            5,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#paper",
+          "uv": [
+            2,
+            0,
+            5,
+            12
+          ]
+        }
+      },
+      "name": "wing_l1"
+    },
+    {
+      "from": [
+        -1,
+        2.0,
+        11
+      ],
+      "to": [
+        2,
+        2.25,
+        18
+      ],
+      "faces": {
+        "north": {
+          "texture": "#paper",
+          "uv": [
+            13,
+            13.75,
+            16,
+            14.0
+          ]
+        },
+        "south": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            13.75,
+            3,
+            14.0
+          ]
+        },
+        "east": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            13.75,
+            7,
+            14.0
+          ]
+        },
+        "west": {
+          "texture": "#paper",
+          "uv": [
+            9,
+            13.75,
+            16,
+            14.0
+          ]
+        },
+        "up": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            9,
+            3,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            0,
+            3,
+            7
+          ]
+        }
+      },
+      "name": "wing_l2"
+    },
+    {
+      "from": [
+        8,
+        1,
+        0
+      ],
+      "to": [
+        11,
+        1.25,
+        18
+      ],
+      "faces": {
+        "north": {
+          "texture": "#paper",
+          "uv": [
+            5,
+            14.75,
+            8,
+            15
+          ]
+        },
+        "south": {
+          "texture": "#paper",
+          "uv": [
+            8,
+            14.75,
+            11,
+            15
+          ]
+        },
+        "east": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            14.75,
+            16,
+            15
+          ]
+        },
+        "west": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            14.75,
+            16,
+            15
+          ]
+        },
+        "up": {
+          "texture": "#paper",
+          "uv": [
+            8,
+            0,
+            11,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#paper",
+          "uv": [
+            8,
+            0,
+            11,
+            16
+          ]
+        }
+      },
+      "name": "wing_r0"
+    },
+    {
+      "from": [
+        11,
+        1.5,
+        6
+      ],
+      "to": [
+        14,
+        1.75,
+        18
+      ],
+      "faces": {
+        "north": {
+          "texture": "#paper",
+          "uv": [
+            2,
+            14.25,
+            5,
+            14.5
+          ]
+        },
+        "south": {
+          "texture": "#paper",
+          "uv": [
+            11,
+            14.25,
+            14,
+            14.5
+          ]
+        },
+        "east": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            14.25,
+            12,
+            14.5
+          ]
+        },
+        "west": {
+          "texture": "#paper",
+          "uv": [
+            4,
+            14.25,
+            16,
+            14.5
+          ]
+        },
+        "up": {
+          "texture": "#paper",
+          "uv": [
+            11,
+            4,
+            14,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#paper",
+          "uv": [
+            11,
+            0,
+            14,
+            12
+          ]
+        }
+      },
+      "name": "wing_r1"
+    },
+    {
+      "from": [
+        14,
+        2.0,
+        11
+      ],
+      "to": [
+        17,
+        2.25,
+        18
+      ],
+      "faces": {
+        "north": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            13.75,
+            3,
+            14.0
+          ]
+        },
+        "south": {
+          "texture": "#paper",
+          "uv": [
+            13,
+            13.75,
+            16,
+            14.0
+          ]
+        },
+        "east": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            13.75,
+            7,
+            14.0
+          ]
+        },
+        "west": {
+          "texture": "#paper",
+          "uv": [
+            9,
+            13.75,
+            16,
+            14.0
+          ]
+        },
+        "up": {
+          "texture": "#paper",
+          "uv": [
+            13,
+            9,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#paper",
+          "uv": [
+            13,
+            0,
+            16,
+            7
+          ]
+        }
+      },
+      "name": "wing_r2"
+    },
+    {
+      "from": [
+        7.75,
+        0,
+        1
+      ],
+      "to": [
+        8.25,
+        1,
+        17
+      ],
+      "faces": {
+        "north": {
+          "texture": "#paper",
+          "uv": [
+            7.75,
+            15,
+            8.25,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#paper",
+          "uv": [
+            7.75,
+            15,
+            8.25,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            15,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#paper",
+          "uv": [
+            0,
+            15,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#paper",
+          "uv": [
+            7.75,
+            0,
+            8.25,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#paper",
+          "uv": [
+            7.75,
+            0,
+            8.25,
+            16
+          ]
+        }
+      },
+      "name": "keel"
+    },
+    {
+      "from": [
+        7.75,
+        0.5,
+        0
+      ],
+      "to": [
+        8.25,
+        1,
+        1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#paper"
+        },
+        "south": {
+          "texture": "#paper"
+        },
+        "east": {
+          "texture": "#paper"
+        },
+        "west": {
+          "texture": "#paper"
+        },
+        "up": {
+          "texture": "#paper"
+        },
+        "down": {
+          "texture": "#paper"
+        }
+      },
+      "name": "nose"
+    }
+  ]
+}

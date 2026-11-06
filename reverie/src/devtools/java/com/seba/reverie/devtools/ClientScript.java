@@ -361,6 +361,7 @@ final class ClientScript {
             }
             case "sneak" -> mc.options.keyShift.setDown(a[1].equals("on"));
             case "hidegui" -> mc.options.hideGui = a[1].equals("on");
+            case "camera" -> mc.options.setCameraType(net.minecraft.client.CameraType.valueOf(a[1].toUpperCase()));
             case "gui" -> {
                 mc.options.guiScale().set(Integer.parseInt(a[1]));
                 mc.resizeDisplay();

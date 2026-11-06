@@ -282,7 +282,26 @@ def dream_decor():
     write("models/item/lone_door.json", {"parent": "minecraft:item/generated", "textures": {"layer0": "reverie:item/lone_door"}})
 
 
+def paper_glider():
+    """The Paper Glider held overhead while gliding: a folded paper plane made of thin sheets, nose toward -z, wings at
+    y = 1. Each wing is three stepped strips, every one raised half a pixel more (a pixel-art dihedral); a shallow
+    keel (1 px) is folded under the middle, clear of the head. Drawn scaled and placed by GliderClient."""
+    sheet = 0.25
+    els = []
+    for side in (-1, 1):
+        for i, (w0, w1, z0, lift) in enumerate(((0, 3, 0, 0), (3, 6, 6, 0.5), (6, 9, 11, 1.0))):
+            x0, x1 = (8 - w1, 8 - w0) if side < 0 else (8 + w0, 8 + w1)
+            els.append(box([x0, 1 + lift, z0], [x1, 1 + lift + sheet, 18], "paper", name=f"wing_{'l' if side < 0 else 'r'}{i}"))
+    els.append(box([7.75, 0, 1], [8.25, 1, 17], "paper", name="keel"))
+    els.append(box([7.75, 0.5, 0], [8.25, 1, 1], "paper", name="nose"))
+    write("models/item/paper_glider_3d.json", model({"paper": "reverie:item/paper_glider_sheet", "particle": "reverie:item/paper_glider_sheet"},
+                                                    els, render_type="minecraft:cutout"))
+    # While gliding the held item draws nothing (the glider is drawn overhead instead).
+    write("models/item/paper_glider_gliding.json", {"parent": "minecraft:item/generated", "textures": {"layer0": "reverie:item/empty"}})
+
+
 if __name__ == "__main__":
+    paper_glider()
     dream_decor()
     gearshift()
     print("models written")

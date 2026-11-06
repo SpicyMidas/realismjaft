@@ -1,0 +1,26 @@
+newworld glider_pose flat 7
+wait 40
+cmd time set noon
+cmd gamerule doDaylightCycle false
+cmd gamemode survival
+cmd item replace entity @s weapon.mainhand with reverie:paper_glider
+cmd tp @s 0.5 -20 0.5 0 0
+wait 10
+holdkey use on
+wait 40
+screenshot glide_first
+cmd tp @s ~ ~ ~ 30 45
+camera third_person_back
+wait 10
+screenshot glide_back
+cmd tp @s ~ ~ ~ 0 0
+camera third_person_front
+wait 10
+screenshot glide_front
+cmd tp @s 0.5 -20 0.5 90 0
+wait 10
+screenshot glide_side
+wait 5
+holdkey use off
+camera first_person
+stop

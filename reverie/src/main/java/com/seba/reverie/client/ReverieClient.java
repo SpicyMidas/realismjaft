@@ -20,6 +20,7 @@ public final class ReverieClient {
         com.seba.reverie.client.shader.ScreenEffects.init(modBus);
         com.seba.reverie.client.shade.ShadeClient.init(modBus);
         com.seba.reverie.client.dreamland.DreamlandClient.init(modBus);
+        com.seba.reverie.client.glider.GliderClient.init(modBus);
         if (Compat.create()) CreateClientCompat.init(modBus);
     }
 }

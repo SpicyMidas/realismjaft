@@ -31,7 +31,9 @@ final class ModelGen {
             basicItem(ModItems.LUCID_SHARD.get());
             basicItem(ModItems.DREAM_DUST.get());
             basicItem(ModItems.DREAM_CATCHER.get());
-            basicItem(ModItems.PAPER_GLIDER.get());
+            // While gliding, the held glider draws nothing: GliderClient draws the 3D one overhead.
+            basicItem(ModItems.PAPER_GLIDER.get()).override().predicate(modLoc("gliding"), 1f)
+                    .model(getExistingFile(modLoc("item/paper_glider_gliding"))).end();
             for (var egg : new String[]{"sleepwalking_sheep_spawn_egg", "lucid_moth_spawn_egg"}) {
                 withExistingParent(egg, mcLoc("item/template_spawn_egg"));
             }

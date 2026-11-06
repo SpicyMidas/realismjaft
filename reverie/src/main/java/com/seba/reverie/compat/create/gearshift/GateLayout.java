@@ -2,6 +2,7 @@ package com.seba.reverie.compat.create.gearshift;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntPredicate;
 
 /**
  * The H-pattern gate, shared by the GUI and the block renderer so they can never disagree.
@@ -18,8 +19,8 @@ public final class GateLayout {
     public static final GateLayout SPORT = new GateLayout(6);
 
     private static final float EPS = 1e-4f;
-    /** Distance from a column at which the knob on the rail is allowed to drop into it. */
-    private static final float COLUMN_SNAP = 0.22f;
+    /** How far into its slot the knob gets for a gear the screen refuses (too fast). */
+    private static final float BLOCKED_REACH = 0.7f;
 
     public final int forwardGears;
     public final int columns;
@@ -133,43 +134,56 @@ public final class GateLayout {
     }
 
     /**
-     * Moves the knob from {@code pos} toward the pointer at (mx, my) while staying in the gate.
-     * Returns true if the knob is pressed against a wall (pointer far away in a blocked direction).
+     * Moves the knob from {@code pos} to the point of the gate nearest the pointer at (mx, my), routed along the gate
+     * (out of the column, along the rail, into the next one), so cutting a corner diagonally simply follows the mouse.
+     * The screen draws the knob gliding along that route. Slots of gears in {@code blocked} end short of their gear.
+     * Returns true if the knob is pressed against a wall (pointer far from the gate).
      */
-    public boolean drag(float[] pos, float mx, float my) {
-        float step = 0.04f;
-        int dir = my < -0.25f ? -1 : my > 0.25f ? 1 : 0;
-        int mouseColumn = Math.round(clamp(mx, 0, columns - 1));
-        boolean mouseInColumnBand = Math.abs(mx - mouseColumn) < 0.5f;
-        for (int i = 0; i < 200; i++) {
-            float x = pos[0];
-            float y = pos[1];
-            if (Math.abs(y) < EPS) {
-                // On the rail: drop into the column under the pointer, otherwise slide toward it.
-                boolean canEnter = dir != 0 && mouseInColumnBand && hasSlot(mouseColumn, dir);
-                if (canEnter && Math.abs(x - mouseColumn) < COLUMN_SNAP) {
-                    pos[0] = mouseColumn;
-                    pos[1] = dir * Math.min(step, Math.abs(my));
-                    continue;
+    public boolean drag(float[] pos, float mx, float my, IntPredicate blocked) {
+        float bestX = clamp(mx, 0, columns - 1);
+        float bestY = 0;
+        float bestScore = score(pos, bestX, 0, mx, my);
+        for (int c = 0; c < columns; c++) {
+            for (int dir = -1; dir <= 1; dir += 2) {
+                if (!hasSlot(c, dir)) continue;
+                float reach = blocked.test(gearAtSlot(c, dir)) ? BLOCKED_REACH : 1f;
+                float y = dir < 0 ? clamp(my, -reach, 0) : clamp(my, 0, reach);
+                float score = score(pos, c, y, mx, my);
+                if (score < bestScore - EPS) {
+                    bestScore = score;
+                    bestX = c;
+                    bestY = y;
                 }
-                float target = canEnter ? mouseColumn : clamp(mx, 0, columns - 1);
-                float d = target - x;
-                if (Math.abs(d) < EPS) break;
-                pos[0] = x + Math.signum(d) * Math.min(step, Math.abs(d));
-            } else {
-                // In a column: only vertical moves; leave through the rail if the pointer is elsewhere.
-                int side = y < 0 ? -1 : 1;
-                boolean leave = Math.abs(mx - x) > 0.5f || dir != side;
-                float target = leave ? 0 : clamp(my, side < 0 ? -1 : 0, side < 0 ? 0 : 1);
-                float d = target - y;
-                if (Math.abs(d) < EPS) break;
-                float ny = y + Math.signum(d) * Math.min(step, Math.abs(d));
-                pos[1] = Math.abs(ny) < EPS || Math.signum(ny) != side ? 0 : ny;
             }
         }
+        pos[0] = bestX;
+        pos[1] = Math.abs(bestY) < EPS ? 0 : bestY;
         float dx = mx - pos[0];
         float dy = my - pos[1];
         return dx * dx + dy * dy > 0.45f * 0.45f;
+    }
+
+    public boolean drag(float[] pos, float mx, float my) {
+        return drag(pos, mx, my, gear -> false);
+    }
+
+    /** Distance from the pointer, with a little of the route length so near-ties keep the shorter move. */
+    private float score(float[] pos, float x, float y, float mx, float my) {
+        float d = (float) Math.sqrt((mx - x) * (mx - x) + (my - y) * (my - y));
+        return d + 0.1f * length(path(pos[0], pos[1], x, y));
+    }
+
+    /** Route between two points on the gate. */
+    private static List<float[]> path(float x, float y, float tx, float ty) {
+        List<float[]> pts = new ArrayList<>();
+        pts.add(new float[]{x, y});
+        boolean sameColumn = Math.abs(x - tx) < EPS;
+        if (!sameColumn || (Math.abs(y) > EPS && Math.abs(ty) > EPS && Math.signum(ty) != Math.signum(y))) {
+            if (Math.abs(y) > EPS) pts.add(new float[]{x, 0});
+            if (Math.abs(ty) > EPS) pts.add(new float[]{tx, 0});
+        }
+        pts.add(new float[]{tx, ty});
+        return pts;
     }
 
     private static float clamp(float v, float lo, float hi) {

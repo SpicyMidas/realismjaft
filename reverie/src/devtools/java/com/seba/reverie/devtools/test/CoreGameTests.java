@@ -49,6 +49,14 @@ public final class CoreGameTests {
         boolean wall = layout.drag(pos, layout.slotX(6), layout.slotY(6));
         h.assertTrue(layout.gearAt(pos[0], pos[1]) == 6, "drag 1->6 ended at " + pos[0] + "," + pos[1]);
         h.assertFalse(wall, "unexpected wall after reaching the target");
+        // Cutting the corner diagonally (from 1 straight toward just past 4) still follows the gate into 4.
+        float[] diag = {GateLayout.REGULAR.slotX(1), GateLayout.REGULAR.slotY(1)};
+        GateLayout.REGULAR.drag(diag, 1.12f, 0.97f);
+        h.assertTrue(GateLayout.REGULAR.gearAt(diag[0], diag[1]) == 4, "diagonal drag 1->4 ended at " + diag[0] + "," + diag[1]);
+        // A refused (too fast) gear keeps the knob short of its slot end.
+        float[] held = {GateLayout.REGULAR.slotX(1), GateLayout.REGULAR.slotY(1)};
+        GateLayout.REGULAR.drag(held, 1f, 1f, gear -> gear == 4);
+        h.assertTrue(GateLayout.REGULAR.gearAt(held[0], held[1]) == -1 && held[1] > 0.5f, "refused gear 4 was reached");
         // R has no bottom slot: pushing down from R is a wall.
         pos[0] = layout.slotX(GateLayout.R);
         pos[1] = layout.slotY(GateLayout.R);

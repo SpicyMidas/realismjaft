@@ -266,7 +266,8 @@ WOOD_LIGHT = (0x96, 0x6f, 0x3f)
 REDSTONE_OFF = [[(0x58, 1, 1), (0x4b, 1, 1)], [(0x47, 1, 2), (0x58, 1, 1)]]
 REDSTONE_ON = [[(0xff, 0x52, 0x3a), (0xe0, 0x10, 0x08)], [(0xcd, 0, 0), (0xa5, 0, 0)]]
 SOCKET = (36, 38, 33)
-SPORT_STRIPE = ((214, 22, 18), (158, 10, 8))
+# The sport's mark: a thin dark-red pinline in the board's middle seam (two shades, so it reads as paint in the grain).
+SPORT_STRIPE = ((128, 30, 22), (104, 24, 18))
 
 
 def hexc(h):
@@ -298,7 +299,7 @@ def create_casing(interior):
 
 def gearshift_side(sport, on):
     """Create's gearshift side: alloy frame, Create's wooden board down the middle, tuff where Create has its lamps, and
-    a small redstone light in each tuff strip that is lit while powered. The sport has a red stripe down the board."""
+    a small redstone light in each tuff strip that is lit while powered. The sport has a thin dark-red pinline in the board's seam."""
     img = create_pixels(CREATE_GEARSHIFT)
     tuff = tuff_art()
     for y in range(2, 14):
@@ -315,8 +316,7 @@ def gearshift_side(sport, on):
                 img.putpixel((x0 + dx, 7 + dy), rgba(lamp[dy][dx]))
     if sport:
         for y in range(16):
-            img.putpixel((7, y), rgba(SPORT_STRIPE[0]))
-            img.putpixel((8, y), rgba(SPORT_STRIPE[1]))
+            img.putpixel((8, y), rgba(SPORT_STRIPE[(y // 3) % 2]))
     return img
 
 
@@ -397,9 +397,9 @@ def gearshift_textures():
                            (a['dmid'], FRAME_COLORS['B'], a['dark']),
                            (a['dark'], a['dark'], knob_base)],
                       bottom=a['out']), "block/gearshift/knob")
-    red, red_hi, red_lo = (205, 0, 0), (232, 40, 28), (150, 0, 0)
+    red = SPORT_STRIPE[0]          # just a small dot on top, the same dark red as the pinline
     save(knob_texture(sides=[(a['hi'], a['hi'], a['light']),
-                             (red_hi, red, red_lo),
+                             (a['light'], a['light'], a['mid']),
                              (a['light'], a['mid'], a['mid'])],
                       top=[(a['hi'], a['hi'], a['light']),
                            (a['hi'], red, a['light']),
@@ -495,13 +495,11 @@ def gearshift_gui():
     # regular knob (0,104): dark tuff with a pale alloy ring
     disc(8, 112, 7.5, lambda x, y, d: ALLOY['light'] if d > 6.3 else mix(ALLOY['dmid'], ALLOY['out'],
                                                                          min(1, ((x - 5) ** 2 + (y - 108) ** 2) ** 0.5 / 10)))
-    # sport knob (16,104): the same knob in pale alloy with the red band
+    # sport knob (16,104): the same knob in pale alloy with a small dark-red dot
     disc(24, 112, 7.5, lambda x, y, d: ALLOY['hi'] if d > 6.3 else mix(ALLOY['light'], ALLOY['mid'],
                                                                       min(1, ((x - 21) ** 2 + (y - 108) ** 2) ** 0.5 / 12)))
-    for x in range(17, 32):
-        for y in (111, 112):
-            if ((x + 0.5 - 24) ** 2 + (y + 0.5 - 112) ** 2) ** 0.5 <= 6.3:
-                img.putpixel((x, y), rgba((205, 0, 0) if y == 111 else (125, 0, 0)))
+    for (x, y) in ((23, 111), (24, 111), (23, 112), (24, 112)):     # a small dark-red dot instead of a band
+        img.putpixel((x, y), rgba(SPORT_STRIPE[0] if y == 111 else SPORT_STRIPE[1]))
     # slot ring (32,104) 24x24: the dark collar the stick comes out of
     disc(44, 116, 11.5, lambda x, y, d: None if d < 7.5 else mix(ALLOY['dmid'], ALLOY['out'], (d - 7.5) / 4))
     # lamps (56,104) off and (68,104) on, 12x12
@@ -947,6 +945,20 @@ def paper_glider_texture():
         "......wfw.......", "......oso.......", ".......s........", "................"]
     save(grid(rows, {'w': (214, 208, 196), 'W': (240, 236, 226), 'f': (176, 150, 214), 'o': (150, 144, 136),
                      's': (124, 96, 66)}), "item/paper_glider")
+    # The 3D glider's paper (models/item/paper_glider_3d.json, one texel per model pixel): warm white sheet with a
+    # little grain, a lilac fold down the middle (columns 7-8) and faint creases where the wing strips meet.
+    rnd = random.Random(4242)
+    sheet = Image.new("RGBA", (16, 16))
+    for y in range(16):
+        for x in range(16):
+            c = (240, 236, 226) if rnd.random() > 0.18 else (228, 223, 212)
+            if x in (7, 8):
+                c = (196, 178, 228) if x == 7 else (176, 150, 214)
+            elif x in (2, 5, 10, 13):
+                c = (214, 208, 196)
+            sheet.putpixel((x, y), rgba(c))
+    save(sheet, "item/paper_glider_sheet")
+    save(Image.new("RGBA", (16, 16), T), "item/empty")
 
 
 def fauna_textures():

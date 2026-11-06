@@ -7,6 +7,8 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 authors="Seba"
+# The Paper Glider's two-handed gliding arm pose (client only).
+enumExtensions="META-INF/enumextensions.json"
 description='''
 Melatonia, Sleepyness and the Dreamland: sleep any time of day and dream on floating islands watched by Shades.
 With Create: Tuff Gearshifts and the Latch Remote. With Farmer's Delight: dreamy dishes.

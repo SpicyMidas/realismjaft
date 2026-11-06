@@ -197,21 +197,19 @@ public class TuffGearshiftScreen extends Screen {
         }
         float gx = (panelX(mouseX) - PLATE_X - GATE_MARGIN) / colSpacing();
         float gy = (panelY(mouseY) - PLATE_Y - PLATE_H / 2f) / ROW;
-        boolean wall = layout.drag(dragPos, gx, gy);
+        TuffGearshiftBlockEntity blockEntity = be;
+        boolean wall = layout.drag(dragPos, gx, gy, gear -> gear != committed && blockEntity != null && blockEntity.wouldOverspeed(gear));
         if (wall && wallShake < 0.4f) wallShake = 1f;
         if (Math.abs(dragPos[1]) < 0.01f && Math.abs(dragPos[0] - lastRailTick) > 0.4f) {
             lastRailTick = dragPos[0];
             uiSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.9f, 0.08f);
         }
         int at = layout.gearAt(dragPos[0], dragPos[1]);
-        if (at > 0 && at != committed) {
-            if (be != null && be.wouldOverspeed(at)) {
-                // The gear would spin faster than Create allows: the gate pushes back.
-                dragPos[1] = Math.signum(dragPos[1]) * 0.7f;
-                tooFast(be);
-            } else {
-                commit(at);
-            }
+        if (at > 0 && at != committed) commit(at);
+        if (be != null && Math.abs(dragPos[1]) > 0.6f) {
+            // Held short of a gear that would spin faster than Create allows: the gate pushes back.
+            int toward = layout.gearAtSlot(Math.round(dragPos[0]), dragPos[1] < 0 ? -1 : 1);
+            if (toward > 0 && toward != committed && be.wouldOverspeed(toward)) tooFast(be);
         }
         return true;
     }
@@ -398,7 +396,7 @@ public class TuffGearshiftScreen extends Screen {
         var pose = g.pose();
         pose.pushPose();
         pose.translate(x, y, 0);
-        // Leather boot ring, then the knob (sport: metal ball with red band; regular: black knob with gold collar).
+        // Leather boot ring, then the knob (sport: pale alloy with a dark-red dot; regular: dark knob).
         g.blit(TEX, -12, -12, 32, 104, 24, 24, 256, 256);
         g.blit(TEX, -8, -8, layout == GateLayout.SPORT ? 16 : 0, 104, 16, 16, 256, 256);
         pose.popPose();

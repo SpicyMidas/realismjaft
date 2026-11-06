@@ -62,10 +62,10 @@ public final class CreateGameTests {
         build(h, CreateContent.TUFF_GEARSHIFT.get());
         h.startSequence()
                 .thenIdle(3)
-                .thenExecute(() -> ((CreativeMotorBlockEntity) h.getBlockEntity(MOTOR)).generatedSpeed.setValue(64))
+                .thenExecute(() -> ((CreativeMotorBlockEntity) h.getBlockEntity(MOTOR)).generatedSpeed.setValue(32))
                 .thenIdle(5)
                 .thenExecute(() -> expect(h, "N", 0))
-                .thenExecute(() -> box(h).select(1)).thenIdle(4).thenExecute(() -> expect(h, "1", 64 * (float) ReverieConfig.gearRatio(1) * Math.signum(box(h).getSpeed())))
+                .thenExecute(() -> box(h).select(1)).thenIdle(4).thenExecute(() -> expect(h, "1", 32 * (float) ReverieConfig.gearRatio(1) * Math.signum(box(h).getSpeed())))
                 .thenExecute(() -> box(h).select(2)).thenIdle(4).thenExecute(() -> expect(h, "2", box(h).getSpeed() * (float) ReverieConfig.gearRatio(2)))
                 .thenExecute(() -> box(h).select(3)).thenIdle(4).thenExecute(() -> expect(h, "3", box(h).getSpeed() * (float) ReverieConfig.gearRatio(3)))
                 .thenExecute(() -> box(h).select(4)).thenIdle(4).thenExecute(() -> expect(h, "4", box(h).getSpeed() * (float) ReverieConfig.gearRatio(4)))
@@ -86,7 +86,7 @@ public final class CreateGameTests {
                 .thenExecute(() -> {
                     h.assertTrue(box(h).effectiveGear() == 2, "did not return to the remembered gear");
                     expect(h, "back to 2", box(h).getSpeed() * (float) ReverieConfig.gearRatio(2));
-                    // A gear that would run faster than Create allows is refused (64 rpm x4 = 256 is fine, 128 x4 is not).
+                    // A gear that would run faster than Create allows is refused (at 128 rpm gear 2 = 256 is fine, gear 4 = x6 is not).
                     ((CreativeMotorBlockEntity) h.getBlockEntity(MOTOR)).generatedSpeed.setValue(128);
                 })
                 .thenIdle(4)
@@ -112,7 +112,7 @@ public final class CreateGameTests {
         build(h, CreateContent.SPORT_TUFF_GEARSHIFT.get());
         h.startSequence()
                 .thenIdle(3)
-                .thenExecute(() -> ((CreativeMotorBlockEntity) h.getBlockEntity(MOTOR)).generatedSpeed.setValue(32))
+                .thenExecute(() -> ((CreativeMotorBlockEntity) h.getBlockEntity(MOTOR)).generatedSpeed.setValue(16))  // x10 in gear 6 stays under the limit
                 .thenIdle(5)
                 .thenExecute(() -> box(h).select(5)).thenIdle(4).thenExecute(() -> expect(h, "5", box(h).getSpeed() * (float) ReverieConfig.gearRatio(5)))
                 .thenExecute(() -> box(h).select(6)).thenIdle(4).thenExecute(() -> expect(h, "6", box(h).getSpeed() * (float) ReverieConfig.gearRatio(6)))

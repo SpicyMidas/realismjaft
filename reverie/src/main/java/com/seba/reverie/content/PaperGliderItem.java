@@ -58,7 +58,11 @@ public class PaperGliderItem extends Item {
         entity.resetFallDistance();
         int used = getUseDuration(stack, entity) - remaining;
         if (level.isClientSide) {
-            if (used % 6 == 0) level.addParticle(ParticleTypes.CLOUD, entity.getX(), entity.getY() + 2.3, entity.getZ(), -hx * 0.2, 0.0, -hz * 0.2);
+            if (used % 6 == 0) {
+                // a little wake off the glider's tail, behind and above the head
+                Vec3 back = ahead.lengthSqr() < 1e-4 ? Vec3.ZERO : ahead.normalize().scale(-1.3);
+                level.addParticle(ParticleTypes.CLOUD, entity.getX() + back.x, entity.getY() + 2.2, entity.getZ() + back.z, -hx * 0.3, 0.0, -hz * 0.3);
+            }
         } else {
             if (used % 40 == 0) level.playSound(null, entity.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 0.4f, 0.6f);
             if (used % 20 == 19) stack.hurtAndBreak(1, entity, LivingEntity.getSlotForHand(entity.getUsedItemHand()));

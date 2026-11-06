@@ -84,9 +84,9 @@ public final class ReverieConfig {
         b.pop();
 
         b.push("gearshift");
-        GEAR_RATIOS = b.comment("Output/input ratio for forward gears 1..6 (gear N = xN; the regular gearshift uses the first four).",
-                        "A gear that would spin faster than Create's maxRotationSpeed is refused, and the output is capped there.")
-                .defineList("gearRatios", List.of(1.0, 2.0, 3.0, 4.0, 5.0, 6.0), () -> 1.0,
+        GEAR_RATIOS = b.comment("Output/input ratio for forward gears 1..6 (x1, x2, x4, x6, x8, x10; the regular gearshift uses the first four).",
+                        "A gear that would spin faster than Create's maxRotationSpeed is refused.")
+                .defineList("gearRatios", List.of(1.0, 2.0, 4.0, 6.0, 8.0, 10.0), () -> 1.0,
                         o -> o instanceof Number n && Math.abs(n.doubleValue()) <= 16);
         REVERSE_RATIO = b.comment("Ratio of gear R (negative = reversed).")
                 .defineInRange("reverseRatio", -1.0, -16.0, 16.0);
@@ -165,7 +165,7 @@ public final class ReverieConfig {
             Object o = ratios.get(i);
             if (o instanceof Number n) return n.doubleValue();
         }
-        double[] defaults = {1.0, 1.5, 2.0, 2.5, 3.0, 4.0};
+        double[] defaults = {1.0, 2.0, 4.0, 6.0, 8.0, 10.0};
         return i < defaults.length ? defaults[i] : 1.0;
     }
 }
