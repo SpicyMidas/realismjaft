@@ -300,7 +300,53 @@ def paper_glider():
     write("models/item/paper_glider_gliding.json", {"parent": "minecraft:item/generated", "textures": {"layer0": "reverie:item/empty"}})
 
 
+def melatonia_cake():
+    """The Melatonia Cake: Farmer's Delight's pie templates (four quarter slices, same cut order and UV layout) at
+    vanilla cake size: 14x14, 8 tall. Side textures hold the cake in rows 8-15, as vanilla's cake_side does."""
+    xz = {2: 1, 8: 8, 14: 15}
+    y = {0: 0, 4: 8}
+    v_side = {12: 8, 16: 16}
+
+    def el(frm, to, faces):
+        out = {"from": [xz[frm[0]], y[frm[1]], xz[frm[2]]], "to": [xz[to[0]], y[to[1]], xz[to[2]]], "faces": {}}
+        for face, (uv, tex) in faces.items():
+            if face in ("up", "down"):
+                u = [xz[uv[0]], xz[uv[1]], xz[uv[2]], xz[uv[3]]]
+            else:
+                u = [xz[uv[0]], v_side[uv[1]], xz[uv[2]], v_side[uv[3]]]
+            f = {"uv": u, "texture": "#" + tex}
+            if face == "down":
+                f["cullface"] = "down"
+            out["faces"][face] = f
+        return out
+
+    S, I = "side", "inner"
+    full = [el([2, 0, 2], [14, 4, 14], {"north": ([2, 12, 14, 16], S), "east": ([2, 12, 14, 16], S), "south": ([2, 12, 14, 16], S),
+                                         "west": ([2, 12, 14, 16], S), "up": ([2, 2, 14, 14], "top"), "down": ([2, 2, 14, 14], "bottom")})]
+    north_half = el([2, 0, 2], [14, 4, 8], {"north": ([2, 12, 14, 16], S), "east": ([8, 12, 14, 16], S), "south": ([2, 12, 14, 16], I),
+                                             "west": ([2, 12, 8, 16], S), "up": ([2, 2, 14, 8], "top"), "down": ([2, 8, 14, 14], "bottom")})
+    slice1 = [el([2, 0, 8], [8, 4, 14], {"east": ([2, 12, 8, 16], I), "south": ([2, 12, 8, 16], S), "west": ([8, 12, 14, 16], S),
+                                          "up": ([2, 8, 8, 14], "top"), "down": ([2, 2, 8, 8], "bottom")}), north_half]
+    slice2 = [north_half]
+    slice3 = [el([8, 0, 2], [14, 4, 8], {"north": ([2, 12, 8, 16], S), "east": ([8, 12, 14, 16], S), "south": ([8, 12, 14, 16], I),
+                                          "west": ([2, 12, 8, 16], I), "up": ([8, 2, 14, 8], "top"), "down": ([8, 8, 14, 14], "bottom")})]
+    tex = {"particle": D + "melatonia_cake_top", "top": D + "melatonia_cake_top", "side": D + "melatonia_cake_side",
+           "bottom": D + "melatonia_cake_bottom", "inner": D + "melatonia_cake_inner"}
+    names = ["melatonia_cake", "melatonia_cake_slice1", "melatonia_cake_slice2", "melatonia_cake_slice3"]
+    for name, els in zip(names, (full, slice1, slice2, slice3)):
+        write(f"models/block/{name}.json", {"parent": "block/block", "textures": tex, "elements": els})
+    variants = {}
+    for bites, name in enumerate(names):
+        for facing, rot in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
+            v = {"model": "reverie:block/" + name}
+            if rot:
+                v["y"] = rot
+            variants[f"bites={bites},facing={facing}"] = v
+    write("blockstates/melatonia_cake.json", {"variants": variants})
+
+
 if __name__ == "__main__":
+    melatonia_cake()
     paper_glider()
     dream_decor()
     gearshift()

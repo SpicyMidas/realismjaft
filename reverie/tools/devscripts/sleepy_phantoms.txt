@@ -1,0 +1,35 @@
+newworld sleepy_phantoms flat 7
+wait 40
+cmd time set noon
+cmd gamerule doDaylightCycle false
+cmd effect give @s reverie:sleepyness 200 0
+hidegui on
+wait 50
+screenshot sp_1
+wait 50
+screenshot sp_2
+wait 50
+screenshot sp_3
+wait 50
+screenshot sp_4
+wait 50
+screenshot sp_5
+wait 50
+screenshot sp_6
+wait 50
+screenshot sp_7
+wait 50
+screenshot sp_8
+wait 50
+screenshot sp_9
+wait 50
+screenshot sp_10
+wait 50
+screenshot sp_11
+wait 50
+screenshot sp_12
+wait 50
+screenshot sp_13
+wait 50
+screenshot sp_14
+stop

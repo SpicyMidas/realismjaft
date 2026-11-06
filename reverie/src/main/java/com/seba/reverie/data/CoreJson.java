@@ -42,5 +42,26 @@ final class CoreJson {
         concentrated.add("result", JsonGen.result("reverie:concentrated_melatonia_extract", 1));
         concentrated.addProperty("returned_bottles", 2);
         gen.put("data/reverie/recipe/concentrated_melatonia_extract.json", concentrated);
+        // Eight snowballs or arrows around one Extract: eight laced ones, the bottle comes back.
+        for (String ammo : new String[]{"snowball", "arrow"}) {
+            for (int level = 1; level <= 2; level++) {
+                JsonObject recipe = new JsonObject();
+                recipe.addProperty("type", "reverie:bottle_returning_shapeless");
+                recipe.addProperty("category", "equipment");
+                com.google.gson.JsonArray ingredients = new com.google.gson.JsonArray();
+                for (int i = 0; i < 8; i++) ingredients.add(JsonGen.item("minecraft:" + ammo));
+                ingredients.add(JsonGen.item(level == 2 ? "reverie:concentrated_melatonia_extract" : "reverie:melatonia_extract"));
+                recipe.add("ingredients", ingredients);
+                JsonObject result = JsonGen.result("reverie:laced_" + ammo, 8);
+                JsonObject laced = new JsonObject();
+                laced.addProperty("level", level);
+                JsonObject components = new JsonObject();
+                components.add("reverie:laced", laced);
+                result.add("components", components);
+                recipe.add("result", result);
+                recipe.addProperty("returned_bottles", 1);
+                gen.put("data/reverie/recipe/laced_" + ammo + (level == 2 ? "_concentrated" : "") + ".json", recipe);
+            }
+        }
     }
 }

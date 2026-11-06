@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "reverie:melatonia_cake_slice"
+    },
+    {
+      "item": "reverie:melatonia_cake_slice"
+    },
+    {
+      "item": "reverie:melatonia_cake_slice"
+    },
+    {
+      "item": "reverie:melatonia_cake_slice"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "reverie:melatonia_cake"
+  }
+}

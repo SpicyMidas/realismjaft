@@ -1,0 +1,35 @@
+newworld laced_cake flat 7
+wait 40
+cmd time set noon
+cmd gamerule doDaylightCycle false
+cmd kill @e[type=!player]
+cmd setblock 0 -60 3 reverie:melatonia_cake[bites=0,facing=south]
+cmd setblock 2 -60 3 reverie:melatonia_cake[bites=1,facing=south]
+cmd setblock 4 -60 3 reverie:melatonia_cake[bites=2,facing=south]
+cmd setblock 6 -60 3 reverie:melatonia_cake[bites=3,facing=south]
+cmd item replace entity @s hotbar.0 with reverie:melatonia_cake
+cmd item replace entity @s hotbar.1 with reverie:melatonia_cake_slice 4
+cmd item replace entity @s hotbar.2 with reverie:laced_snowball[reverie:laced={level:1}] 8
+cmd item replace entity @s hotbar.3 with reverie:laced_snowball[reverie:laced={level:2}] 8
+cmd item replace entity @s hotbar.4 with reverie:laced_arrow[reverie:laced={level:1}] 8
+cmd item replace entity @s hotbar.5 with reverie:laced_arrow[reverie:laced={level:2}] 8
+cmd item replace entity @s hotbar.6 with minecraft:pumpkin_pie[reverie:laced={level:1,known_by:[[I;940439953,-167562164,-1601161573,-1389718966]]}]
+cmd item replace entity @s hotbar.7 with minecraft:mushroom_stew[reverie:laced={level:2,known_by:[[I;940439953,-167562164,-1601161573,-1389718966]]}]
+cmd item replace entity @s hotbar.8 with minecraft:bread[reverie:laced={level:2}]
+cmd tp @s 3.5 -58.6 0.5 0 38
+wait 80
+screenshot cake_stages
+cmd fill -6 -63 -6 12 -61 12 minecraft:stone
+cmd setblock 1 -62 4 minecraft:diamond_ore
+cmd setblock 3 -62 6 minecraft:gold_ore
+cmd setblock 5 -63 5 minecraft:emerald_ore
+cmd setblock -1 -62 7 minecraft:redstone_ore
+cmd setblock 6 -62 8 minecraft:lapis_ore
+cmd setblock 2 -63 9 minecraft:iron_ore
+cmd setblock 4 -62 2 minecraft:coal_ore
+cmd setblock 0 -62 10 minecraft:copper_ore
+cmd effect give @s reverie:lucid_sight 15
+cmd tp @s 3.5 -60 0.5 0 50
+wait 40
+screenshot lucid_sight
+stop

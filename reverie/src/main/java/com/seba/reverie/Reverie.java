@@ -57,6 +57,10 @@ public final class Reverie {
         ModCreativeTab.add(ModItems.MELATONIA_COOKIE);
         ModCreativeTab.add(ModItems.DROWSY_TEA);
         ModCreativeTab.add(ModItems.SLEEPY_STEW);
+        ModCreativeTab.add(ModItems.MELATONIA_CAKE);
+        ModCreativeTab.add(ModItems.MELATONIA_CAKE_SLICE);
+        ModCreativeTab.add(ModItems.LACED_SNOWBALL);
+        ModCreativeTab.add(ModItems.LACED_ARROW);
         for (var item : ModItems.DREAM_BLOCK_ITEMS) ModCreativeTab.add(item);
         ModCreativeTab.add(ModItems.LONE_DOOR);
         ModCreativeTab.add(ModItems.LUCID_SHARD);
@@ -67,6 +71,8 @@ public final class Reverie {
         ModCreativeTab.add(ModItems.LUCID_MOTH_SPAWN_EGG);
 
         NeoForge.EVENT_BUS.addListener(Lacing::onFinishUsing);
+        NeoForge.EVENT_BUS.addListener(Lacing::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent e) -> Lacing.forget(e.getEntity()));
         com.seba.reverie.dream.DreamEvents.init();
         com.seba.reverie.dream.DreamManager.addListener(new com.seba.reverie.dreamland.MemoryIsland());
         com.seba.reverie.shade.ShadeCrowdManager.init();
@@ -75,6 +81,10 @@ public final class Reverie {
         com.seba.reverie.dreamland.DreamFootsteps.init();
         com.seba.reverie.dream.DreamAdvancements.init();
         modBus.addListener(ReverieDataGen::gather);
+        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent e) -> e.enqueueWork(() -> {
+            net.minecraft.world.level.block.DispenserBlock.registerProjectileBehavior(ModItems.LACED_SNOWBALL.get());
+            net.minecraft.world.level.block.DispenserBlock.registerProjectileBehavior(ModItems.LACED_ARROW.get());
+        }));
 
         // Optional integrations: their classes are only touched behind these checks.
         if (Compat.create()) CreateCompat.init(modBus);

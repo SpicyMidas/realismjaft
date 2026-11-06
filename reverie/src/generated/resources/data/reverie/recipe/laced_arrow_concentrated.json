@@ -1,0 +1,43 @@
+{
+  "type": "reverie:bottle_returning_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:arrow"
+    },
+    {
+      "item": "minecraft:arrow"
+    },
+    {
+      "item": "minecraft:arrow"
+    },
+    {
+      "item": "minecraft:arrow"
+    },
+    {
+      "item": "minecraft:arrow"
+    },
+    {
+      "item": "minecraft:arrow"
+    },
+    {
+      "item": "minecraft:arrow"
+    },
+    {
+      "item": "minecraft:arrow"
+    },
+    {
+      "item": "reverie:concentrated_melatonia_extract"
+    }
+  ],
+  "result": {
+    "components": {
+      "reverie:laced": {
+        "level": 2
+      }
+    },
+    "count": 8,
+    "id": "reverie:laced_arrow"
+  },
+  "returned_bottles": 1
+}

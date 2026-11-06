@@ -30,9 +30,6 @@ public final class ScreenEffects {
     public static final class Sleepy {
         public float lid;
         public float dark;
-        public float glimpse;
-        public float glimpseX = 0.5f;
-        public float seed;
     }
 
     public static final Dizzy DIZZY = new Dizzy();
@@ -73,13 +70,10 @@ public final class ScreenEffects {
                 chain.setUniform("Bend", DIZZY.bend);
             });
         }
-        if (SLEEPY.lid > 0.005f || SLEEPY.dark > 0.01f || SLEEPY.glimpse > 0.01f) {
+        if (SLEEPY.lid > 0.005f || SLEEPY.dark > 0.01f) {
             SLEEPY_CHAIN.run(clock, chain -> {
                 chain.setUniform("Lid", SLEEPY.lid);
                 chain.setUniform("Dark", SLEEPY.dark);
-                chain.setUniform("Glimpse", SLEEPY.glimpse);
-                chain.setUniform("GlimpseX", SLEEPY.glimpseX);
-                chain.setUniform("Seed", SLEEPY.seed);
             });
         }
     }

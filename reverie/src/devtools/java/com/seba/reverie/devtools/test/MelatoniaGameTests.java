@@ -137,7 +137,7 @@ public final class MelatoniaGameTests {
     public static void eatingLacedFoodAndMilk(GameTestHelper h) {
         var player = CreateFreeFakePlayer.get(h);
         player.removeAllEffects();
-        ItemStack laced = Lacing.lace(new ItemStack(Items.BREAD), 2);
+        ItemStack laced = Lacing.lace(new ItemStack(Items.BREAD), 2, null);
         NeoForge.EVENT_BUS.post(new LivingEntityUseItemEvent.Finish(player, laced, 0, ItemStack.EMPTY));
         h.assertTrue(player.hasEffect(ModEffects.DIZZINESS) && player.hasEffect(ModEffects.SLEEPYNESS), "strong lacing did not apply effects");
         player.removeEffectsCuredBy(EffectCures.MILK);
@@ -147,5 +147,80 @@ public final class MelatoniaGameTests {
         h.assertTrue(food.effects().stream().anyMatch(e -> e.effect().getEffect().is(ModEffects.DIZZINESS)), "extract has no Dizziness");
         h.assertTrue(food.usingConvertsTo().map(s -> s.is(Items.GLASS_BOTTLE)).orElse(false), "extract does not return a bottle");
         h.succeed();
+    }
+
+    @GameTest(templateNamespace = "reverie", template = "empty")
+    public static void lacingIsSecretUntilNoticed(GameTestHelper h) {
+        var player = CreateFreeFakePlayer.get(h);
+        java.util.UUID other = java.util.UUID.randomUUID();
+        ItemStack mine = Lacing.lace(new ItemStack(Items.BREAD), 1, player.getUUID());
+        h.assertTrue(Lacing.knownTo(mine, player.getUUID()), "the lacer does not know");
+        h.assertFalse(Lacing.knownTo(mine, other), "someone else knows");
+        // Old saves stored only the level.
+        var old = com.seba.reverie.content.melatonia.Laced.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE,
+                new com.google.gson.JsonPrimitive(2)).getOrThrow();
+        h.assertTrue(old.level() == 2 && old.knownBy().isEmpty(), "old lacing did not load");
+        // Someone else's laced pie: unknown until held 30 seconds.
+        ItemStack pie = Lacing.lace(new ItemStack(Items.PUMPKIN_PIE), 1, other);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, pie);
+        for (int i = 0; i < Lacing.NOTICE_TICKS - 1; i++) NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
+        h.assertFalse(Lacing.knownTo(player.getMainHandItem(), player.getUUID()), "noticed too early");
+        NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
+        h.assertTrue(Lacing.knownTo(player.getMainHandItem(), player.getUUID()), "not noticed after 30 seconds");
+        // A pie carries it well: the bad effects and one gift.
+        player.removeAllEffects();
+        NeoForge.EVENT_BUS.post(new LivingEntityUseItemEvent.Finish(player, player.getMainHandItem(), 0, ItemStack.EMPTY));
+        h.assertTrue(player.getEffect(ModEffects.DIZZINESS) != null && player.getEffect(ModEffects.DIZZINESS).getAmplifier() >= 1,
+                "laced food is not severe");
+        boolean gift = player.hasEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION) || player.hasEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED)
+                || player.hasEffect(net.minecraft.world.effect.MobEffects.JUMP) || player.hasEffect(ModEffects.LUCID_SIGHT);
+        h.assertTrue(gift, "a laced pie gave no gift");
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        player.removeAllEffects();
+        h.succeed();
+    }
+
+    @GameTest(templateNamespace = "reverie", template = "empty")
+    public static void melatoniaCakeHasFourSlices(GameTestHelper h) {
+        var player = CreateFreeFakePlayer.get(h);
+        BlockPos pos = new BlockPos(1, 2, 1);
+        h.setBlock(pos.below(), Blocks.STONE);
+        h.setBlock(pos, ModBlocks.MELATONIA_CAKE.get());
+        player.removeAllEffects();
+        for (int slice = 0; slice < 4; slice++) {
+            h.assertBlockPresent(ModBlocks.MELATONIA_CAKE.get(), pos);
+            player.getFoodData().setFoodLevel(2);
+            var hit = new net.minecraft.world.phys.BlockHitResult(h.absoluteVec(pos.getCenter()), net.minecraft.core.Direction.UP, h.absolutePos(pos), false);
+            var result = h.getBlockState(pos).useWithoutItem(h.getLevel(), player, hit);
+            h.assertTrue(result.consumesAction(), "slice " + (slice + 1) + " was not eaten");
+        }
+        h.assertBlockNotPresent(ModBlocks.MELATONIA_CAKE.get(), pos);
+        h.assertTrue(player.hasEffect(ModEffects.DIZZINESS), "the cake gave no Dizziness");
+        h.assertTrue(player.getFoodData().getFoodLevel() > 2, "the cake did not feed");
+        player.removeAllEffects();
+        h.succeed();
+    }
+
+    @GameTest(templateNamespace = "reverie", template = "empty", timeoutTicks = 100)
+    public static void lacedSnowballDosesWhatItHits(GameTestHelper h) {
+        var recipes = h.getLevel().getRecipeManager();
+        for (String id : new String[]{"laced_snowball", "laced_snowball_concentrated", "laced_arrow", "laced_arrow_concentrated"}) {
+            var holder = recipes.byKey(com.seba.reverie.Reverie.id(id)).orElse(null);
+            h.assertTrue(holder != null && holder.value() instanceof BottleReturningShapelessRecipe, "missing recipe " + id);
+            ItemStack out = holder.value().getResultItem(h.getLevel().registryAccess());
+            h.assertTrue(out.getCount() == 8 && Lacing.level(out) == (id.endsWith("concentrated") ? 2 : 1), id + " makes the wrong thing: " + out);
+        }
+        h.setBlock(new BlockPos(1, 1, 1), Blocks.STONE);
+        var pig = h.spawnWithNoFreeWill(net.minecraft.world.entity.EntityType.PIG, new BlockPos(1, 2, 1));
+        h.startSequence()
+                .thenIdle(10)   // let the pig settle on the stone first
+                .thenExecute(() -> {
+                    var ball = new com.seba.reverie.content.melatonia.LacedSnowball(h.getLevel(), pig.getX(), pig.getY() + 1.6, pig.getZ());
+                    ball.setItem(new ItemStack(ModItems.LACED_SNOWBALL.get()));
+                    ball.setDeltaMovement(0, -0.5, 0);
+                    h.getLevel().addFreshEntity(ball);
+                })
+                .thenWaitUntil(() -> h.assertTrue(pig.hasEffect(ModEffects.DIZZINESS), "the pig was not dosed"))
+                .thenSucceed();
     }
 }

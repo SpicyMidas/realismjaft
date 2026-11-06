@@ -144,10 +144,12 @@ public final class DizzinessClient {
         input.leftImpulse = (float) (f * Math.sin(angle) + l * Math.cos(angle));
     }
 
+    /** "(Laced)" after the name, only for someone who knows; lilac for Extract, deep purple for Concentrated. */
     private static void tooltip(ItemTooltipEvent event) {
         int level = Lacing.level(event.getItemStack());
-        if (level <= 0) return;
-        event.getToolTip().add(1, Component.translatable(level >= 2 ? "reverie.laced.strong" : "reverie.laced.normal")
-                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+        var player = net.minecraft.client.Minecraft.getInstance().player;
+        if (level <= 0 || player == null || !Lacing.knownTo(event.getItemStack(), player.getUUID()) || event.getToolTip().isEmpty()) return;
+        event.getToolTip().set(0, event.getToolTip().get(0).copy().append(" ")
+                .append(Component.translatable("reverie.laced.tag").withColor(Lacing.tagColor(level))));
     }
 }

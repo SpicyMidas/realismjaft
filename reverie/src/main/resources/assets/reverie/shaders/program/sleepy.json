@@ -79,30 +79,6 @@
       "values": [
         0.0
       ]
-    },
-    {
-      "name": "Glimpse",
-      "type": "float",
-      "count": 1,
-      "values": [
-        0.0
-      ]
-    },
-    {
-      "name": "GlimpseX",
-      "type": "float",
-      "count": 1,
-      "values": [
-        0.0
-      ]
-    },
-    {
-      "name": "Seed",
-      "type": "float",
-      "count": 1,
-      "values": [
-        0.0
-      ]
     }
   ]
 }

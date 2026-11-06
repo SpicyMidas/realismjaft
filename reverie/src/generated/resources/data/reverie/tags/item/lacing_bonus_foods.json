@@ -1,0 +1,47 @@
+{
+  "values": [
+    "#c:foods/soup",
+    "#c:foods/pie",
+    "#c:foods/cookie",
+    "reverie:melatonia_cake_slice",
+    "reverie:drowsy_tea",
+    "minecraft:pumpkin_pie",
+    "minecraft:mushroom_stew",
+    "minecraft:rabbit_stew",
+    "minecraft:beetroot_soup",
+    "minecraft:suspicious_stew",
+    "minecraft:honey_bottle",
+    {
+      "id": "farmersdelight:cake_slice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:apple_pie_slice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:sweet_berry_cheesecake_slice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:chocolate_pie_slice",
+      "required": false
+    },
+    {
+      "id": "reverie:dreamy_pie_slice",
+      "required": false
+    },
+    {
+      "id": "reverie:lullaby_stew",
+      "required": false
+    },
+    {
+      "id": "reverie:dozing_dumplings",
+      "required": false
+    },
+    {
+      "id": "reverie:melatonia_syrup",
+      "required": false
+    }
+  ]
+}

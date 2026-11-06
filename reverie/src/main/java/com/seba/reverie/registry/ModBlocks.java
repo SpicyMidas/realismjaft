@@ -18,6 +18,9 @@ public final class ModBlocks {
 
     public static final DeferredBlock<MelatoniaCropBlock> MELATONIA = BLOCKS.register("melatonia",
             () -> new MelatoniaCropBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEETROOTS).mapColor(MapColor.COLOR_PURPLE)));
+    public static final DeferredBlock<com.seba.reverie.content.melatonia.MelatoniaCakeBlock> MELATONIA_CAKE = BLOCKS.register("melatonia_cake",
+            () -> new com.seba.reverie.content.melatonia.MelatoniaCakeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE).mapColor(MapColor.COLOR_PURPLE),
+                    () -> ModItems.MELATONIA_CAKE_SLICE.get()));
     public static final DeferredBlock<WildMelatoniaBlock> WILD_MELATONIA = BLOCKS.register("wild_melatonia",
             () -> new WildMelatoniaBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).noCollission()
                     .instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ)

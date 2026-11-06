@@ -708,6 +708,15 @@ def melatonia_textures():
     for (x, y) in ((8, 13), (9, 13), (7, 14), (8, 14), (9, 14), (10, 14), (8, 4), (9, 5), (8, 7), (9, 10)):
         drift.putpixel((x, y), rgba((236, 214, 160)))
     save(drift, "mob_effect/drift")
+    # Lucid Sight: an open eye with a pale cyan iris and a cut gem for a pupil.
+    eye = [
+        "..................", "..................", "..................", "..................",
+        "......oooooo......", "....oowwwwwwoo....", "...owwwiiiiwwwo...", "..owwwiiggiiiwwo..",
+        ".owwwiigddgiiwwwo.", ".owwwiigddgiiwwwo.", "..owwwiiggiiiwwo..", "...owwwiiiiwwwo...",
+        "....oowwwwwwoo....", "......oooooo......", "..................", "..................",
+        "..................", ".................."]
+    save(grid(eye, {'o': (40, 60, 92), 'w': (232, 244, 255), 'i': (120, 220, 255), 'g': (196, 244, 255), 'd': (40, 120, 170)}),
+         "mob_effect/lucid_sight")
 
 
 def misc_textures():
@@ -961,6 +970,100 @@ def paper_glider_texture():
     save(Image.new("RGBA", (16, 16), T), "item/empty")
 
 
+# ---------------------------------------------------------------- melatonia cake
+CAKE = {'F': (214, 196, 238), 'f': (186, 166, 220), 'h': (238, 230, 250), 'p': (128, 78, 180), 'q': (164, 118, 210),
+        'S': (216, 172, 112), 's': (188, 144, 88), 'c': (232, 198, 142), 'C': (198, 178, 232), 'b': (156, 114, 72),
+        'o': (88, 60, 118), 'w': (250, 248, 252)}
+
+
+def melatonia_cake_textures():
+    """The Melatonia Cake in vanilla's cake layout (top, side with the cake in rows 8-15, cut face, bottom), plus the
+    cake and slice icons: lavender frosting with Melatonia petals, golden sponge, a lavender cream layer."""
+    rnd = random.Random(7711)
+    top = Image.new("RGBA", (16, 16))
+    for y in range(16):
+        for x in range(16):
+            r = rnd.random()
+            c = CAKE['h'] if r < 0.16 else CAKE['f'] if r < 0.3 else CAKE['F']
+            if x in (1, 14) or y in (1, 14):
+                c = CAKE['f']
+            top.putpixel((x, y), rgba(c))
+    for (x, y) in ((3, 3), (7, 2), (11, 4), (5, 7), (9, 8), (12, 10), (3, 11), (7, 12), (10, 13), (13, 6)):
+        top.putpixel((x, y), rgba(CAKE['p']))          # petals: a dark dot with a lighter tail
+        top.putpixel((min(14, x + 1), y), rgba(CAKE['q']))
+    for (x, y) in ((6, 5), (10, 11), (4, 9), (12, 3)):
+        top.putpixel((x, y), rgba(CAKE['w']))          # sugar
+    save(top, "block/melatonia_cake_top")
+
+    def layers(img, inner):
+        drips = {2, 3, 6, 9, 10, 13}
+        for x in range(16):
+            for y in range(8, 16):
+                r = rnd.random()
+                if y == 8:
+                    c = CAKE['h'] if r < 0.3 else CAKE['F']
+                elif y == 9 or (y == 10 and x in drips):
+                    c = CAKE['F'] if r < 0.6 else CAKE['f']
+                elif y in (12, 13) and not (y == 13 and x % 5 == 2):
+                    c = CAKE['C'] if r < 0.8 else CAKE['q']
+                elif y == 15:
+                    c = CAKE['b'] if not inner else CAKE['s']
+                else:
+                    sponge = CAKE['c'] if inner else CAKE['S']
+                    c = sponge if r < 0.7 else CAKE['s'] if r < 0.9 else CAKE['c']
+                img.putpixel((x, y), rgba(c))
+        return img
+
+    save(layers(Image.new("RGBA", (16, 16), T), False), "block/melatonia_cake_side")
+    save(layers(Image.new("RGBA", (16, 16), T), True), "block/melatonia_cake_inner")
+    bottom = noise_fill(16, 16, [CAKE['b'], CAKE['s'], (170, 126, 80)], 7712)
+    save(bottom, "block/melatonia_cake_bottom")
+
+    # Icon: the cake seen from the front and a little above, like vanilla's.
+    icon = Image.new("RGBA", (16, 16), T)
+    for y in range(16):
+        for x in range(16):
+            dx, dy = abs(x - 7.5) / 7.5, abs(y - 5.5) / 3.6
+            if dx + dy <= 1.0:
+                c = CAKE['h'] if (x + y) % 7 == 0 else CAKE['F'] if dx + dy < 0.8 else CAKE['f']
+                icon.putpixel((x, y), rgba(c))
+            else:
+                # below the top's lower edge: the side, 6 px tall
+                edge = 5.5 + 3.6 * (1 - abs(x - 7.5) / 7.5)
+                d = y - edge
+                if 0 <= d < 6 and 0 <= x <= 15 and y > 5:
+                    c = [CAKE['F'], CAKE['S'], CAKE['C'], CAKE['S'], CAKE['s'], CAKE['b']][int(d)]
+                    if x < 8 and int(d) not in (0, 2):
+                        c = mix(c, (0, 0, 0), 0.12)   # the left face a touch darker
+                    icon.putpixel((x, y), rgba(c))
+    for (x, y) in ((5, 4), (9, 3), (7, 6), (11, 5), (4, 6)):
+        icon.putpixel((x, y), rgba(CAKE['p']))
+    outline(icon, CAKE['o'])
+    save(icon, "item/melatonia_cake")
+
+    # Slice icon: a wedge, point to the lower left.
+    rows = [
+        "................", "................", "................", "..........oo....",
+        "........ooFho...", "......ooFFpFFo..", "....ooFhFFFFFFo.", "..ooFFFFFqFFFFo.",
+        ".oFFpFFFFFFFFFo.", ".oSSSSSSSSSSSSo.", ".oCCCCCCCCCCCCo.", ".oSSSSSSSSSsSSo.",
+        ".osssSSSSSSSSso.", ".obbbbbbbbbbbbo.", "..oooooooooooo..", "................"]
+    save(grid(rows, CAKE), "item/melatonia_cake_slice")
+
+
+def outline(img, color):
+    """Dark outline on transparent pixels next to the shape (4-neighbourhood)."""
+    w, h = img.size
+    src = img.copy()
+    for y in range(h):
+        for x in range(w):
+            if src.getpixel((x, y))[3] > 0:
+                continue
+            for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                if 0 <= nx < w and 0 <= ny < h and src.getpixel((nx, ny))[3] > 0:
+                    img.putpixel((x, y), rgba(color))
+                    break
+
+
 def fauna_textures():
     """Lucid Moth: wings up, wings down, and a soft glow cell (48x16). A snore Z particle."""
     import math as m
@@ -1209,7 +1312,7 @@ def shade_textures():
     save(img, "entity/shade")
 
 
-GROUPS = [tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture, fauna_textures, paper_glider_texture]
+GROUPS = [melatonia_cake_textures, tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture, fauna_textures, paper_glider_texture]
 
 
 def contact_sheet(out_dir):

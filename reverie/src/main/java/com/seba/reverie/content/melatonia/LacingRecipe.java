@@ -47,13 +47,16 @@ public class LacingRecipe extends CustomRecipe {
     @Override
     public boolean matches(CraftingInput input, Level level) {
         Parts p = parts(input);
-        return p != null && !Lacing.lace(p.food(), p.level()).isEmpty();
+        return p != null && !Lacing.lace(p.food(), p.level(), null).isEmpty();
     }
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
         Parts p = parts(input);
-        return p == null ? ItemStack.EMPTY : Lacing.lace(p.food(), p.level());
+        if (p == null) return ItemStack.EMPTY;
+        // Whoever laces it knows (NeoForge sets the crafting player while the result is assembled).
+        var player = net.neoforged.neoforge.common.CommonHooks.getCraftingPlayer();
+        return Lacing.lace(p.food(), p.level(), player == null ? null : player.getUUID());
     }
 
     @Override

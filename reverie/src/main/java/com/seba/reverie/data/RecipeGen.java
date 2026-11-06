@@ -80,6 +80,15 @@ final class RecipeGen extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.SLEEPY_STEW.get())
                 .requires(Items.BOWL).requires(ModItems.MELATONIA_PETALS.get(), 2).requires(Items.POTATO).requires(Items.CARROT)
                 .unlockedBy("has_petals", has(ModItems.MELATONIA_PETALS.get())).save(out);
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.MELATONIA_CAKE.get())
+                .pattern("MMM").pattern("SPS").pattern("WEW")
+                .define('M', Items.MILK_BUCKET).define('S', Items.SUGAR).define('P', ModItems.MELATONIA_PETALS.get())
+                .define('W', Items.WHEAT).define('E', Items.EGG)
+                .unlockedBy("has_petals", has(ModItems.MELATONIA_PETALS.get())).save(out);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.MELATONIA_CAKE.get())
+                .requires(ModItems.MELATONIA_CAKE_SLICE.get(), 4)
+                .unlockedBy("has_slice", has(ModItems.MELATONIA_CAKE_SLICE.get()))
+                .save(out, com.seba.reverie.Reverie.id("melatonia_cake_from_slices"));
         dreamland(out);
         net.minecraft.data.recipes.SpecialRecipeBuilder.special(com.seba.reverie.content.melatonia.LacingRecipe::new)
                 .save(out, com.seba.reverie.Reverie.id("lacing").toString());

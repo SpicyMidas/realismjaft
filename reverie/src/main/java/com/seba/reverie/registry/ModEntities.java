@@ -32,6 +32,15 @@ public final class ModEntities {
                             com.seba.reverie.fauna.LucidMoth::new, MobCategory.AMBIENT)
                     .sized(0.35f, 0.35f).noSave().clientTrackingRange(6).build("lucid_moth"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.seba.reverie.content.melatonia.LacedSnowball>> LACED_SNOWBALL =
+            ENTITIES.register("laced_snowball", () -> EntityType.Builder.<com.seba.reverie.content.melatonia.LacedSnowball>of(
+                            com.seba.reverie.content.melatonia.LacedSnowball::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).build("laced_snowball"));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.seba.reverie.content.melatonia.LacedArrow>> LACED_ARROW =
+            ENTITIES.register("laced_arrow", () -> EntityType.Builder.<com.seba.reverie.content.melatonia.LacedArrow>of(
+                            com.seba.reverie.content.melatonia.LacedArrow::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f).eyeHeight(0.13f).clientTrackingRange(4).updateInterval(20).build("laced_arrow"));
+
     /** Attributes and spawn rules (mod bus). */
     public static void init(net.neoforged.bus.api.IEventBus modBus) {
         modBus.addListener((net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent e) -> {

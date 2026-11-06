@@ -51,7 +51,7 @@ public final class FdGameTests {
     public static void dishesLaceAndSyrupLaces(GameTestHelper h) {
         for (var item : new ItemStack[]{new ItemStack(FdContent.LULLABY_STEW.get()), new ItemStack(FdContent.DOZING_DUMPLINGS.get()),
                 new ItemStack(FdContent.DREAMY_PIE_SLICE.get()), new ItemStack(FdContent.NIGHT_BLOOM_ROLL.get())}) {
-            ItemStack laced = Lacing.lace(item, 1);
+            ItemStack laced = Lacing.lace(item, 1, null);
             h.assertFalse(laced.isEmpty(), item.getHoverName().getString() + " cannot be laced");
             var food = item.getFoodProperties(null);
             h.assertTrue(food != null && food.effects().stream().anyMatch(e -> e.effect().getEffect().is(ModEffects.DIZZINESS)),
@@ -94,6 +94,23 @@ public final class FdGameTests {
                         e -> e.getItem().is(FdContent.DREAMY_PIE_SLICE.get())).isEmpty();
         h.assertTrue(gotSlice, "no Dreamy Pie slice came out");
         ReverieDevTools.log("PASS dreamyPieSlices");
+        h.succeed();
+    }
+
+    @GameTest(templateNamespace = "reverie", template = "empty")
+    public static void knifeCutsMelatoniaCake(GameTestHelper h) {
+        var player = com.seba.reverie.devtools.test.CreateFreeFakePlayer.get(h);
+        BlockPos pos = new BlockPos(1, 2, 1);
+        h.setBlock(pos.below(), net.minecraft.world.level.block.Blocks.STONE);
+        h.setBlock(pos, com.seba.reverie.registry.ModBlocks.MELATONIA_CAKE.get());
+        ItemStack knife = new ItemStack(vectorwing.farmersdelight.common.registry.ModItems.IRON_KNIFE.get());
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, knife);
+        var hit = new net.minecraft.world.phys.BlockHitResult(h.absoluteVec(pos.getCenter()), net.minecraft.core.Direction.UP, h.absolutePos(pos), false);
+        var result = h.getBlockState(pos).useItemOn(knife, h.getLevel(), player, net.minecraft.world.InteractionHand.MAIN_HAND, hit);
+        h.assertTrue(result.consumesAction(), "the knife did not cut");
+        h.assertTrue(h.getBlockState(pos).getValue(com.seba.reverie.content.melatonia.MelatoniaCakeBlock.BITES) == 1, "no slice was taken");
+        h.assertItemEntityPresent(com.seba.reverie.registry.ModItems.MELATONIA_CAKE_SLICE.get(), pos, 2.0);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         h.succeed();
     }
 }

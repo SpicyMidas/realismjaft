@@ -73,7 +73,25 @@ final class TagGen {
             tag(ItemTags.LOGS).add(ModBlocks.DREAMWOOD_LOG.get().asItem());
             tag(ItemTags.PLANKS).add(ModBlocks.DREAMWOOD_PLANKS.get().asItem());
             tag(ItemTags.LEAVES).add(ModBlocks.DREAMWOOD_LEAVES.get().asItem());
-            tag(net.neoforged.neoforge.common.Tags.Items.FOODS).add(ModItems.MELATONIA_COOKIE.get(), ModItems.SLEEPY_STEW.get(), ModItems.DROWSY_TEA.get());
+            tag(net.neoforged.neoforge.common.Tags.Items.FOODS).add(ModItems.MELATONIA_COOKIE.get(), ModItems.SLEEPY_STEW.get(), ModItems.DROWSY_TEA.get(),
+                    ModItems.MELATONIA_CAKE_SLICE.get());
+            tag(net.neoforged.neoforge.common.Tags.Items.FOODS_COOKIE).add(ModItems.MELATONIA_COOKIE.get());
+            tag(net.neoforged.neoforge.common.Tags.Items.FOODS_SOUP).add(ModItems.SLEEPY_STEW.get());
+            tag(net.neoforged.neoforge.common.Tags.Items.FOODS_EDIBLE_WHEN_PLACED).add(ModItems.MELATONIA_CAKE.get());
+            tag(ItemTags.ARROWS).add(ModItems.LACED_ARROW.get());
+            tag(ModTags.Items.LACING_BONUS_FOODS)
+                    .addTag(net.neoforged.neoforge.common.Tags.Items.FOODS_SOUP).addTag(net.neoforged.neoforge.common.Tags.Items.FOODS_PIE)
+                    .addTag(net.neoforged.neoforge.common.Tags.Items.FOODS_COOKIE)
+                    .add(ModItems.MELATONIA_CAKE_SLICE.get(), ModItems.DROWSY_TEA.get(), net.minecraft.world.item.Items.PUMPKIN_PIE,
+                            net.minecraft.world.item.Items.MUSHROOM_STEW, net.minecraft.world.item.Items.RABBIT_STEW,
+                            net.minecraft.world.item.Items.BEETROOT_SOUP, net.minecraft.world.item.Items.SUSPICIOUS_STEW,
+                            net.minecraft.world.item.Items.HONEY_BOTTLE)
+                    .addOptional(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("farmersdelight", "cake_slice"))
+                    .addOptional(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("farmersdelight", "apple_pie_slice"))
+                    .addOptional(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("farmersdelight", "sweet_berry_cheesecake_slice"))
+                    .addOptional(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("farmersdelight", "chocolate_pie_slice"))
+                    .addOptional(Reverie.id("dreamy_pie_slice")).addOptional(Reverie.id("lullaby_stew"))
+                    .addOptional(Reverie.id("dozing_dumplings")).addOptional(Reverie.id("melatonia_syrup"));
             com.seba.reverie.compat.fd.FdDataGen.itemTags(this::getOrCreateRawBuilder);
         }
     }

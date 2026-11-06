@@ -44,7 +44,9 @@ public class ShadeEntity extends Entity {
     private static final EntityDataAccessor<Float> FIXED_YAW = SynchedEntityData.defineId(ShadeEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> INSTANT = SynchedEntityData.defineId(ShadeEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public static final int FADE_TICKS = 10;
+    /** Fade-out length (the crowd manager's clean-up waits on it); fading in is a little quicker. */
+    public static final int FADE_TICKS = 28;
+    public static final int FADE_IN_TICKS = 16;
 
     /** Set by the crowd manager; a shade without it (loaded from somewhere) removes itself. */
     boolean managed;
@@ -138,11 +140,21 @@ public class ShadeEntity extends Entity {
         if (key == FADING && fading()) fadeStartTick = tickCount;
     }
 
-    /** 0..1 visibility (fade in when spawned, fade out when vanishing). */
+    /** 0..1 visibility (fade in when spawned, fade out when vanishing), eased at both ends. */
     public float alpha(float partial) {
-        float in = entityData.get(INSTANT) ? 1f : Mth.clamp((tickCount + partial) / FADE_TICKS, 0f, 1f);
-        if (!fading() || fadeStartTick < 0) return in;
-        return in * Mth.clamp(1f - (tickCount - fadeStartTick + partial) / FADE_TICKS, 0f, 1f);
+        float in = entityData.get(INSTANT) ? 1f : smooth((tickCount + partial) / FADE_IN_TICKS);
+        return in * (1f - fadeProgress(partial));
+    }
+
+    /** 0 while not fading, rising smoothly to 1 at the end of the fade-out. */
+    public float fadeProgress(float partial) {
+        if (!fading() || fadeStartTick < 0) return 0f;
+        return smooth((tickCount - fadeStartTick + partial) / FADE_TICKS);
+    }
+
+    private static float smooth(float x) {
+        x = Mth.clamp(x, 0f, 1f);
+        return x * x * (3f - 2f * x);
     }
 
     @Override
@@ -166,7 +178,7 @@ public class ShadeEntity extends Entity {
         if (!drift.equals(Vec3.ZERO)) setPos(getX() + drift.x, getY() + drift.y, getZ() + drift.z);
         if (fading() && tickCount - fadeStartTick > FADE_TICKS + 2) discard();
         if (fading() && tickCount - fadeStartTick == 1 && level() instanceof ServerLevel server) {
-            server.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE, getX(), getY() + 1.0, getZ(), 6, 0.15, 0.4, 0.15, 0.005);
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE, getX(), getY() + 1.0, getZ(), 3, 0.15, 0.4, 0.15, 0.003);
         }
     }
 

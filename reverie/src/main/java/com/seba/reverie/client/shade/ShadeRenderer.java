@@ -19,8 +19,8 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
 /**
- * Flat black silhouettes: unlit, a soft translucent halo for the edges, and two pale pinprick eyes only while you
- * look straight at one (config shadeGlow).
+ * Flat black silhouettes: unlit, a soft translucent halo for the edges, and two pale pinprick eyes (config shadeGlow),
+ * dim normally and bright while you look straight at one. Vanishing, the halo swells a little and the eyes go last.
  */
 public class ShadeRenderer extends EntityRenderer<ShadeEntity> {
     private static final ResourceLocation TEXTURE = Reverie.id("textures/entity/shade.png");
@@ -108,23 +108,36 @@ public class ShadeRenderer extends EntityRenderer<ShadeEntity> {
                 LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, body);
 
         // Halo: inflated copies, faint and without depth writes, so the edges are soft and the eyes still show.
+        float vanish = shade.fadeProgress(partial);
         for (int i = 1; i < models.length; i++) {
             ShadeModel halo = models[i];
             halo.copyPose(model);
-            int color = FastColor.ARGB32.color(Mth.floor(alpha * HALO_ALPHA[i] * 255), 255, 255, 255);
+            // While vanishing the soft edge spreads out as it thins (the body itself just fades).
+            float spread = 1f + 0.35f * vanish * i;
+            float haloAlpha = alpha * HALO_ALPHA[i] * (1f + 0.6f * vanish);
+            int color = FastColor.ARGB32.color(Mth.floor(Math.min(1f, haloAlpha) * 255), 255, 255, 255);
+            pose.pushPose();
+            if (spread > 1.001f) {
+                pose.translate(0, 1.5, 0);
+                pose.scale(spread, 1f + (spread - 1f) * 0.4f, spread);
+                pose.translate(0, -1.5, 0);
+            }
             (frame ? halo.frame : halo.root).render(pose, buffers.getBuffer(RenderType.entityTranslucentEmissive(TEXTURE)),
                     LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, color);
+            pose.popPose();
         }
 
-        // In a Fog Tide every shade shows its eyes: only silhouettes and dim lights.
-        float tide = com.seba.reverie.client.dreamland.DreamAmbienceClient.fogTide();
-        if (alpha > 0.6f && ReverieConfig.get(ReverieConfig.SHADE_GLOW) && (tide > 0.5f || ShadeLook.staredAt(shade))) {
+        // Eyes on every shade: dim, bright while stared at or in a Fog Tide. They fade in after the body and out last.
+        float eyeAlpha = shade.fading() ? Mth.clamp(1f - (vanish - 0.35f) / 0.65f, 0f, 1f) : Mth.clamp((alpha - 0.4f) / 0.6f, 0f, 1f);
+        if (eyeAlpha > 0.02f && ReverieConfig.get(ReverieConfig.SHADE_GLOW)) {
+            float tide = com.seba.reverie.client.dreamland.DreamAmbienceClient.fogTide();
+            boolean bright = tide > 0.5f || ShadeLook.staredAt(shade);
             ModelPart owner = model.eyeOwner(variant);
             ModelPart eyes = model.eyesOf(variant);
             pose.pushPose();
             owner.translateAndRotate(pose);
             eyes.visible = true;
-            int v = Mth.floor(alpha * 235);
+            int v = Mth.floor(eyeAlpha * (bright ? 245 : 170));
             eyes.render(pose, buffers.getBuffer(RenderType.eyes(TEXTURE)), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
                     FastColor.ARGB32.color(255, v, v, v));
             eyes.visible = false;

@@ -46,6 +46,21 @@ public final class ModItems {
                     .nutrition(7).saturationModifier(0.8f).usingConvertsTo(Items.BOWL)
                     .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, 600), 1f).build()), false));
 
+    public static final DeferredItem<BlockItem> MELATONIA_CAKE = ITEMS.register("melatonia_cake",
+            () -> new BlockItem(ModBlocks.MELATONIA_CAKE.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<DreamFoodItem> MELATONIA_CAKE_SLICE = ITEMS.register("melatonia_cake_slice",
+            () -> new DreamFoodItem(new Item.Properties().food(new FoodProperties.Builder()
+                    .nutrition(com.seba.reverie.content.melatonia.MelatoniaCakeBlock.NUTRITION)
+                    .saturationModifier(com.seba.reverie.content.melatonia.MelatoniaCakeBlock.SATURATION).fast()
+                    .effect(() -> new MobEffectInstance(ModEffects.DIZZINESS, com.seba.reverie.content.melatonia.MelatoniaCakeBlock.DIZZY_TICKS), 1f)
+                    .build()), false));
+
+    /** Eight snowballs or arrows around one Extract; the reverie:laced component carries the strength. */
+    public static final DeferredItem<com.seba.reverie.content.melatonia.LacedSnowballItem> LACED_SNOWBALL = ITEMS.register("laced_snowball",
+            () -> new com.seba.reverie.content.melatonia.LacedSnowballItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<com.seba.reverie.content.melatonia.LacedArrowItem> LACED_ARROW = ITEMS.register("laced_arrow",
+            () -> new com.seba.reverie.content.melatonia.LacedArrowItem(new Item.Properties()));
+
     // --- Dreamland
     public static final DeferredItem<Item> LUCID_SHARD = ITEMS.registerSimpleItem("lucid_shard", new Item.Properties());
     public static final DeferredItem<Item> DREAM_DUST = ITEMS.registerSimpleItem("dream_dust", new Item.Properties());

@@ -1,5 +1,6 @@
 {
   "values": [
+    "reverie:sleepy_stew",
     {
       "id": "reverie:lullaby_stew",
       "required": false

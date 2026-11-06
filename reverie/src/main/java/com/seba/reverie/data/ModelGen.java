@@ -24,7 +24,7 @@ final class ModelGen {
             basicItem(ModItems.TUFF_ALLOY.get());
             for (var item : new net.minecraft.world.item.Item[]{ModItems.MELATONIA_SEEDS.get(), ModItems.MELATONIA_PETALS.get(),
                     ModItems.MELATONIA_EXTRACT.get(), ModItems.CONCENTRATED_MELATONIA_EXTRACT.get(), ModItems.MELATONIA_COOKIE.get(),
-                    ModItems.DROWSY_TEA.get(), ModItems.SLEEPY_STEW.get()}) {
+                    ModItems.DROWSY_TEA.get(), ModItems.SLEEPY_STEW.get(), ModItems.MELATONIA_CAKE.get(), ModItems.MELATONIA_CAKE_SLICE.get()}) {
                 basicItem(item);
             }
             withExistingParent("wild_melatonia", "item/generated").texture("layer0", modLoc("block/wild_melatonia"));

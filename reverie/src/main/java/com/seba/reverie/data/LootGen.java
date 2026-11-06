@@ -62,6 +62,7 @@ final class LootGen {
                     .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.MELATONIA_SEEDS.get())))
                     .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.MELATONIA_PETALS.get())
                             .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 1)))))));
+            add(ModBlocks.MELATONIA_CAKE.get(), noDrop());   // like a cake: eaten, not mined
             dreamland();
         }
 

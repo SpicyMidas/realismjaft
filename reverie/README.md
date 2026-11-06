@@ -26,16 +26,26 @@ Without them Reverie works on its own. Their content simply does not exist, and 
    controls flip for a few seconds.
 3. **Concentrated Melatonia Extract**: 3 Extracts + Glowstone Dust (returns 2 bottles). Drinking it gives
    **Sleepyness** for 4 minutes.
-4. While Sleepy your eyes keep closing: the world dims and, in the dark behind your eyelids, you may glimpse the
-   Shades waiting. **Sleep in any bed, at any time**. Whatever you hold goes with you into the dream. Everything else
+4. While Sleepy your eyes keep closing and the world dims. Sometimes, when your eyes open again, Shades are standing
+   at the edge of sight. Only you can see them, and they fade away when you look straight at one or come close. **Sleep in any bed, at any time**. Whatever you hold goes with you into the dream. Everything else
    stays behind, safe (see *Your items are safe* below).
 5. A dream lasts 5 minutes. It ends when the time runs out, when you fall into the void, when you die, or when you
    lie down in a bed inside the dream (the Great Bed islands are the kind way out). You wake in your bed with your
    own inventory back. Each stack you picked up in the dream has a small chance to come back with you.
 
-Food: any food can be **laced** with an Extract in the crafting grid (strongly with a Concentrated one). A laced
-food also makes you Dizzy, and a strongly laced one also makes you Sleepy. Melatonia Cookie, Drowsy Tea and
-Sleepy Stew are the plain recipes.
+Food: any food can be **laced** with an Extract in the crafting grid (strongly with a Concentrated one). Nobody can
+tell: the name shows **(Laced)** only to whoever laced it, or to someone who has held it in hand for 30 seconds
+(lilac for Extract, deep purple for Concentrated). Eating it is much worse than a Melatonia dish: strong Dizziness,
+nausea and slowness, and with Concentrated also Sleepyness, weakness and a moment of black. Foods that carry it well
+(cakes, pies, cookies, soups, stews) also give a gift: Night Vision, Speed or Jump Boost for up to 3 minutes, or a
+15 second glimpse of **Lucid Sight** (ores show through the stone). Concentrated gives two gifts.
+
+**Laced Snowballs** and **Laced Arrows**: 8 snowballs or arrows around one Extract make 8 (the bottle comes back).
+Whoever they hit gets a shorter dose.
+
+**Melatonia Cake** (3 milk, 2 sugar, Melatonia Petals, egg, 2 wheat): place it and eat it in 4 slices, or cut a slice
+off with a knife (Farmer's Delight). 4 slices make a cake again. Melatonia Cookie, Drowsy Tea and Sleepy Stew are the
+other plain recipes.
 
 ### Dreamland
 
@@ -157,8 +167,8 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `ambientVolume` | 0.8 | Reverie's captions and weather sounds |
 | `dizzinessIntensity` | 1.0 | Camera sway while Dizzy (0 = off) |
 | `customSky` | true | The Dreamland sky (off = plain vanilla sky) |
-| `eyelidOverlay` | true | Heavy eyelids while Sleepy |
-| `shadeGlow` | true | Pale eyes on a Shade you stare at |
+| `eyelidOverlay` | true | Heavy eyelids, and the Shades you half-see, while Sleepy |
+| `shadeGlow` | true | Pale eyes on the Shades (brighter on one you stare at) |
 | `reduceMotion` | false | Halves camera roll and FOV wobble |
 
 ## Known limitations

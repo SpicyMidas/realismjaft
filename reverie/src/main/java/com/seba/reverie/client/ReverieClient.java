@@ -15,6 +15,8 @@ public final class ReverieClient {
     public ReverieClient(IEventBus modBus, ModContainer container) {
         DizzinessClient.init();
         DreamClient.init(modBus);
+        LucidSightClient.init();
+        LacedProjectilesClient.init(modBus);
         DreamEffectsClient.init();
         modBus.addListener(com.seba.reverie.client.shader.ReverieShaders::onRegisterShaders);
         com.seba.reverie.client.shader.ScreenEffects.init(modBus);

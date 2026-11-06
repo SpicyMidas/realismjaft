@@ -24,6 +24,8 @@ public final class ModTags {
         public static final TagKey<Item> INGOTS_TUFF_ALLOY = common("ingots/tuff_alloy");
         public static final TagKey<Item> INGOTS_BRASS = common("ingots/brass");
         public static final TagKey<Item> LACING_AGENTS = mod("lacing_agents");
+        /** Foods that carry Melatonia well (cakes, pies, cookies, soups and stews): laced, they also give a bonus. */
+        public static final TagKey<Item> LACING_BONUS_FOODS = mod("lacing_bonus_foods");
         public static final TagKey<Item> LUCID_KEEPSAKES = mod("lucid_keepsakes");
 
         private static TagKey<Item> common(String path) {

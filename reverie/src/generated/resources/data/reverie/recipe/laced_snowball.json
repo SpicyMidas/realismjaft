@@ -1,0 +1,43 @@
+{
+  "type": "reverie:bottle_returning_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "reverie:melatonia_extract"
+    }
+  ],
+  "result": {
+    "components": {
+      "reverie:laced": {
+        "level": 1
+      }
+    },
+    "count": 8,
+    "id": "reverie:laced_snowball"
+  },
+  "returned_bottles": 1
+}

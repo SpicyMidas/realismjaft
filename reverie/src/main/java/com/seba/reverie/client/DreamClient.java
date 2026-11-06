@@ -44,7 +44,6 @@ public final class DreamClient {
     private static float lid;
     private static float lidPrev;
     private static float dark;
-    private static float glimpse;
     private static final java.util.Random RNG = new java.util.Random();
     private static int flashTicks;
     private static int awakeTicks;
@@ -124,15 +123,14 @@ public final class DreamClient {
             blinkTick = -1;
             lid = Math.max(0, lid - 0.1f);
             dark = Math.max(0, dark - 0.05f);
-            glimpse = Math.max(0, glimpse - 0.1f);
         }
         var fx = com.seba.reverie.client.shader.ScreenEffects.SLEEPY;
         boolean on = ReverieConfig.get(ReverieConfig.EYELID_OVERLAY);
         fx.dark = on ? dark : 0;
-        fx.glimpse = on ? glimpse : 0;
+        com.seba.reverie.client.shade.SleepyPhantoms.tick(on && mc.player != null && !dreaming && mc.player.hasEffect(ModEffects.SLEEPYNESS));
     }
 
-    /** Heavy, irregular blinks; sometimes the eyes stay shut a moment, and in that dark the Shades stand. */
+    /** Heavy, irregular blinks; sometimes the eyes stay shut a moment (and then the Shades may be there, see SleepyPhantoms). */
     private static void sleepyTick() {
         dark += (0.42f - dark) * 0.03f;
         if (blinkTick < 0) {
@@ -142,20 +140,17 @@ public final class DreamClient {
                 blinkLength = microSleep ? 110 : 55 + RNG.nextInt(30);
                 blinkDepth = microSleep ? 1f : 0.65f + RNG.nextFloat() * 0.3f;
                 nextBlink = 120 + RNG.nextInt(220);
-                var fx = com.seba.reverie.client.shader.ScreenEffects.SLEEPY;
-                fx.glimpseX = 0.15f + RNG.nextFloat() * 0.7f;
-                fx.seed = RNG.nextFloat() * 100f;
             }
             lid = Math.max(0, lid - 0.05f);
-            glimpse = Math.max(0, glimpse - 0.04f);
             return;
         }
         float t = ++blinkTick / (float) blinkLength;
         // close slowly (ease in), hold, open a little faster
         float shape = t < 0.45f ? smooth(t / 0.45f) : t < 0.65f ? 1f : 1f - smooth((t - 0.65f) / 0.35f);
+        float before = lid;
         lid = shape * blinkDepth;
-        float wantGlimpse = lid > 0.4f ? Math.min(1f, (lid - 0.4f) / 0.3f) : 0f;
-        glimpse += (wantGlimpse - glimpse) * 0.12f;
+        // Eyes just shut in a heavy blink: when they open, something may be standing there.
+        if (before < 0.8f && lid >= 0.8f) com.seba.reverie.client.shade.SleepyPhantoms.eyesClosed(blinkLength > 100);
         dark = Math.max(dark, 0.42f + 0.3f * lid);
         if (blinkTick >= blinkLength) blinkTick = -1;
     }
