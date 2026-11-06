@@ -971,97 +971,211 @@ def paper_glider_texture():
 
 
 # ---------------------------------------------------------------- melatonia cake
-CAKE = {'F': (214, 196, 238), 'f': (186, 166, 220), 'h': (238, 230, 250), 'p': (128, 78, 180), 'q': (164, 118, 210),
-        'S': (216, 172, 112), 's': (188, 144, 88), 'c': (232, 198, 142), 'C': (198, 178, 232), 'b': (156, 114, 72),
-        'o': (88, 60, 118), 'w': (250, 248, 252)}
+# Lavender frosting, a golden sponge, lavender cream and a petal-jam line; the bloom and petals use the Melatonia
+# plant's own colours (BLOOM). Shading is placed by hand-written rules rather than noise, in the manner of vanilla's
+# cake and Farmer's Delight's pies: light from the upper left, darker tones of each colour at the edges.
+CAKE = {
+    'H': (248, 243, 254), 'F': (231, 219, 248), 'f': (209, 191, 238), 'd': (178, 156, 220), 'D': (146, 122, 196),
+    'L': (228, 170, 100), 'S': (204, 140, 78), 's': (174, 112, 60), 'b': (138, 86, 46), 'B': (104, 62, 34),
+    'C': (216, 200, 246), 'c': (190, 170, 234), 'J': (112, 88, 196), 'j': (84, 64, 156),
+    'P': BLOOM['P'], 'p': BLOOM['q'], 'v': BLOOM['v'], 'y': BLOOM['y'], 'w': BLOOM['w'],
+}
+
+
+def _put(img, x, y, key):
+    if 0 <= x < img.size[0] and 0 <= y < img.size[1]:
+        img.putpixel((x, y), rgba(CAKE[key]))
+
+
+def _bloom(img, cx, cy):
+    """A tiny Melatonia bloom: four petals round a pale yellow heart, lit from the upper left."""
+    for (dx, dy, k) in ((0, -1, 'p'), (-1, 0, 'p'), (1, 0, 'P'), (0, 1, 'P'), (-1, -1, 'p'), (1, 1, 'v'), (1, -1, 'P'), (-1, 1, 'P')):
+        _put(img, cx + dx, cy + dy, k)
+    _put(img, cx, cy, 'y')
+
+
+def _petal(img, x, y):
+    _put(img, x, y, 'P')
+    _put(img, x - 1, y, 'p')
 
 
 def melatonia_cake_textures():
-    """The Melatonia Cake in vanilla's cake layout (top, side with the cake in rows 8-15, cut face, bottom), plus the
-    cake and slice icons: lavender frosting with Melatonia petals, golden sponge, a lavender cream layer."""
-    rnd = random.Random(7711)
-    top = Image.new("RGBA", (16, 16))
+    """The Melatonia Cake in vanilla's cake layout: top (the cake is 1..14), side and cut face (the cake in rows 8-15),
+    bottom; plus the cake and slice icons."""
+    # --- top: soft light from the upper left, a ring of piped dollops, a bloom in the middle, scattered petals
+    top = Image.new("RGBA", (16, 16), rgba(CAKE['F']))
+    for y in range(16):
+        for x in range(16):
+            light = ((x - 4.5) ** 2 + (y - 4.5) ** 2) ** 0.5
+            k = 'H' if light < 3.2 else 'F' if light < 9.5 else 'f'
+            if k == 'F' and light > 8.2 and (x + y) % 2 == 0:
+                k = 'f'                                  # dithered falloff toward the lower right
+            if k == 'H' and light > 2.4 and (x + y) % 2 == 1:
+                k = 'F'
+            _put(top, x, y, k)
+    for i in range(1, 15):                               # rim
+        for (x, y) in ((i, 1), (1, i)):
+            _put(top, x, y, 'f')
+        for (x, y) in ((i, 14), (14, i)):
+            _put(top, x, y, 'd')
+    for i in (2, 5, 8, 11):                              # piped dollops along the rim: lit top-left, shadow bottom-right
+        for (x, y, horizontal) in ((i, 2, True), (2, i, False), (i, 12, True), (12, i, False)):
+            far = x >= 12 or y >= 12
+            dx, dy = (1, 0) if horizontal else (0, 1)
+            _put(top, x, y, 'F' if far else 'H')
+            _put(top, x + dx, y + dy, 'f' if far else 'F')
+            _put(top, x + 1, y + 1, 'd')
+            if horizontal:
+                _put(top, x + 2, y + 1, 'd' if far else 'f')
+            else:
+                _put(top, x + 1, y + 2, 'd' if far else 'f')
+    _bloom(top, 7, 7)
+    for (x, y) in ((5, 4), (10, 5), (4, 9), (11, 10), (8, 11), (10, 3)):
+        _petal(top, x, y)
+    save(top, "block/melatonia_cake_top")
+
+    # --- side: frosting band with drips over the sponge, a cream layer, darker baked base
+    drips = [0, 1, 2, 1, 0, 0, 1, 2, 1, 0, 1, 0, 0, 1, 2, 1]
+    def sponge(x, y):
+        # crumb: a lighter fleck above a darker one, in a staggered pattern (not noise)
+        if (x * 3 + y * 5) % 7 == 0:
+            return 's'
+        if (x * 3 + (y + 1) * 5) % 7 == 0:
+            return 'L'
+        return 'S'
+
+    side = Image.new("RGBA", (16, 16), T)
+    for x in range(16):
+        n = drips[x]
+        for y in range(8, 16):
+            if y == 8:
+                k = 'H' if x % 4 else 'F'
+            elif y == 9:
+                k = 'F'
+            elif y < 10 + n:
+                k = 'F' if y < 9 + n else 'f'            # drip body, its tip a shade darker
+            elif y == 10 + n and n > 0 and y < 12:
+                k = 'd'                                  # the shadow just under a drip
+            elif y == 12:
+                k = 'J' if x % 5 else 'j'
+            elif y == 15:
+                k = 'b' if x % 3 else 'B'
+            elif y == 14:
+                k = 's' if (x + y) % 2 else sponge(x, y)
+            else:
+                k = sponge(x, y)
+            _put(side, x, y, k)
+    save(side, "block/melatonia_cake_side")
+
+    # --- cut face: frosting cut through, airy sponge, cream with a petal-jam line under it
+    inner = Image.new("RGBA", (16, 16), T)
+    for x in range(16):
+        for y in range(8, 16):
+            if y == 8:
+                k = 'F'
+            elif y == 9:
+                k = 'f'
+            elif y == 11:
+                k = 'C' if x % 6 else 'c'
+            elif y == 12:
+                k = 'J' if x % 4 else 'j'
+            elif y == 15:
+                k = 's' if x % 2 else 'b'
+            else:
+                k = 'L' if (x * 5 + y * 3) % 6 == 0 else 's' if (x * 5 + (y - 1) * 3) % 6 == 0 else 'S'
+            _put(inner, x, y, k)
+    for x in (3, 9, 13):
+        _put(inner, x, 12, 'P')                          # bits of petal in the jam
+    save(inner, "block/melatonia_cake_inner")
+
+    # --- bottom: the baked base
+    bottom = Image.new("RGBA", (16, 16))
+    rnd = random.Random(2211)
     for y in range(16):
         for x in range(16):
             r = rnd.random()
-            c = CAKE['h'] if r < 0.16 else CAKE['f'] if r < 0.3 else CAKE['F']
+            k = 's' if r < 0.3 else 'L' if r < 0.38 else 'S'
             if x in (1, 14) or y in (1, 14):
-                c = CAKE['f']
-            top.putpixel((x, y), rgba(c))
-    for (x, y) in ((3, 3), (7, 2), (11, 4), (5, 7), (9, 8), (12, 10), (3, 11), (7, 12), (10, 13), (13, 6)):
-        top.putpixel((x, y), rgba(CAKE['p']))          # petals: a dark dot with a lighter tail
-        top.putpixel((min(14, x + 1), y), rgba(CAKE['q']))
-    for (x, y) in ((6, 5), (10, 11), (4, 9), (12, 3)):
-        top.putpixel((x, y), rgba(CAKE['w']))          # sugar
-    save(top, "block/melatonia_cake_top")
-
-    def layers(img, inner):
-        drips = {2, 3, 6, 9, 10, 13}
-        for x in range(16):
-            for y in range(8, 16):
-                r = rnd.random()
-                if y == 8:
-                    c = CAKE['h'] if r < 0.3 else CAKE['F']
-                elif y == 9 or (y == 10 and x in drips):
-                    c = CAKE['F'] if r < 0.6 else CAKE['f']
-                elif y in (12, 13) and not (y == 13 and x % 5 == 2):
-                    c = CAKE['C'] if r < 0.8 else CAKE['q']
-                elif y == 15:
-                    c = CAKE['b'] if not inner else CAKE['s']
-                else:
-                    sponge = CAKE['c'] if inner else CAKE['S']
-                    c = sponge if r < 0.7 else CAKE['s'] if r < 0.9 else CAKE['c']
-                img.putpixel((x, y), rgba(c))
-        return img
-
-    save(layers(Image.new("RGBA", (16, 16), T), False), "block/melatonia_cake_side")
-    save(layers(Image.new("RGBA", (16, 16), T), True), "block/melatonia_cake_inner")
-    bottom = noise_fill(16, 16, [CAKE['b'], CAKE['s'], (170, 126, 80)], 7712)
+                k = 'b' if r < 0.7 else 's'
+            _put(bottom, x, y, k)
     save(bottom, "block/melatonia_cake_bottom")
 
-    # Icon: the cake seen from the front and a little above, like vanilla's.
+    save(_cake_icon(), "item/melatonia_cake")
+    save(_slice_icon(), "item/melatonia_cake_slice")
+
+
+def _cake_icon():
+    """A round cake seen from the front and a little above (vanilla's icon pose): an oval frosted top, drips over a
+    curved sponge side with the cream layer, every edge shaded with a darker tone of its own colour."""
     icon = Image.new("RGBA", (16, 16), T)
+    cx, cy, rx, ry, height = 7.5, 5.0, 7.5, 3.6, 6
+    region = {}
     for y in range(16):
         for x in range(16):
-            dx, dy = abs(x - 7.5) / 7.5, abs(y - 5.5) / 3.6
-            if dx + dy <= 1.0:
-                c = CAKE['h'] if (x + y) % 7 == 0 else CAKE['F'] if dx + dy < 0.8 else CAKE['f']
-                icon.putpixel((x, y), rgba(c))
+            u, v = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
+            if u * u + v * v <= 1.0:
+                region[(x, y)] = ('top', u, v)
+            elif abs(u) <= 1.0:
+                low = cy + ry * (1 - u * u) ** 0.5
+                if low <= y + 0.5 < low + height:
+                    region[(x, y)] = ('side', u, int(y + 0.5 - low))
+    drips = {1: 1, 3: 2, 4: 1, 7: 1, 8: 2, 11: 1, 13: 2, 14: 1}
+    for (x, y), (kind, u, w) in region.items():
+        if kind == 'top':
+            light = (u + 0.55) ** 2 + (w + 0.45) ** 2
+            k = 'H' if light < 0.35 else 'F' if light < 1.25 else 'f'
+            if u * u + w * w > 0.72:
+                k = 'f' if (w < 0.2 and u < 0.3) else 'd'    # the rim, darker along the front edge
+        else:
+            d = w
+            drip = drips.get(x, 0)
+            if d == 0 or d <= drip:
+                k = 'F' if d < drip or d == 0 else 'f'
+                if u > 0.55:
+                    k = 'f' if k == 'F' else 'd'
+            elif d == 3:
+                k = 'J' if u < 0.55 else 'j'
+            elif d == height - 1:
+                k = 'b' if u < 0.6 else 'B'
             else:
-                # below the top's lower edge: the side, 6 px tall
-                edge = 5.5 + 3.6 * (1 - abs(x - 7.5) / 7.5)
-                d = y - edge
-                if 0 <= d < 6 and 0 <= x <= 15 and y > 5:
-                    c = [CAKE['F'], CAKE['S'], CAKE['C'], CAKE['S'], CAKE['s'], CAKE['b']][int(d)]
-                    if x < 8 and int(d) not in (0, 2):
-                        c = mix(c, (0, 0, 0), 0.12)   # the left face a touch darker
-                    icon.putpixel((x, y), rgba(c))
-    for (x, y) in ((5, 4), (9, 3), (7, 6), (11, 5), (4, 6)):
-        icon.putpixel((x, y), rgba(CAKE['p']))
-    outline(icon, CAKE['o'])
-    save(icon, "item/melatonia_cake")
+                k = 'L' if u < -0.6 else 'S' if u < 0.45 else 's'
+        _put(icon, x, y, k)
+    # edges: the outermost pixels take a darker tone of their own colour
+    darker = {'H': 'f', 'F': 'f', 'f': 'd', 'd': 'D', 'C': 'c', 'c': 'c', 'L': 'S', 'S': 's', 's': 'b', 'b': 'B', 'B': 'B'}
+    inv = {v: k for k, v in CAKE.items()}
+    src = icon.copy()
+    for (x, y) in region:
+        if any((nx, ny) not in region for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1))):
+            key = inv.get(src.getpixel((x, y))[:3])
+            if key in darker:
+                _put(icon, x, y, darker[key])
+    _bloom(icon, 7, 4)
+    for (x, y) in ((4, 3), (11, 5), (4, 6), (10, 2)):
+        _petal(icon, x, y)
+    return icon
 
-    # Slice icon: a wedge, point to the lower left.
+
+def _slice_icon():
+    """A wedge, point to the left: frosted top with a bloom, the cut face showing sponge, cream and petal jam."""
     rows = [
-        "................", "................", "................", "..........oo....",
-        "........ooFho...", "......ooFFpFFo..", "....ooFhFFFFFFo.", "..ooFFFFFqFFFFo.",
-        ".oFFpFFFFFFFFFo.", ".oSSSSSSSSSSSSo.", ".oCCCCCCCCCCCCo.", ".oSSSSSSSSSsSSo.",
-        ".osssSSSSSSSSso.", ".obbbbbbbbbbbbo.", "..oooooooooooo..", "................"]
-    save(grid(rows, CAKE), "item/melatonia_cake_slice")
-
-
-def outline(img, color):
-    """Dark outline on transparent pixels next to the shape (4-neighbourhood)."""
-    w, h = img.size
-    src = img.copy()
-    for y in range(h):
-        for x in range(w):
-            if src.getpixel((x, y))[3] > 0:
-                continue
-            for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
-                if 0 <= nx < w and 0 <= ny < h and src.getpixel((nx, ny))[3] > 0:
-                    img.putpixel((x, y), rgba(color))
-                    break
+        "................",
+        "................",
+        "................",
+        "...........ff...",
+        ".........ffHFd..",
+        ".......ffHFpPd..",
+        ".....ffHFFPyPd..",
+        "...ffHFFFFFPvd..",
+        ".ffFFFFpPFFFfd..",
+        "fFFFFFFFFFFffdd.",
+        "dFfLFfLSFfSfdfd.",
+        "bLSSSSLSSSSSsfd.",
+        "bCCCCCCCCCCCcdd.",
+        "bJJJPJJJJPJJjjd.",
+        "bsSSSsSSSsSSsbd.",
+        ".bbbbbbbbbbbbBB.",
+    ]
+    return grid(rows, {k: v for k, v in CAKE.items()})
 
 
 def fauna_textures():

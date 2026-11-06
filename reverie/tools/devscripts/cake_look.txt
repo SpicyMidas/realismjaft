@@ -1,0 +1,17 @@
+newworld cake_look flat 7
+wait 40
+cmd time set noon
+cmd gamerule doDaylightCycle false
+cmd kill @e[type=!player]
+cmd setblock 0 -60 2 reverie:melatonia_cake[bites=0,facing=south]
+cmd setblock 1 -60 2 reverie:melatonia_cake[bites=1,facing=south]
+cmd setblock 2 -60 2 reverie:melatonia_cake[bites=2,facing=south]
+cmd setblock 3 -60 2 reverie:melatonia_cake[bites=3,facing=south]
+cmd setblock 5 -60 2 minecraft:cake
+cmd item replace entity @s hotbar.0 with reverie:melatonia_cake
+cmd item replace entity @s hotbar.1 with reverie:melatonia_cake_slice 4
+cmd item replace entity @s hotbar.2 with minecraft:cake
+cmd tp @s 2.5 -59.0 0.3 0 40
+wait 80
+screenshot cake_look
+stop
