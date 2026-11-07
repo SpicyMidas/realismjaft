@@ -154,6 +154,35 @@ final class ShadeModel {
         }
     }
 
+    /**
+     * The Rush: bent hard forward, arms flung out ahead and reaching, legs pounding. Replaces the variant's own pose
+     * (the Tall One stays tall, the Headless stays headless).
+     */
+    void poseRush(ShadeEntity.Variant variant, float t, int seed) {
+        root.getAllParts().forEach(ModelPart::resetPose);
+        head.visible = variant != ShadeEntity.Variant.HEADLESS;
+        eyes.visible = false;
+        chestEyes.visible = false;
+        float stride = t * 0.95f + seed;
+        float lean = 0.42f;
+        body.xRot = lean;
+        body.y = 12 - 12 * Mth.cos(lean);
+        body.z = -12 * Mth.sin(lean);
+        head.y = body.y + 0.4f;
+        head.z = body.z - 0.6f;
+        head.xRot = -0.55f + Mth.sin(stride * 2) * 0.06f;
+        float shoulderY = body.y + 1.5f * Mth.cos(lean);
+        float shoulderZ = body.z + 1.5f * Mth.sin(lean);
+        rightArm.y = leftArm.y = shoulderY;
+        rightArm.z = leftArm.z = shoulderZ;
+        rightArm.xRot = -1.55f + Mth.cos(stride) * 0.35f;
+        leftArm.xRot = -1.55f - Mth.cos(stride) * 0.35f;
+        rightArm.zRot = 0.12f;
+        leftArm.zRot = -0.12f;
+        rightLeg.xRot = Mth.cos(stride) * 1.1f - 0.2f;
+        leftLeg.xRot = -Mth.cos(stride) * 1.1f - 0.2f;
+    }
+
     /** The part the pinprick eyes belong to for this variant, or null when it has none. */
     ModelPart eyeOwner(ShadeEntity.Variant variant) {
         return switch (variant) {

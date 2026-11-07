@@ -6,6 +6,7 @@ import net.neoforged.fml.ModList;
 public final class Compat {
     public static final String CREATE = "create";
     public static final String FARMERS_DELIGHT = "farmersdelight";
+    public static final String SABLE_RAGDOLLS = "sable_player_ragdoll";
 
     private Compat() {
     }
@@ -16,6 +17,10 @@ public final class Compat {
 
     public static boolean farmersDelight() {
         return isLoaded(FARMERS_DELIGHT);
+    }
+
+    public static boolean sableRagdolls() {
+        return isLoaded(SABLE_RAGDOLLS);
     }
 
     private static boolean isLoaded(String id) {

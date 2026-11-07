@@ -27,21 +27,21 @@ final class DreamlandBiomes {
     }
 
     static void bootstrap(BootstrapContext<Biome> ctx) {
-        reg(ctx, DreamlandBiomeKeys.PILLOW_FIELDS, 0x9B8BD6, 0x6E5BB8, 0x9FB6FF, ParticleTypes.END_ROD, 0.0006f,
+        reg(ctx, DreamlandBiomeKeys.PILLOW_FIELDS, DreamlandBiomeKeys.FOG_PILLOW, 0x4E5A72, 0x5E7A92, ParticleTypes.END_ROD, 0.0006f,
                 com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.AMETHYST_BLOCK_CHIME, 0.0012);
-        reg(ctx, DreamlandBiomeKeys.HOLLOW_SPIRES, 0x5A5878, 0x4A4570, 0x7C7AB8, ParticleTypes.ASH, 0.002f,
+        reg(ctx, DreamlandBiomeKeys.HOLLOW_SPIRES, DreamlandBiomeKeys.FOG_SPIRES, 0x34323F, 0x56566E, ParticleTypes.ASH, 0.002f,
                 com.seba.reverie.registry.ModSounds.SPIRE_DRONE, com.seba.reverie.registry.ModSounds.GLASS_HUM, 0.0015);
-        reg(ctx, DreamlandBiomeKeys.MIRROR_MARSH, 0x6FA4B8, 0x4D6E98, 0x7FD0E0, ParticleTypes.GLOW, 0.006f,
+        reg(ctx, DreamlandBiomeKeys.MIRROR_MARSH, DreamlandBiomeKeys.FOG_MARSH, 0x3E5A5C, 0x4C807C, ParticleTypes.GLOW, 0.006f,
                 com.seba.reverie.registry.ModSounds.MARSH_HUM, SoundEvents.FROG_AMBIENT, 0.0008);
-        reg(ctx, DreamlandBiomeKeys.SANDGLASS_DUNES, 0xD6C49B, 0x9E8A6A, 0xC8D6E8, ParticleTypes.WHITE_ASH, 0.004f,
+        reg(ctx, DreamlandBiomeKeys.SANDGLASS_DUNES, DreamlandBiomeKeys.FOG_DUNES, 0x6E5E4A, 0x7E8E9A, ParticleTypes.WHITE_ASH, 0.004f,
                 com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.NOTE_BLOCK_HAT.value(), 0.0009);
-        reg(ctx, DreamlandBiomeKeys.EYE_MEADOW, 0xB58BC4, 0x7B5A9A, 0xB59AE0, ParticleTypes.END_ROD, 0.0012f,
+        reg(ctx, DreamlandBiomeKeys.EYE_MEADOW, DreamlandBiomeKeys.FOG_EYE, 0x56404E, 0x7A6492, ParticleTypes.END_ROD, 0.0012f,
                 com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.0004);
-        reg(ctx, DreamlandBiomeKeys.UPSIDE_DOWN_TOWN, 0x8C7FA8, 0x5D4F7C, 0x9C90D0, ParticleTypes.END_ROD, 0.0004f,
+        reg(ctx, DreamlandBiomeKeys.UPSIDE_DOWN_TOWN, DreamlandBiomeKeys.FOG_TOWN, 0x46424F, 0x6E6C88, ParticleTypes.END_ROD, 0.0004f,
                 com.seba.reverie.registry.ModSounds.TOWN_HUM, SoundEvents.NOTE_BLOCK_CHIME.value(), 0.0014);
-        reg(ctx, DreamlandBiomeKeys.CLOUDREACH, 0xC9CFF2, 0x8E9CEB, 0xD0DCFF, ParticleTypes.END_ROD, 0.0008f,
+        reg(ctx, DreamlandBiomeKeys.CLOUDREACH, DreamlandBiomeKeys.FOG_CLOUD, 0x66708A, 0x8C9CBA, ParticleTypes.END_ROD, 0.0008f,
                 com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.AMETHYST_BLOCK_CHIME, 0.0006);
-        reg(ctx, DreamlandBiomeKeys.VOID_BETWEEN, 0x544A9C, 0x3F3A88, 0x5E58C8, ParticleTypes.END_ROD, 0.0004f,
+        reg(ctx, DreamlandBiomeKeys.VOID_BETWEEN, DreamlandBiomeKeys.FOG_VOID, 0x1C1A32, 0x403E76, ParticleTypes.END_ROD, 0.0004f,
                 com.seba.reverie.registry.ModSounds.VOID_WIND, com.seba.reverie.registry.ModSounds.FAR_BELL, 0.0005);
     }
 

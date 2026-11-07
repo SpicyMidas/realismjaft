@@ -27,6 +27,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
@@ -39,7 +40,8 @@ import org.joml.Vector3f;
  * with Concentrated Extract Sleepyness, weakness and a moment of black. Foods that carry it well
  * (reverie:lacing_bonus_foods: cakes, pies, cookies, soups, stews) also give one gift (two with Concentrated):
  * Night Vision, Speed or Jump Boost for up to three minutes, or a 15 second glimpse of Lucid Sight.
- * Nobody sees that a food is laced except whoever laced it, or someone who holds it in hand for 30 seconds.
+ * Nobody sees that a food is laced except whoever laced it, or someone who holds it in hand for 30 seconds. Laced
+ * and plain items of the same food can share a stack (LacedStacks): the laced ones are always the first eaten.
  * (Rewriting the stack's FOOD component instead would make laced stacks stop stacking after a save: deserialised
  * food effects never compare equal.)
  */
@@ -49,7 +51,8 @@ public final class Lacing {
     public static final int NOTICE_TICKS = 30 * 20;
     private static final Map<UUID, Holding> HOLDING = new HashMap<>();
 
-    private record Holding(ItemStack stack, int ticks) {
+    /** What was in which hand slot (a copy, compared by content), and for how long. */
+    private record Holding(int slot, ItemStack copy, int ticks) {
     }
 
     private Lacing() {
@@ -65,32 +68,39 @@ public final class Lacing {
         return !stack.isEmpty() && stack.has(DataComponents.FOOD) && agentLevel(stack) == 0;
     }
 
+    /** Laced level of the top item of the stack (the next one eaten or thrown), 0 if it is plain. */
     public static int level(ItemStack stack) {
-        Laced laced = stack.get(ModComponents.LACED.get());
-        return laced == null ? 0 : laced.level();
+        return LacedStacks.levelAt(LacedStacks.concrete(stack), 0);
     }
 
-    /** True if {@code player} knows this stack is laced. */
+    /** True if {@code player} knows the top item of this stack is laced. */
     public static boolean knownTo(ItemStack stack, UUID player) {
-        Laced laced = stack.get(ModComponents.LACED.get());
-        return laced != null && laced.knownTo(player);
+        List<Laced.Layer> layers = LacedStacks.concrete(stack);
+        return !layers.isEmpty() && layers.get(0).knownTo(player);
     }
 
-    /** One laced copy of {@code food}, or empty if it is already laced at least this strongly. The lacer knows. */
+    /**
+     * One laced copy of {@code food} (its top item), or empty if that is already laced at least this strongly.
+     * {@code lacer} knows; with null (the crafting grid, which does not say who crafts) whoever takes it out will.
+     */
     public static ItemStack lace(ItemStack food, int level, @Nullable UUID lacer) {
         if (!isLaceableFood(food) || level < 1 || level(food) >= level) return ItemStack.EMPTY;
         ItemStack out = food.copyWithCount(1);
-        Laced before = food.get(ModComponents.LACED.get());
-        Laced laced = new Laced(Math.min(level, 2), before == null ? List.of() : before.knownBy());
-        out.set(ModComponents.LACED.get(), lacer == null ? laced : laced.withKnown(lacer));
+        List<Laced.Layer> before = LacedStacks.concrete(food);
+        List<UUID> known = new ArrayList<>(before.isEmpty() ? List.of() : before.get(0).knownBy());
+        UUID who = lacer == null ? Laced.CRAFTER : lacer;
+        if (!known.contains(who)) known.add(who);
+        out.set(ModComponents.LACED.get(), Laced.uniform(Math.min(level, 2), known));
         return out;
     }
 
     public static void onFinishUsing(LivingEntityUseItemEvent.Finish event) {
         LivingEntity entity = event.getEntity();
         if (entity.level().isClientSide) return;
-        ItemStack food = event.getItem();
+        ItemStack food = event.getItem();      // a copy from before the bite
         int level = level(food);
+        // The top item was eaten: what is left in hand loses it.
+        LacedStacks.afterEating(food, event.getResultStack());
         if (level <= 0 || !food.has(DataComponents.FOOD)) return;
         poison(entity, level, 1f);
         if (food.is(ModTags.Items.LACING_BONUS_FOODS)) gifts(entity, level, entity.getRandom());
@@ -137,26 +147,35 @@ public final class Lacing {
         entity.addEffect(new MobEffectInstance(effect, ticks, amplifier));
     }
 
-    /** Holding a laced stack in hand for 30 seconds: you notice. */
+    /**
+     * Every tick for each player: a freshly laced item they took from the crafting grid becomes theirs to know, and a
+     * laced stack held in one hand for 30 seconds (the same stack, unchanged) gives itself away, for good, to them.
+     */
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         UUID id = player.getUUID();
-        ItemStack held = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (level(held) == 0 || knownTo(held, id)) {
-            held = player.getItemInHand(InteractionHand.OFF_HAND);
-            if (level(held) == 0 || knownTo(held, id)) {
+        var inv = player.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); i++) LacedStacks.claimCrafted(inv.getItem(i), id);
+        LacedStacks.claimCrafted(player.containerMenu.getCarried(), id);
+
+        int slot = inv.selected;
+        ItemStack held = inv.getItem(slot);
+        if (!LacedStacks.hasUnknown(held, id)) {
+            slot = Inventory.SLOT_OFFHAND;
+            held = player.getOffhandItem();
+            if (!LacedStacks.hasUnknown(held, id)) {
                 HOLDING.remove(id);
                 return;
             }
         }
         Holding was = HOLDING.get(id);
-        int ticks = was != null && was.stack() == held ? was.ticks() + 1 : 1;
+        int ticks = was != null && was.slot() == slot && ItemStack.isSameItemSameComponents(was.copy(), held) ? was.ticks() + 1 : 1;
         if (ticks < NOTICE_TICKS) {
-            HOLDING.put(id, new Holding(held, ticks));
+            HOLDING.put(id, new Holding(slot, held.copyWithCount(1), ticks));
             return;
         }
         HOLDING.remove(id);
-        held.set(ModComponents.LACED.get(), held.get(ModComponents.LACED.get()).withKnown(id));
+        LacedStacks.reveal(held, id);
         player.displayClientMessage(Component.translatable("reverie.laced.noticed").withColor(tagColor(level(held))), true);
         player.level().playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.3f, 0.6f);
     }
@@ -165,8 +184,8 @@ public final class Lacing {
         HOLDING.remove(player.getUUID());
     }
 
-    /** Colour of the "(Laced)" tag: lilac for Extract, a deeper purple for Concentrated. */
+    /** Colour of the "(Laced)" tag: pinkish for Extract, deep purple for Concentrated. */
     public static int tagColor(int level) {
-        return level >= 2 ? 0x7A3DB8 : 0xC4A0EE;
+        return level >= 2 ? 0x8A3FD0 : 0xEC9AD6;
     }
 }

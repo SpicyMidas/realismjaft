@@ -48,20 +48,20 @@ public final class ReverieConfig {
     public static final ModConfigSpec.BooleanValue EVENT_EVERYONE_TURNS;
     public static final ModConfigSpec.BooleanValue EVENT_BEHIND_YOU;
     public static final ModConfigSpec.BooleanValue EVENT_MIMIC;
+    public static final ModConfigSpec.BooleanValue EVENT_RUSH;
     public static final ModConfigSpec.BooleanValue EVENT_COUNTING;
     public static final ModConfigSpec.BooleanValue EVENT_GRAVITY_HICCUP;
     public static final ModConfigSpec.BooleanValue EVENT_FAREWELL;
 
     // --- client
     public static final ModConfigSpec.BooleanValue ANIMATED_STICK;
-    public static final ModConfigSpec.BooleanValue LULLABY;
-    public static final ModConfigSpec.DoubleValue LULLABY_VOLUME;
     public static final ModConfigSpec.DoubleValue AMBIENT_VOLUME;
     public static final ModConfigSpec.DoubleValue DIZZINESS_INTENSITY;
     public static final ModConfigSpec.BooleanValue CUSTOM_SKY;
     public static final ModConfigSpec.BooleanValue EYELID_OVERLAY;
     public static final ModConfigSpec.BooleanValue SHADE_GLOW;
     public static final ModConfigSpec.BooleanValue REDUCE_MOTION;
+    public static final ModConfigSpec.BooleanValue LUCID_CONFUSION;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -126,6 +126,7 @@ public final class ReverieConfig {
         EVENT_EVERYONE_TURNS = b.define("everyoneTurns", true);
         EVENT_BEHIND_YOU = b.define("behindYou", true);
         EVENT_MIMIC = b.define("mimic", true);
+        EVENT_RUSH = b.comment("The Rush: now and then a Shade sprints straight at you and vanishes just before it hits.").define("rush", true);
         EVENT_COUNTING = b.define("counting", true);
         EVENT_GRAVITY_HICCUP = b.define("gravityHiccup", true);
         EVENT_FAREWELL = b.define("farewell", true);
@@ -137,14 +138,14 @@ public final class ReverieConfig {
         ModConfigSpec.Builder c = new ModConfigSpec.Builder();
         ANIMATED_STICK = c.comment("Animate the Tuff Gearshift stick (off = static stick at the committed gear).")
                 .define("animatedStick", true);
-        LULLABY = c.define("lullaby", true);
-        LULLABY_VOLUME = c.defineInRange("lullabyVolume", 0.6, 0.0, 1.0);
         AMBIENT_VOLUME = c.defineInRange("ambientVolume", 0.8, 0.0, 1.0);
         DIZZINESS_INTENSITY = c.defineInRange("dizzinessIntensity", 1.0, 0.0, 2.0);
         CUSTOM_SKY = c.define("customSky", true);
         EYELID_OVERLAY = c.define("eyelidOverlay", true);
         SHADE_GLOW = c.comment("Pale pinprick eyes on Shades you look at.").define("shadeGlow", true);
         REDUCE_MOTION = c.comment("Halves camera roll / FOV wobble.").define("reduceMotion", false);
+        LUCID_CONFUSION = c.comment("Reality slips while dreaming: tilting horizon, footsteps behind you, whispers, a breathing view.")
+                .define("lucidConfusion", true);
         CLIENT_SPEC = c.build();
     }
 

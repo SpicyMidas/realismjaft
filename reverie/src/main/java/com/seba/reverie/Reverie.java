@@ -73,6 +73,12 @@ public final class Reverie {
 
         NeoForge.EVENT_BUS.addListener(Lacing::onFinishUsing);
         NeoForge.EVENT_BUS.addListener(Lacing::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(com.seba.reverie.content.melatonia.LacedStacks::onStackedOn);
+        NeoForge.EVENT_BUS.addListener(com.seba.reverie.content.melatonia.Collapse::onRemoved);
+        NeoForge.EVENT_BUS.addListener(com.seba.reverie.content.melatonia.Collapse::onExpired);
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent e) -> {
+            if (e.getEntity() instanceof net.minecraft.server.level.ServerPlayer p) com.seba.reverie.content.melatonia.Collapse.onLogin(p);
+        });
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent e) -> Lacing.forget(e.getEntity()));
         com.seba.reverie.dream.DreamEvents.init();
         com.seba.reverie.dream.DreamManager.addListener(new com.seba.reverie.dreamland.MemoryIsland());

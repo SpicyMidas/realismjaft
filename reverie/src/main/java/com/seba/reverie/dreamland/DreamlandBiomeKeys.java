@@ -16,6 +16,16 @@ public final class DreamlandBiomeKeys {
     public static final ResourceKey<Biome> CLOUDREACH = key("cloudreach");
     public static final ResourceKey<Biome> VOID_BETWEEN = key("the_void_between");
 
+    // Fog colours, one per biome and all different: client/dreamland/DreamColors tells biomes apart by them.
+    public static final int FOG_PILLOW = 0x8A93A3;
+    public static final int FOG_SPIRES = 0x55525F;
+    public static final int FOG_MARSH = 0x648A84;
+    public static final int FOG_DUNES = 0xA8977A;
+    public static final int FOG_EYE = 0x8A6A7C;
+    public static final int FOG_TOWN = 0x6E6A78;
+    public static final int FOG_CLOUD = 0xA4ACBC;
+    public static final int FOG_VOID = 0x2E2A48;
+
     /** In {@link IslandField.Kind} order. */
     public static final java.util.List<ResourceKey<Biome>> ALL = java.util.List.of(PILLOW_FIELDS, HOLLOW_SPIRES, MIRROR_MARSH,
             SANDGLASS_DUNES, EYE_MEADOW, UPSIDE_DOWN_TOWN, CLOUDREACH, VOID_BETWEEN);

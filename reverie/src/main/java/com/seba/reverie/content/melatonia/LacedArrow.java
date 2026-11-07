@@ -62,5 +62,6 @@ public class LacedArrow extends AbstractArrow {
     protected void doPostHurtEffects(LivingEntity target) {
         super.doPostHurtEffects(target);
         Lacing.poison(target, entityData.get(LACING), DOSE);
+        Collapse.fromLacedHit(target, this);
     }
 }

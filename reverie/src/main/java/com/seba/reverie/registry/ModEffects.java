@@ -23,6 +23,8 @@ public final class ModEffects {
             .addAttributeModifier(net.minecraft.world.entity.ai.attributes.Attributes.GRAVITY, Reverie.id("drift_gravity"), -0.5,
                     net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
+    /** Out Cold: knocked flat by a laced arrow or snowball. */
+    public static final DeferredHolder<MobEffect, MobEffect> OUT_COLD = EFFECTS.register("out_cold", com.seba.reverie.content.effect.OutColdEffect::new);
     /** Lucid Sight: a short glimpse of the ores through the stone (client/LucidSightClient draws it). */
     public static final DeferredHolder<MobEffect, MobEffect> LUCID_SIGHT = EFFECTS.register("lucid_sight", () -> new MobEffect(
             net.minecraft.world.effect.MobEffectCategory.BENEFICIAL, 0x9FE8FF) {

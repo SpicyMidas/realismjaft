@@ -159,7 +159,7 @@ public final class MelatoniaGameTests {
         // Old saves stored only the level.
         var old = com.seba.reverie.content.melatonia.Laced.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE,
                 new com.google.gson.JsonPrimitive(2)).getOrThrow();
-        h.assertTrue(old.level() == 2 && old.knownBy().isEmpty(), "old lacing did not load");
+        h.assertTrue(old.topLevel() == 2 && old.layers().get(0).knownBy().isEmpty(), "old lacing did not load");
         // Someone else's laced pie: unknown until held 30 seconds.
         ItemStack pie = Lacing.lace(new ItemStack(Items.PUMPKIN_PIE), 1, other);
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, pie);
@@ -221,6 +221,80 @@ public final class MelatoniaGameTests {
                     h.getLevel().addFreshEntity(ball);
                 })
                 .thenWaitUntil(() -> h.assertTrue(pig.hasEffect(ModEffects.DIZZINESS), "the pig was not dosed"))
+                .thenSucceed();
+    }
+
+    @GameTest(templateNamespace = "reverie", template = "empty")
+    public static void lacedLayersStackWorstFirst(GameTestHelper h) {
+        var player = CreateFreeFakePlayer.get(h);
+        java.util.UUID me = player.getUUID();
+        ItemStack stack = new ItemStack(Items.BREAD, 3);                       // 3 plain
+        ItemStack extract = Lacing.lace(new ItemStack(Items.BREAD), 1, me);
+        extract.setCount(3);                                                   // 3 with Extract
+        ItemStack conc = Lacing.lace(new ItemStack(Items.BREAD), 2, me);
+        conc.setCount(3);                                                      // 3 with Concentrated
+        h.assertTrue(com.seba.reverie.content.melatonia.LacedStacks.sameExceptLacing(stack, extract), "laced bread is not 'the same food'");
+        com.seba.reverie.content.melatonia.LacedStacks.joinInto(stack, extract, 3);
+        com.seba.reverie.content.melatonia.LacedStacks.joinInto(stack, conc, 3);
+        h.assertTrue(stack.getCount() == 9 && extract.isEmpty() && conc.isEmpty(), "stacks did not join: " + stack);
+        var layers = com.seba.reverie.content.melatonia.LacedStacks.concrete(stack);
+        h.assertTrue(layers.size() == 2 && layers.get(0).level() == 2 && layers.get(0).count() == 3
+                && layers.get(1).level() == 1 && layers.get(1).count() == 3, "not worst first: " + layers);
+        // Splitting off 4 takes the top: 3 Concentrated + 1 Extract; the 5 left are 2 Extract + 3 plain.
+        ItemStack top = stack.split(4);
+        var a = com.seba.reverie.content.melatonia.LacedStacks.concrete(top);
+        var b = com.seba.reverie.content.melatonia.LacedStacks.concrete(stack);
+        h.assertTrue(a.size() == 2 && a.get(0).count() == 3 && a.get(1).count() == 1, "split-off part wrong: " + a);
+        h.assertTrue(b.size() == 1 && b.get(0).count() == 2 && b.get(0).level() == 1 && stack.getCount() == 5, "remaining part wrong: " + b);
+        // Eating one from the top pops it.
+        player.removeAllEffects();
+        ItemStack before = top.copy();
+        top.shrink(1);
+        NeoForge.EVENT_BUS.post(new LivingEntityUseItemEvent.Finish(player, before, 0, top));
+        var c = com.seba.reverie.content.melatonia.LacedStacks.concrete(top);
+        h.assertTrue(c.get(0).count() == 2 && c.get(0).level() == 2, "eating did not pop the top: " + c);
+        h.assertTrue(player.getEffect(ModEffects.SLEEPYNESS) != null, "the Concentrated one was not the one eaten");
+        // A plain stack once the laced ones are gone has no component at all (it stacks with plain bread again).
+        ItemStack plain = stack.split(5);
+        plain.shrink(2);
+        com.seba.reverie.content.melatonia.LacedStacks.set(plain, com.seba.reverie.content.melatonia.LacedStacks.drop(
+                com.seba.reverie.content.melatonia.LacedStacks.concrete(plain), 2));
+        h.assertTrue(ItemStack.isSameItemSameComponents(plain, new ItemStack(Items.BREAD)), "a fully plain stack kept the component");
+        // Uniform laced stacks still stack the vanilla way (equal components).
+        ItemStack u1 = Lacing.lace(new ItemStack(Items.COOKIE), 1, me);
+        ItemStack u2 = Lacing.lace(new ItemStack(Items.COOKIE), 1, me);
+        h.assertTrue(ItemStack.isSameItemSameComponents(u1, u2), "two equal laced cookies do not stack");
+        // From the crafting grid nobody is named yet: whoever takes it knows.
+        ItemStack crafted = Lacing.lace(new ItemStack(Items.APPLE), 1, null);
+        h.assertTrue(Lacing.knownTo(crafted, java.util.UUID.randomUUID()), "the crafting result should show it is laced");
+        com.seba.reverie.content.melatonia.LacedStacks.claimCrafted(crafted, me);
+        h.assertTrue(Lacing.knownTo(crafted, me) && !Lacing.knownTo(crafted, java.util.UUID.randomUUID()), "the crafter was not claimed");
+        // Old saves: a bare level and {level, known_by}.
+        var old = com.seba.reverie.content.melatonia.Laced.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE,
+                com.google.gson.JsonParser.parseString("{\"level\":2}")).getOrThrow();
+        h.assertTrue(old.topLevel() == 2, "old {level} lacing did not load");
+        player.removeAllEffects();
+        h.succeed();
+    }
+
+    @GameTest(templateNamespace = "reverie", template = "empty", timeoutTicks = 100)
+    public static void lacedHitKnocksMobsOut(GameTestHelper h) {
+        h.setBlock(new BlockPos(1, 1, 1), Blocks.STONE);
+        var pig = h.spawnWithNoFreeWill(net.minecraft.world.entity.EntityType.PIG, new BlockPos(1, 2, 1));
+        h.startSequence()
+                .thenIdle(5)
+                .thenExecute(() -> com.seba.reverie.content.melatonia.Collapse.fromLacedHit(pig, null))
+                .thenIdle(3)
+                .thenExecute(() -> {
+                    var out = pig.getEffect(ModEffects.OUT_COLD);
+                    h.assertTrue(out != null && out.getDuration() > 500, "the pig was not knocked out for ~30 s");
+                    h.assertTrue(pig.hasPose(net.minecraft.world.entity.Pose.SLEEPING), "the pig is not lying down");
+                    h.assertTrue(pig.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED) <= 1e-4,
+                            "the pig can still walk");
+                    pig.removeEffect(ModEffects.OUT_COLD);
+                })
+                .thenIdle(2)
+                .thenExecute(() -> h.assertFalse(pig.hasPose(net.minecraft.world.entity.Pose.SLEEPING), "the pig did not get up"))
                 .thenSucceed();
     }
 }

@@ -34,14 +34,19 @@ Without them Reverie works on its own. Their content simply does not exist, and 
    own inventory back. Each stack you picked up in the dream has a small chance to come back with you.
 
 Food: any food can be **laced** with an Extract in the crafting grid (strongly with a Concentrated one). Nobody can
-tell: the name shows **(Laced)** only to whoever laced it, or to someone who has held it in hand for 30 seconds
-(lilac for Extract, deep purple for Concentrated). Eating it is much worse than a Melatonia dish: strong Dizziness,
+tell: the name shows **(Laced)** only to whoever laced it, or to someone who has held it in hand for 30 seconds (for
+good, and only to them): pinkish for Extract, deep purple for Concentrated. Laced and plain items of the same food
+can share a stack: click one onto the other in the inventory. The laced ones are always the first eaten (and the first
+thrown or split off), worst first, and whoever knows sees the order, e.g. "First 3 laced" in deep purple, "Next 3
+laced" in pink, on a stack that looks like plain bread to anyone else. Eating it is much worse than a Melatonia dish: strong Dizziness,
 nausea and slowness, and with Concentrated also Sleepyness, weakness and a moment of black. Foods that carry it well
 (cakes, pies, cookies, soups, stews) also give a gift: Night Vision, Speed or Jump Boost for up to 3 minutes, or a
 15 second glimpse of **Lucid Sight** (ores show through the stone). Concentrated gives two gifts.
 
 **Laced Snowballs** and **Laced Arrows**: 8 snowballs or arrows around one Extract make 8 (the bottle comes back).
-Whoever they hit gets a shorter dose.
+Whoever they hit gets a shorter dose, and a mob drops to the ground **Out Cold** for about 30 seconds. A player who is
+already Sleepy sometimes goes down too, for a couple of seconds. With [Sable: Ragdolls](https://modrinth.com/mod/sable-ragdolls)
+installed the fall is a physics ragdoll instead.
 
 **Melatonia Cake** (3 milk, 2 sugar, Melatonia Petals, egg, 2 wheat): place it and eat it in 4 slices, or cut a slice
 off with a knife (Farmer's Delight). 4 slices make a cake again. Melatonia Cookie, Drowsy Tea and Sleepy Stew are the
@@ -64,10 +69,13 @@ other plain recipes.
 - Dream weather: Starfall (sometimes a star lands and leaves a Lucid Shard), Petal Drift, Fog Tide, Upward Rain,
   and The Long Silence.
 - **Shades**: a crowd of harmless silhouettes always 28 to 52 blocks away, watching. Walk toward one and it is gone.
-  Now and then the whole crowd does something stranger, and once in a while one of them is shaped like you.
-- Odd subtitles from nowhere (turn subtitles on), soft hums, drones and far bells per biome, a procedural lullaby
-  (bass, harp arpeggios and a bell melody that never repeats the same song), and one recurring object that the
-  dream keeps returning to.
+  Every minute or so one of them breaks into a sprint straight at you and vanishes just before it hits (**The
+  Rush**). Now and then the whole crowd does something stranger, and once in a while one of them is shaped like you.
+- It is a lucid dream, not a calm one: dusky light, muted slate, moss and umber instead of pastels, no music, and now
+  and then reality slips (the horizon tilts, footsteps follow right behind you, a whisper scrambles itself over the
+  hotbar, the view breathes in and out).
+- Odd subtitles from nowhere (turn subtitles on), hums, drones and far bells per biome, and one recurring object that
+  the dream keeps returning to.
 
 ### Create: Tuff Gearshifts and the Latch Remote
 
@@ -159,19 +167,20 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `dreamland.enableRareEvents` | true | Master switch for the Shade events below |
 | `dreamland.events.hush` / `everyoneTurns` / `behindYou` / `counting` / `gravityHiccup` / `farewell` | true | Each Shade event |
 | `dreamland.events.mimic` | true | Mimic: your own silhouette copies you, three seconds late |
+| `dreamland.events.rush` | true | The Rush: a Shade sprints at you and vanishes just before it hits |
 
 `config/reverie-client.toml`:
 
 | Option | Default | |
 |---|---|---|
 | `animatedStick` | true | Animate the gearshift stick |
-| `lullaby` / `lullabyVolume` | true / 0.6 | The procedural lullaby in Dreamland (it replaces the game's music there; the Music slider applies too) |
 | `ambientVolume` | 0.8 | Reverie's captions and weather sounds |
 | `dizzinessIntensity` | 1.0 | Camera sway while Dizzy (0 = off) |
 | `customSky` | true | The Dreamland sky (off = plain vanilla sky) |
 | `eyelidOverlay` | true | Heavy eyelids, and the Shades you half-see, while Sleepy |
 | `shadeGlow` | true | Pale eyes on the Shades (brighter on one you stare at) |
-| `reduceMotion` | false | Halves camera roll and FOV wobble |
+| `reduceMotion` | false | Halves camera roll and FOV wobble (and skips the tilting and breathing reality slips) |
+| `lucidConfusion` | true | Reality slips while dreaming (tilt, footsteps behind you, whispers, a breathing view) |
 
 ## Known limitations
 

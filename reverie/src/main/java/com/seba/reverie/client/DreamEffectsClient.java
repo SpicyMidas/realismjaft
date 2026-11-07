@@ -74,6 +74,7 @@ public final class DreamEffectsClient {
                 mc.getSoundManager().stop(null, SoundSource.WEATHER);
                 mc.getSoundManager().stop(null, SoundSource.RECORDS);
             }
+            case ShadeCrowdManager.RUSH_HIT -> com.seba.reverie.client.dreamland.LucidConfusionClient.jolt();
             case ShadeCrowdManager.FAREWELL -> {
                 farewellTicks = payload.durationTicks();
                 farewellTotal = Math.max(1, payload.durationTicks());
@@ -127,10 +128,10 @@ public final class DreamEffectsClient {
     }
 
     private static void onMusic(SelectMusicEvent event) {
-        // In Dreamland the procedural lullaby replaces the game's music.
+        // No music in Dreamland: only its own sounds.
         var level = Minecraft.getInstance().level;
         boolean dreamland = level != null && level.dimension().equals(com.seba.reverie.dream.DreamManager.DREAMLAND);
-        if (silenced() || dreamland && ReverieConfig.get(ReverieConfig.LULLABY)) event.setMusic(null);
+        if (silenced() || dreamland) event.setMusic(null);
     }
 
     /** A sound played at a fraction of its volume. Tickable sounds are left alone (the engine ticks them by type). */

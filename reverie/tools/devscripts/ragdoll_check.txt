@@ -1,0 +1,21 @@
+newworld ragdoll_check flat 7
+wait 60
+cmd time set noon
+cmd gamerule doDaylightCycle false
+cmd kill @e[type=!player]
+cmd summon minecraft:pig 0.5 -60 4.5 {NoAI:1b}
+cmd summon minecraft:zombie 3.5 -60 4.5 {NoAI:1b,PersistenceRequired:1b}
+cmd tp @s 1.5 -59 0.5 0 15
+wait 40
+screenshot rag_before
+cmd summon reverie:laced_snowball 0.5 -57.5 4.5 {Motion:[0.0,-1.0,0.0]}
+cmd summon reverie:laced_snowball 3.5 -57.5 4.5 {Motion:[0.0,-1.0,0.0]}
+wait 6
+screenshot rag_t0
+wait 20
+screenshot rag_t1
+wait 60
+screenshot rag_t4
+cmd data get entity @e[type=pig,limit=1] active_effects
+wait 20
+stop

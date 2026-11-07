@@ -9,7 +9,7 @@
       "tick_chance": 8.0E-4
     },
     "ambient_sound": "reverie:ambient.marsh_hum",
-    "fog_color": 7316664,
+    "fog_color": 6589060,
     "mood_sound": {
       "block_search_extent": 8,
       "offset": 2.0,
@@ -22,9 +22,9 @@
       },
       "probability": 0.006
     },
-    "sky_color": 5074584,
-    "water_color": 8376544,
-    "water_fog_color": 7316664
+    "sky_color": 4086364,
+    "water_color": 5013628,
+    "water_fog_color": 6589060
   },
   "features": [],
   "has_precipitation": false,

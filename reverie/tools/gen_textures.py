@@ -725,6 +725,14 @@ def melatonia_textures():
         "..................", ".................."]
     save(grid(eye, {'o': (40, 60, 92), 'w': (232, 244, 255), 'i': (120, 220, 255), 'g': (196, 244, 255), 'd': (40, 120, 170)}),
          "mob_effect/lucid_sight")
+    # Out Cold: a closed eye under a little ring of dizzy stars.
+    ko = [
+        "..................", "....y.....y.......", "...yYy...yYy..y...", "....y.....y..yYy..",
+        "..............y...", "..................", "..................", "....oooooooooo....",
+        "...o..........o...", "..o.lllllllll..o..", "...o..........o...", "....oo......oo....",
+        "......oooooo......", "..................", "..................", "..................",
+        "..................", ".................."]
+    save(grid(ko, {'y': (255, 230, 120), 'Y': (255, 250, 210), 'o': (60, 44, 96), 'l': (150, 120, 200)}), "mob_effect/out_cold")
 
 
 def misc_textures():
@@ -739,9 +747,9 @@ def misc_textures():
 
 
 # ---------------------------------------------------------------- dreamland
-LUCID = [(122, 128, 172), (140, 146, 190), (158, 164, 206), (176, 182, 220), (196, 202, 234)]
-SOIL = [(92, 70, 112), (108, 84, 128), (124, 98, 144), (140, 114, 158)]
-DWOOD = [(118, 70, 112), (144, 92, 136), (168, 114, 158), (190, 138, 178)]
+LUCID = [(76, 80, 92), (92, 97, 110), (106, 112, 126), (122, 128, 142), (140, 146, 160)]
+SOIL = [(52, 40, 40), (64, 50, 48), (76, 60, 56), (90, 72, 64)]
+DWOOD = [(70, 50, 56), (90, 66, 70), (110, 82, 84), (128, 98, 96)]
 
 
 def grey(img):
@@ -759,7 +767,7 @@ def dreamland_textures():
     top = ramp_fill(16, 16, [(150, 150, 150), (172, 172, 172), (192, 192, 192), (214, 214, 214), (236, 236, 236)], 1501, cell=2, jitter=0.35)
     save(top, "block/dream_grass_block_top")
     soil = ramp_fill(16, 16, SOIL, 1502, cell=3, jitter=0.3)
-    speckle(soil, [(170, 150, 196)], 6, 1503)
+    speckle(soil, [(104, 88, 78), (40, 30, 32)], 6, 1503)
     save(soil, "block/dream_soil")
     side = soil.copy()
     overlay = Image.new("RGBA", (16, 16), T)
@@ -771,11 +779,11 @@ def dreamland_textures():
             overlay.putpixel((x, y), (v, v, v, 255))
     save(side, "block/dream_grass_block_side")
     save(overlay, "block/dream_grass_block_side_overlay")
-    bottom = ramp_fill(16, 16, [(198, 164, 214), (214, 180, 228), (226, 196, 238), (236, 212, 246)], 1505, cell=2, jitter=0.35)
+    bottom = ramp_fill(16, 16, [(96, 112, 100), (110, 126, 112), (124, 138, 122), (138, 150, 132)], 1505, cell=2, jitter=0.35)
     save(bottom, "block/dream_grass_block_bottom")
 
     stone = ramp_fill(16, 16, LUCID, 1510, cell=4, jitter=0.2)
-    speckle(stone, [(220, 226, 250), (104, 108, 150)], 7, 1511)
+    speckle(stone, [(150, 168, 176), (48, 50, 60)], 7, 1511)
     save(stone, "block/lucid_stone")
     cob = Image.new("RGBA", (16, 16))
     rnd = random.Random(1512)
@@ -806,23 +814,24 @@ def dreamland_textures():
     rnd = random.Random(1514)
     for _ in range(4):
         cx, cy = rnd.randint(2, 13), rnd.randint(2, 13)
-        for (dx, dy, c) in ((0, 0, (250, 236, 255)), (1, 0, (190, 150, 250)), (0, 1, (160, 120, 240)), (-1, 0, (210, 180, 255)), (0, -1, (130, 96, 220))):
+        for (dx, dy, c) in ((0, 0, (226, 252, 250)), (1, 0, (120, 214, 212)), (0, 1, (76, 168, 176)), (-1, 0, (168, 236, 232)), (0, -1, (54, 128, 140))):
             ore.putpixel((cx + dx, cy + dy), rgba(c))
     save(ore, "block/lucid_crystal_ore")
 
+    bark = [(64, 64, 72), (86, 86, 96), (108, 108, 118), (128, 126, 134)]
     log = Image.new("RGBA", (16, 16))
     for y in range(16):
         for x in range(16):
-            v = DWOOD[[1, 2, 1, 0, 1, 2, 3, 2, 1, 0, 1, 2, 2, 1, 0, 1][x]]
+            v = bark[[1, 2, 1, 0, 1, 2, 3, 2, 1, 0, 1, 2, 2, 1, 0, 1][x]]
             log.putpixel((x, y), rgba(v))
-    speckle(log, [(214, 170, 206)], 5, 1515)
+    speckle(log, [(150, 148, 154), (44, 42, 50)], 6, 1515)
     save(log, "block/dreamwood_log")
-    logtop = Image.new("RGBA", (16, 16), rgba(DWOOD[0]))
+    logtop = Image.new("RGBA", (16, 16), rgba(bark[0]))
     for y in range(16):
         for x in range(16):
             d = max(abs(x - 7.5), abs(y - 7.5))
             if d < 6.5:
-                logtop.putpixel((x, y), rgba((222, 186, 204) if int(d) % 2 == 0 else (200, 160, 186)))
+                logtop.putpixel((x, y), rgba((170, 160, 146) if int(d) % 2 == 0 else (140, 130, 120)))
     save(logtop, "block/dreamwood_log_top")
     planks = Image.new("RGBA", (16, 16))
     rnd = random.Random(1516)
@@ -850,18 +859,18 @@ def dreamland_textures():
             for x in range(x0 - w // 2, x0 + (w + 1) // 2 + 1):
                 if 0 <= x < 16:
                     t = (y - (16 - h)) / h
-                    cluster.putpixel((x, y), rgba(mix((248, 236, 255), (124, 96, 214), t)))
+                    cluster.putpixel((x, y), rgba(mix((224, 250, 248), (54, 128, 140), t)))
     save(cluster, "block/lucid_crystal_cluster")
 
-    cloud = ramp_fill(16, 16, [(226, 230, 248), (236, 238, 252), (244, 246, 255), (250, 251, 255)], 1520, cell=4, jitter=0.2)
+    cloud = ramp_fill(16, 16, [(176, 180, 190), (190, 194, 202), (204, 206, 212), (216, 218, 222)], 1520, cell=4, jitter=0.2)
     for y in range(16):
         for x in range(16):
             r, g, b, _ = cloud.getpixel((x, y))
             cloud.putpixel((x, y), (r, g, b, 214))
     save(cloud, "block/pillow_cloud")
 
-    sand = ramp_fill(16, 16, [(214, 200, 168), (228, 216, 186), (238, 228, 202), (246, 240, 220)], 1521, cell=2, jitter=0.4)
-    speckle(sand, [(196, 176, 140), (255, 250, 236)], 8, 1522)
+    sand = ramp_fill(16, 16, [(150, 132, 100), (166, 148, 114), (180, 162, 128), (192, 176, 142)], 1521, cell=2, jitter=0.4)
+    speckle(sand, [(122, 104, 76), (214, 202, 172)], 8, 1522)
     save(sand, "block/hourglass_sand")
 
     # Mirror Water: an animated slice of a sky that is not quite this one (a waxing crescent that never is).
@@ -873,7 +882,7 @@ def dreamland_textures():
         for y in range(16):
             for x in range(16):
                 t = y / 15
-                c = mix((70, 92, 168), (126, 150, 214), t)
+                c = mix((30, 40, 62), (62, 78, 104), t)
                 wave = math.sin((x + f) * 0.8) * 6 + math.sin((y * 1.3 - f) * 0.7) * 5
                 c = tuple(max(0, min(255, int(v + wave))) for v in c)
                 mirror.putpixel((x, f * 16 + y), rgba(c))

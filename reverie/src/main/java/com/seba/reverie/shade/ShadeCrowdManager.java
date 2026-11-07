@@ -39,7 +39,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
  * looking at blink a little closer (never inside 24). Also runs the rare events and the Farewell.
  */
 public final class ShadeCrowdManager implements DreamManager.Listener {
-    public enum Event { HUSH, EVERYONE_TURNS, BEHIND_YOU, GRAVITY_HICCUP, COUNTING, MIMIC }
+    public enum Event { HUSH, EVERYONE_TURNS, BEHIND_YOU, GRAVITY_HICCUP, COUNTING, MIMIC, RUSH }
 
     private static final int MIMIC_DELAY = 60;
     private static final int MIMIC_COPY = 420;
@@ -51,6 +51,8 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
     public static final int HICCUP = 4;
     public static final int COUNTING = 5;
     public static final int FAREWELL = 6;
+    /** The Rush reached you (and vanished): the client jolts the view. */
+    public static final int RUSH_HIT = 7;
 
     private static final int MIN_DIST = 28;
     private static final int MAX_DIST = 52;
@@ -73,6 +75,9 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         Vec3 playerOrigin;
         final java.util.ArrayDeque<double[]> mimicHistory = new java.util.ArrayDeque<>();
         boolean farewellSent;
+        int rushId = -1;
+        int rushAge;
+        long nextRush;
     }
 
     private static final Map<UUID, Crowd> CROWDS = new HashMap<>();
@@ -134,6 +139,9 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
             Entity mimic = dream.getEntity(c.mimicId);
             if (mimic != null) mimic.discard();
             c.mimicId = -1;
+            Entity rusher = dream.getEntity(c.rushId);
+            if (rusher != null) rusher.discard();
+            c.rushId = -1;
         }
         c.ids.clear();
         return n;
@@ -153,6 +161,7 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         try {
             behindYouTick(dream);
             mimicTick(dream);
+            rushTick(dream);
             if (serverTick % 10 != 0) return;
             for (Iterator<Map.Entry<UUID, Crowd>> it = CROWDS.entrySet().iterator(); it.hasNext(); ) {
                 var entry = it.next();
@@ -177,7 +186,7 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
 
     /** True if a crowd owns this entity id (also the Behind You shade). */
     public static boolean tracked(int id) {
-        for (Crowd c : CROWDS.values()) if (c.behindId == id || c.mimicId == id || c.ids.contains(id)) return true;
+        for (Crowd c : CROWDS.values()) if (c.behindId == id || c.mimicId == id || c.rushId == id || c.ids.contains(id)) return true;
         return false;
     }
 
@@ -266,6 +275,13 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
             if (c.hushTicks <= 0) c.awayTicks = 100; // they come back facing away
         }
         if (!farewell) maybeEvent(level, p, c, shades, elapsed, left, rng);
+        // The Rush comes far more often than the rare events: every minute or so one of them runs at you.
+        long time = level.getGameTime();
+        if (!farewell && c.hushTicks <= 0 && c.rushId < 0 && c.event != Event.COUNTING && elapsed > 300 && time >= c.nextRush
+                && enabled(Event.RUSH) && rng.nextInt(40) == 0) {
+            startRush(level, p, c, shades, rng);
+            c.nextRush = time + 900 + rng.nextInt(1200);
+        }
         return spawned;
     }
 
@@ -357,6 +373,7 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
             case GRAVITY_HICCUP -> ReverieConfig.get(ReverieConfig.EVENT_GRAVITY_HICCUP);
             case COUNTING -> ReverieConfig.get(ReverieConfig.EVENT_COUNTING);
             case MIMIC -> ReverieConfig.get(ReverieConfig.EVENT_MIMIC);
+            case RUSH -> ReverieConfig.get(ReverieConfig.EVENT_RUSH);
         };
     }
 
@@ -455,7 +472,94 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
                 Net.send(p, new ShadeEventPayload(COUNTING, 140));
             }
             case MIMIC -> startMimic(level, p, c, rng);
+            case RUSH -> startRush(level, p, c, shades, rng);
         }
+    }
+
+    /**
+     * The Rush: one of the Shades in front of you (or one that appears out there) breaks into a sprint straight at
+     * you, faster and faster, and vanishes two blocks short. Sounds go to that dreamer only.
+     */
+    private static void startRush(ServerLevel level, ServerPlayer p, Crowd c, List<ShadeEntity> shades, RandomSource rng) {
+        if (c.rushId >= 0) return;
+        Vec3 look = p.getViewVector(1f).multiply(1, 0, 1);
+        look = look.lengthSqr() < 1e-4 ? new Vec3(0, 0, 1) : look.normalize();
+        ShadeEntity runner = null;
+        if (rng.nextFloat() < 0.7f) {
+            for (ShadeEntity s : shades) {
+                ShadeEntity.Variant v = s.variant();
+                if (s.fading() || v == ShadeEntity.Variant.HANGING || v == ShadeEntity.Variant.DOORFRAME || v == ShadeEntity.Variant.MIMIC) continue;
+                Vec3 to = s.position().subtract(p.position()).multiply(1, 0, 1);
+                double d = to.length();
+                if (d < 14 || d > 46 || Math.abs(s.getY() - p.getY()) > 6 || to.normalize().dot(look) < 0.55) continue;
+                runner = s;
+                c.ids.remove((Integer) s.getId());
+                break;
+            }
+        }
+        if (runner == null) {
+            double a = Math.atan2(look.z, look.x) + (rng.nextDouble() - 0.5) * 1.2;
+            double r = 20 + rng.nextDouble() * 8;
+            Vec3 at = p.position().add(Math.cos(a) * r, 0, Math.sin(a) * r);
+            runner = ModEntities.SHADE.get().create(level);
+            if (runner == null) return;
+            runner.managed = true;
+            runner.setVariant(rng.nextFloat() < 0.25f ? ShadeEntity.Variant.TALL_ONE : ShadeEntity.Variant.ONLOOKER);
+            runner.setOwner(p);
+            runner.setInstant();
+            float yaw = (float) (Mth.atan2(p.getZ() - at.z, p.getX() - at.x) * (180 / Math.PI)) - 90f;
+            runner.moveTo(at.x, groundY(level, at, p.getY()), at.z, yaw, 0);
+            if (!level.addFreshEntity(runner)) return;
+        }
+        runner.setMode(ShadeEntity.RUSH);
+        runner.setDrift(Vec3.ZERO);
+        c.rushId = runner.getId();
+        c.rushAge = 0;
+        soundFor(p, SoundEvents.ENDERMAN_STARE, runner.position(), 1.0f, 0.55f);
+    }
+
+    /** The runner speeds up toward its dreamer and is gone just before it reaches them. Every tick. */
+    private static void rushTick(ServerLevel level) {
+        for (var entry : CROWDS.entrySet()) {
+            Crowd c = entry.getValue();
+            if (c.rushId < 0) continue;
+            ServerPlayer p = level.getServer().getPlayerList().getPlayer(entry.getKey());
+            if (!(level.getEntity(c.rushId) instanceof ShadeEntity s) || p == null || p.level() != level) {
+                if (level.getEntity(c.rushId) instanceof ShadeEntity gone) gone.discard();
+                c.rushId = -1;
+                continue;
+            }
+            c.rushAge++;
+            Vec3 here = s.position();
+            Vec3 flat = p.position().subtract(here).multiply(1, 0, 1);
+            double dist = flat.length();
+            if (dist < 2.2 || c.rushAge > 140) {
+                // Gone just before the impact: a shriek, a puff of black, and the dreamer's view jolts.
+                s.discard();
+                c.rushId = -1;
+                if (dist < 2.2) {
+                    soundFor(p, SoundEvents.ENDERMAN_SCREAM, p.getEyePosition(), 0.9f, 0.6f);
+                    soundFor(p, SoundEvents.SOUL_ESCAPE.value(), p.getEyePosition(), 1.0f, 0.5f);
+                    level.sendParticles(p, net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, true, here.x, here.y + 1.2, here.z,
+                            14, 0.3, 0.6, 0.3, 0.04);
+                    Net.send(p, new ShadeEventPayload(RUSH_HIT, 12));
+                }
+                continue;
+            }
+            double speed = Math.min(0.95, 0.3 + c.rushAge * 0.025);
+            Vec3 next = here.add(flat.normalize().scale(Math.min(speed, dist)));
+            double y = groundY(level, next, here.y);
+            if (Math.abs(y - here.y) > 1.5) y = here.y + Mth.clamp(p.getY() - here.y, -0.4, 0.4);   // over gaps it just keeps coming
+            s.setPos(next.x, y, next.z);
+            if (c.rushAge % 4 == 0) soundFor(p, SoundEvents.WOOL_STEP, s.position(), 0.9f, 0.45f + p.getRandom().nextFloat() * 0.1f);
+        }
+    }
+
+    /** A sound at a place, heard only by {@code p}. */
+    private static void soundFor(ServerPlayer p, net.minecraft.sounds.SoundEvent sound, Vec3 at, float volume, float pitch) {
+        p.connection.send(new net.minecraft.network.protocol.game.ClientboundSoundPacket(
+                net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound), SoundSource.HOSTILE,
+                at.x, at.y, at.z, volume, pitch, p.getRandom().nextLong()));
     }
 
     /** Mimic: a silhouette in your own shape, about 30 blocks away, standing on ground at about your height. */

@@ -7,7 +7,7 @@
       "tick_chance": 0.0015
     },
     "ambient_sound": "reverie:ambient.spire_drone",
-    "fog_color": 5920888,
+    "fog_color": 5591647,
     "mood_sound": {
       "block_search_extent": 8,
       "offset": 2.0,
@@ -20,9 +20,9 @@
       },
       "probability": 0.002
     },
-    "sky_color": 4867440,
-    "water_color": 8157880,
-    "water_fog_color": 5920888
+    "sky_color": 3420735,
+    "water_color": 5658222,
+    "water_fog_color": 5591647
   },
   "features": [],
   "has_precipitation": false,

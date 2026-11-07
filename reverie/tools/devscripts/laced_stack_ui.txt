@@ -1,0 +1,48 @@
+newworld laced_stack_ui flat 7
+wait 40
+cmd gamemode survival
+cmd item replace entity @s hotbar.0 with minecraft:bread 3
+cmd item replace entity @s hotbar.1 with minecraft:bread[reverie:laced={level:1,known_by:[[I;940439953,-167562164,-1601161573,-1389718966]]}] 3
+cmd item replace entity @s hotbar.2 with minecraft:bread[reverie:laced={level:2,known_by:[[I;940439953,-167562164,-1601161573,-1389718966]]}] 3
+cmd item replace entity @s hotbar.3 with minecraft:apple 2
+cmd item replace entity @s hotbar.4 with reverie:melatonia_extract 1
+wait 20
+inventory
+wait 10
+clickmenu 37 0
+wait 3
+clickmenu 36 0
+wait 3
+clickmenu 38 0
+wait 3
+clickmenu 36 0
+wait 5
+cursorslot 0
+wait 5
+screenshot ui_merged
+clickmenu 39 1
+wait 3
+clickmenu 1 0
+wait 3
+clickmenu 40 0
+wait 3
+clickmenu 2 0
+wait 5
+clickmenu 0 0
+wait 3
+clickmenu 41 0
+wait 5
+cursorslot 5
+wait 5
+screenshot ui_crafted
+clickmenu 36 1
+wait 3
+clickmenu 44 0
+wait 5
+cursorslot 8
+wait 5
+screenshot ui_split_taken
+cursorslot 0
+wait 5
+screenshot ui_split_rest
+stop

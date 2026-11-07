@@ -1,0 +1,23 @@
+newworld dream_look2 flat 4242
+wait 40
+cmd reverie dream Dev
+wait 200
+hidegui on
+screenshot dl_home
+cmd gamemode spectator
+tpbiome reverie:pillow_fields 26 8
+wait 140
+screenshot dl_pillow
+tpbiome reverie:mirror_marsh 26 8
+wait 140
+screenshot dl_marsh
+tpbiome reverie:eye_meadow 22 8
+wait 140
+screenshot dl_eye
+tpbiome reverie:hollow_spires 30 12
+wait 140
+screenshot dl_spires
+tpbiome reverie:sandglass_dunes 26 8
+wait 140
+screenshot dl_dunes
+stop

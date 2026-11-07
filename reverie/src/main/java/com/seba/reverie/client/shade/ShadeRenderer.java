@@ -100,7 +100,8 @@ public class ShadeRenderer extends EntityRenderer<ShadeEntity> {
 
         ShadeModel model = models[0];
         boolean frame = variant == ShadeEntity.Variant.DOORFRAME;
-        if (!frame) model.pose(variant, t, shade.getId(), reduceMotion);
+        if (!frame && shade.mode() == ShadeEntity.RUSH) model.poseRush(variant, t, shade.getId());
+        else if (!frame) model.pose(variant, t, shade.getId(), reduceMotion);
         model.frameEyes.visible = false;
 
         int body = FastColor.ARGB32.color(Mth.floor(alpha * 255), 255, 255, 255);

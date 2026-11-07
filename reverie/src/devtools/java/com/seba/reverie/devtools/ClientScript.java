@@ -362,6 +362,15 @@ final class ClientScript {
             case "sneak" -> mc.options.keyShift.setDown(a[1].equals("on"));
             case "hidegui" -> mc.options.hideGui = a[1].equals("on");
             case "camera" -> mc.options.setCameraType(net.minecraft.client.CameraType.valueOf(a[1].toUpperCase()));
+            case "clickmenu" -> {
+                // clickmenu <menu slot> <button> [shift]: a real click on the open container (sent to the server too)
+                if (mc.player != null && mc.gameMode != null) {
+                    var type = a.length > 3 && a[3].equals("shift") ? net.minecraft.world.inventory.ClickType.QUICK_MOVE
+                            : net.minecraft.world.inventory.ClickType.PICKUP;
+                    mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, Integer.parseInt(a[1]),
+                            Integer.parseInt(a[2]), type, mc.player);
+                }
+            }
             case "gui" -> {
                 mc.options.guiScale().set(Integer.parseInt(a[1]));
                 mc.resizeDisplay();

@@ -14,6 +14,10 @@ Melatonia, Sleepyness and the Dreamland: sleep any time of day and dream on floa
 With Create: Tuff Gearshifts and the Latch Remote. With Farmer's Delight: dreamy dishes.
 '''
 
+# One mixin: laced items inside a stack follow the right part when the stack is split.
+[[mixins]]
+config="reverie.mixins.json"
+
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"

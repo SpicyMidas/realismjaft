@@ -144,12 +144,37 @@ public final class DizzinessClient {
         input.leftImpulse = (float) (f * Math.sin(angle) + l * Math.cos(angle));
     }
 
-    /** "(Laced)" after the name, only for someone who knows; lilac for Extract, deep purple for Concentrated. */
+    /**
+     * For someone who knows: "(Laced)" after the name when the top item (the next one eaten) is laced, and for a stack
+     * mixing laced and plain items one line per laced group, top first: "First 3 laced", "Next 3 laced". Deep purple
+     * for Concentrated, pinkish for Extract. Anyone else sees an ordinary stack.
+     */
     private static void tooltip(ItemTooltipEvent event) {
-        int level = Lacing.level(event.getItemStack());
         var player = net.minecraft.client.Minecraft.getInstance().player;
-        if (level <= 0 || player == null || !Lacing.knownTo(event.getItemStack(), player.getUUID()) || event.getToolTip().isEmpty()) return;
-        event.getToolTip().set(0, event.getToolTip().get(0).copy().append(" ")
-                .append(Component.translatable("reverie.laced.tag").withColor(Lacing.tagColor(level))));
+        var layers = com.seba.reverie.content.melatonia.LacedStacks.concrete(event.getItemStack());
+        if (layers.isEmpty() || player == null || event.getToolTip().isEmpty()) return;
+        java.util.UUID me = player.getUUID();
+        var top = layers.get(0);
+        if (top.knownTo(me)) {
+            event.getToolTip().set(0, event.getToolTip().get(0).copy().append(" ")
+                    .append(Component.translatable("reverie.laced.tag").withColor(Lacing.tagColor(top.level()))));
+        }
+        int laced = layers.stream().mapToInt(com.seba.reverie.content.melatonia.Laced.Layer::count).sum();
+        if (layers.size() == 1 && laced >= event.getItemStack().getCount()) return;   // the whole stack: the tag says it
+        int line = 1;
+        int index = 0;
+        boolean previousKnown = true;
+        for (int i = 0; i < layers.size(); i++) {
+            var layer = layers.get(i);
+            boolean known = layer.knownTo(me);
+            if (known) {
+                Component text = i == 0 ? Component.translatable("reverie.laced.first", layer.count())
+                        : previousKnown ? Component.translatable("reverie.laced.next", layer.count())
+                        : Component.translatable("reverie.laced.range", index + 1, index + layer.count());
+                event.getToolTip().add(Math.min(line++, event.getToolTip().size()), text.copy().withColor(Lacing.tagColor(layer.level())));
+            }
+            previousKnown = known;
+            index += layer.count();
+        }
     }
 }

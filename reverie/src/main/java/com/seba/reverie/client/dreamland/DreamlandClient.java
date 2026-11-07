@@ -36,11 +36,9 @@ public final class DreamlandClient {
             if (mc.level == null || !mc.level.dimension().equals(DreamManager.DREAMLAND)) return;
             DreamSky.tick();
             DreamAmbienceClient.tick(mc);
-            LullabyPlayer.tick(mc);
         });
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut e) -> {
             DreamSky.reset();
-            LullabyPlayer.reset();
         });
     }
 
@@ -115,7 +113,7 @@ public final class DreamlandClient {
 
         @Override
         public Vec3 getBrightnessDependentFogColor(Vec3 fogColor, float brightness) {
-            return fogColor.scale(0.55 + brightness * 0.45);
+            return fogColor.scale(0.45 + brightness * 0.45);
         }
 
         /** No sunset band: the twilight is the same in every direction. */

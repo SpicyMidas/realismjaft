@@ -60,6 +60,7 @@ public class LacedSnowball extends ThrowableItemProjectile {
         if (!level().isClientSide && result.getEntity() instanceof LivingEntity target) {
             target.hurt(damageSources().thrown(this, getOwner()), 0f);
             Lacing.poison(target, lacing(), DOSE);
+            Collapse.fromLacedHit(target, this);
         }
     }
 

@@ -1,0 +1,34 @@
+newworld dream_scary flat 4242
+wait 40
+cmd reverie dream Dev
+wait 260
+hidegui on
+screenshot sc_home
+cmd reverie debug shadeevent Dev rush
+wait 4
+screenshot sc_rush0
+wait 8
+screenshot sc_rush1
+wait 8
+screenshot sc_rush2
+wait 8
+screenshot sc_rush3
+wait 4
+screenshot sc_rush4
+wait 3
+screenshot sc_rush5
+wait 30
+cmd gamemode spectator
+tpbiome reverie:pillow_fields 26 8
+wait 140
+screenshot sc_pillow
+tpbiome reverie:mirror_marsh 26 8
+wait 140
+screenshot sc_marsh
+tpbiome reverie:eye_meadow 22 8
+wait 140
+screenshot sc_eye
+tpbiome reverie:hollow_spires 30 12
+wait 140
+screenshot sc_spires
+stop

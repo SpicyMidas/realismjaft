@@ -41,11 +41,20 @@ final class Lang {
         s.add("effect.reverie.dizziness", "Dizziness", "Vertigine");
         s.add("effect.reverie.sleepyness", "Sleepyness", "Sonnolenza");
         s.add("effect.reverie.lucid_sight", "Lucid Sight", "Vista Lucida");
+        s.add("effect.reverie.out_cold", "Out Cold", "Svenuto");
+        String[][] whispers = {{"You are dreaming.", "Stai sognando."}, {"Look behind you.", "Guarda dietro di te."},
+                {"This is not your bed.", "Questo non è il tuo letto."}, {"Count the doors again.", "Conta di nuovo le porte."},
+                {"Wake up.", "Svegliati."}, {"Did you hear that?", "L'hai sentito?"},
+                {"It was closer a moment ago.", "Un attimo fa era più vicino."}, {"Look at your hands.", "Guardati le mani."}};
+        for (int i = 0; i < whispers.length; i++) s.add("reverie.whisper." + i, whispers[i][0], whispers[i][1]);
         s.add("item.reverie.laced_snowball", "Laced Snowball", "Palla di Neve Corretta");
         s.add("item.reverie.laced_arrow", "Laced Arrow", "Freccia Corretta");
         s.add("entity.reverie.laced_snowball", "Laced Snowball", "Palla di Neve Corretta");
         s.add("entity.reverie.laced_arrow", "Laced Arrow", "Freccia Corretta");
         s.add("reverie.laced.tag", "(Laced)", "(Corretto)");
+        s.add("reverie.laced.first", "First %s laced", "I primi %s sono corretti");
+        s.add("reverie.laced.next", "Next %s laced", "I successivi %s sono corretti");
+        s.add("reverie.laced.range", "Items %s-%s laced", "Dal %s al %s corretti");
         s.add("reverie.laced.noticed", "Something about this smells off.", "Questo ha un odore strano.");
 
         // Dreams

@@ -36,6 +36,7 @@ public class ShadeEntity extends Entity {
     public static final int AWAY = 1;
     public static final int TURNS = 2;   // Everyone Turns: away while looked at, toward when not
     public static final int FIXED = 3;   // Counting: everyone points the same way
+    public static final int RUSH = 4;    // The Rush: sprinting straight at the dreamer
 
     private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(ShadeEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> OWNER = SynchedEntityData.defineId(ShadeEntity.class, EntityDataSerializers.INT);
@@ -202,7 +203,7 @@ public class ShadeEntity extends Entity {
             target = away ? toward + 180f : toward;
         }
         yRotO = getYRot();
-        setYRot(Mth.approachDegrees(getYRot(), target, mode == TURNS ? 40f : mode == FIXED ? 30f : 6f));
+        setYRot(Mth.approachDegrees(getYRot(), target, mode == TURNS ? 40f : mode == FIXED || mode == RUSH ? 30f : 6f));
     }
 
     /** Smooth position updates; the rotation is the client's own (it turns toward its owner locally). */
