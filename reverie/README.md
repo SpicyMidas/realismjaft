@@ -141,7 +141,7 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `dream.maxKeepsakes` | 1 | Most stacks brought back from one dream |
 | `dream.backupsKeptPerPlayer` | 20 | Backup files kept per player |
 | `dream.memoryIsland` | true | Build the Memory Island |
-| `gearshift.gearRatios` | [1, 2, 4, 6, 8, 10] | Forward ratios for gears 1-6 (the regular gearshift uses the first four). A gear that would exceed Create's max speed is refused |
+| `gearshift.gearMultipliers` | [1, 2, 4, 6, 8, 10] | Forward ratios for gears 1-6 (the regular gearshift uses the first four). A gear that would exceed Create's max speed is refused |
 | `gearshift.reverseRatio` | -1.0 | Ratio of R |
 | `melatonia.nightBloomerGrowthBoost` | true | Faster growth at night and in the dark, slower in full sun |
 | `melatonia.wildMelatoniaFrequency` | 24 | 1 patch in N chunks, 0 = none (needs a restart) |

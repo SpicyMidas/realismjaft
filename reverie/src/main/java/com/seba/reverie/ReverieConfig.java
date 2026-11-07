@@ -84,9 +84,11 @@ public final class ReverieConfig {
         b.pop();
 
         b.push("gearshift");
+        // Renamed from gearRatios: config files written by older versions kept their old ratios (gear 6 = x4 or x6),
+        // so the new key makes every existing file pick up the new defaults.
         GEAR_RATIOS = b.comment("Output/input ratio for forward gears 1..6 (x1, x2, x4, x6, x8, x10; the regular gearshift uses the first four).",
                         "A gear that would spin faster than Create's maxRotationSpeed is refused.")
-                .defineList("gearRatios", List.of(1.0, 2.0, 4.0, 6.0, 8.0, 10.0), () -> 1.0,
+                .defineList("gearMultipliers", List.of(1.0, 2.0, 4.0, 6.0, 8.0, 10.0), () -> 1.0,
                         o -> o instanceof Number n && Math.abs(n.doubleValue()) <= 16);
         REVERSE_RATIO = b.comment("Ratio of gear R (negative = reversed).")
                 .defineInRange("reverseRatio", -1.0, -16.0, 16.0);
