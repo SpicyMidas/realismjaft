@@ -72,6 +72,9 @@ public final class ModItems {
                     0x2E2A55, 0xBFEFFF, new Item.Properties()));
     public static final DeferredItem<com.seba.reverie.content.PaperGliderItem> PAPER_GLIDER = ITEMS.register("paper_glider",
             () -> new com.seba.reverie.content.PaperGliderItem(new Item.Properties().durability(300)));
+    /** Uncraftable: 1% from spiders killed in Trial Chambers (data/reverie/loot_modifiers). */
+    public static final DeferredItem<Item> GOLDEN_STRING = ITEMS.registerSimpleItem("golden_string",
+            new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE));
     public static final DeferredItem<com.seba.reverie.content.DreamCatcherItem> DREAM_CATCHER = ITEMS.register("dream_catcher",
             () -> new com.seba.reverie.content.DreamCatcherItem(new Item.Properties().stacksTo(1)));
     public static final java.util.List<DeferredItem<? extends Item>> DREAM_BLOCK_ITEMS = new java.util.ArrayList<>();

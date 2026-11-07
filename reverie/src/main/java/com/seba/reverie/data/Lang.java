@@ -75,8 +75,12 @@ final class Lang {
         s.add("item.reverie.sleepwalking_sheep_spawn_egg", "Sleepwalking Sheep Spawn Egg", "Uovo Generatore di Pecora Sonnambula");
         s.add("item.reverie.lucid_moth_spawn_egg", "Lucid Moth Spawn Egg", "Uovo Generatore di Falena Lucida");
         s.add("block.reverie.impossible_stairs", "Impossible Stairs", "Scale Impossibili");
-        s.add("item.reverie.dream_catcher.desc", "Hold it as you fall asleep: one thing from the dream is likelier to stay.",
-                "Tienilo in mano mentre ti addormenti: una cosa del sogno ha piu' probabilita' di restare.");
+        s.add("item.reverie.dream_catcher.desc", "Keep it with you: while you dream, it catches something to bring back.",
+                "Tienilo con te: mentre sogni, cattura qualcosa da riportare.");
+        s.add("item.reverie.dream_catcher.caught", "Caught: %s", "Catturato: %s");
+        s.add("item.reverie.dream_catcher.open", "Use to open it.", "Usalo per aprirlo.");
+        s.add("reverie.dream.caught", "Your Dream Catcher closed around %s.", "Il tuo Acchiappasogni si è chiuso attorno a %s.");
+        s.add("item.reverie.golden_string", "Golden String", "Filo d'Oro");
         s.add("advancements.reverie.master_chef.title", "Sweet Dreams, Chef", "Sogni d'Oro, Chef");
         s.add("advancements.reverie.master_chef.description", "Eat every Reverie dish.", "Mangia ogni piatto di Reverie.");
         s.add("reverie.recurring.dandelion", "The Same Dandelion", "Lo Stesso Dente di Leone");

@@ -1,0 +1,24 @@
+newworld catcher_look flat 7
+wait 40
+cmd time set noon
+cmd item replace entity @s hotbar.0 with reverie:dream_catcher
+cmd item replace entity @s hotbar.1 with reverie:dream_catcher[reverie:caught=[{slot:0,item:{id:"minecraft:diamond",count:3}}]]
+cmd item replace entity @s hotbar.2 with reverie:golden_string
+cmd item replace entity @s hotbar.3 with reverie:dream_dust 4
+cmd item replace entity @s hotbar.4 with reverie:melatonia_extract
+cmd item replace entity @s hotbar.5 with reverie:concentrated_melatonia_extract
+cmd item replace entity @s hotbar.6 with reverie:drowsy_tea
+cmd item replace entity @s hotbar.7 with reverie:melatonia_cookie
+cmd item replace entity @s hotbar.8 with reverie:sleepy_stew
+cmd item replace entity @s inventory.0 with reverie:melatonia_seeds
+cmd item replace entity @s weapon.offhand with string
+wait 40
+screenshot catcher_hotbar_a
+wait 7
+screenshot catcher_hotbar_b
+inventory
+wait 10
+cursorslot 1
+wait 5
+screenshot catcher_tooltip
+stop

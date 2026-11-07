@@ -42,6 +42,40 @@ final class CoreJson {
         concentrated.add("result", JsonGen.result("reverie:concentrated_melatonia_extract", 1));
         concentrated.addProperty("returned_bottles", 2);
         gen.put("data/reverie/recipe/concentrated_melatonia_extract.json", concentrated);
+        // Golden String: 1% from a spider or cave spider a player kills inside Trial Chambers.
+        JsonObject spider = new JsonObject();
+        spider.addProperty("condition", "minecraft:entity_properties");
+        spider.addProperty("entity", "this");
+        JsonObject predicate = new JsonObject();
+        predicate.add("type", JsonGen.array(new com.google.gson.JsonPrimitive("minecraft:spider"), new com.google.gson.JsonPrimitive("minecraft:cave_spider")));
+        JsonObject where = new JsonObject();
+        where.addProperty("structures", "minecraft:trial_chambers");
+        predicate.add("location", where);
+        spider.add("predicate", predicate);
+        JsonObject byPlayer = new JsonObject();
+        byPlayer.addProperty("condition", "minecraft:killed_by_player");
+        JsonObject chance = new JsonObject();
+        chance.addProperty("condition", "minecraft:random_chance");
+        chance.addProperty("chance", 0.01);
+        JsonObject modifier = new JsonObject();
+        modifier.addProperty("type", "neoforge:add_table");
+        modifier.add("conditions", JsonGen.array(spider, byPlayer, chance));
+        modifier.addProperty("table", "reverie:gameplay/golden_string");
+        gen.put("data/reverie/loot_modifiers/golden_string_from_trial_spiders.json", modifier);
+        JsonObject glm = new JsonObject();
+        glm.addProperty("replace", false);
+        glm.add("entries", JsonGen.array(new com.google.gson.JsonPrimitive("reverie:golden_string_from_trial_spiders")));
+        gen.put("data/neoforge/loot_modifiers/global_loot_modifiers.json", glm);
+        JsonObject entry = new JsonObject();
+        entry.addProperty("type", "minecraft:item");
+        entry.addProperty("name", "reverie:golden_string");
+        JsonObject pool = new JsonObject();
+        pool.addProperty("rolls", 1.0);
+        pool.add("entries", JsonGen.array(entry));
+        JsonObject table = new JsonObject();
+        table.addProperty("type", "minecraft:generic");
+        table.add("pools", JsonGen.array(pool));
+        gen.put("data/reverie/loot_table/gameplay/golden_string.json", table);
         // Eight snowballs or arrows around one Extract: eight laced ones, the bottle comes back.
         for (String ammo : new String[]{"snowball", "arrow"}) {
             for (int level = 1; level <= 2; level++) {

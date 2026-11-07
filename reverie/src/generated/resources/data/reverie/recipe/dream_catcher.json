@@ -8,6 +8,9 @@
     "F": {
       "item": "minecraft:feather"
     },
+    "G": {
+      "item": "reverie:golden_string"
+    },
     "L": {
       "item": "reverie:lucid_shard"
     },
@@ -16,7 +19,7 @@
     }
   },
   "pattern": [
-    "/S/",
+    "/G/",
     "SLS",
     "F F"
   ],

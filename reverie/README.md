@@ -81,8 +81,10 @@ other plain recipes.
 **Paper Glider** (paper and sticks): hold use while in the air to drift down slowly, forward where you look. The fall
 does not hurt, and in Dreamland it carries you from island to island. **Floating Lanterns** can be placed in mid-air.
 
-**Dream Catcher** (sticks, string, feathers and a Lucid Shard): hold it as you fall asleep and one thing you find in
-that dream has at least an even chance to come back with you. The catcher itself stays in the dream.
+**Dream Catcher** (sticks, string, Golden String, feathers and a Lucid Shard): keep it in your inventory; you need not
+hold it, and it never goes into the dream. While you dream it almost surely catches one thing from your dream
+inventory, most likely what you hold as you leave. You wake with it closed around the catch; use it to open it and
+take the thing. **Golden String** cannot be crafted: spiders killed in Trial Chambers drop it 1% of the time.
 
 ## Your items are safe
 

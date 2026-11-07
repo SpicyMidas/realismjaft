@@ -193,7 +193,7 @@ public final class DreamGameTests {
         dream.add(held);
         int total = 0;
         for (int round = 0; round < 400; round++) {
-            var kept = com.seba.reverie.dream.Keepsakes.roll(dream, random, false);
+            var kept = com.seba.reverie.dream.Keepsakes.roll(dream, random, ItemStack.EMPTY);
             h.assertTrue(kept.size() <= 1, "more than maxKeepsakes kept: " + kept.size());
             for (ItemStack k : kept) h.assertFalse(k.is(Items.NETHERITE_SWORD), "held item kept");
             total += kept.size();
@@ -202,8 +202,28 @@ public final class DreamGameTests {
         h.assertTrue(total > 0, "keepsakes never happen");
         List<ItemStack> lonely = List.of(new ItemStack(Items.COBBLESTONE));
         int kept = 0;
-        for (int round = 0; round < 2000; round++) kept += com.seba.reverie.dream.Keepsakes.roll(lonely, random, false).size();
+        for (int round = 0; round < 2000; round++) kept += com.seba.reverie.dream.Keepsakes.roll(lonely, random, ItemStack.EMPTY).size();
         h.assertTrue(kept > 40 && kept < 180, "single-stack keepsake rate off (expected ~5%): " + kept + "/2000");
+        h.succeed();
+    }
+
+    @GameTest(templateNamespace = "reverie", template = "empty")
+    public static void dreamCatcherCatchesMostlyWhatYouHold(GameTestHelper h) {
+        var random = net.minecraft.util.RandomSource.create(7);
+        List<ItemStack> dream = new ArrayList<>();
+        for (int i = 0; i < 10; i++) dream.add(new ItemStack(Items.COBBLESTONE, 1 + i));
+        ItemStack held = new ItemStack(Items.DIAMOND);
+        dream.add(held);
+        int caughtHeld = 0, caughtNothing = 0;
+        for (int round = 0; round < 1000; round++) {
+            ItemStack c = com.seba.reverie.dream.Keepsakes.catchOne(dream, held, random);
+            if (c.isEmpty()) caughtNothing++;
+            else if (c == held) caughtHeld++;
+            var rest = com.seba.reverie.dream.Keepsakes.roll(dream, random, c);
+            for (ItemStack k : rest) h.assertFalse(!c.isEmpty() && k.is(c.getItem()) && k.getCount() == c.getCount(), "caught item also kept");
+        }
+        h.assertTrue(caughtNothing < 90, "the catcher missed too often: " + caughtNothing + "/1000");
+        h.assertTrue(caughtHeld > 600, "the held item was not favoured: " + caughtHeld + "/1000");
         h.succeed();
     }
 

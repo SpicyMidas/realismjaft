@@ -65,6 +65,7 @@ public final class Reverie {
         ModCreativeTab.add(ModItems.LONE_DOOR);
         ModCreativeTab.add(ModItems.LUCID_SHARD);
         ModCreativeTab.add(ModItems.DREAM_DUST);
+        ModCreativeTab.add(ModItems.GOLDEN_STRING);
         ModCreativeTab.add(ModItems.DREAM_CATCHER);
         ModCreativeTab.add(ModItems.PAPER_GLIDER);
         ModCreativeTab.add(ModItems.SLEEPWALKING_SHEEP_SPAWN_EGG);

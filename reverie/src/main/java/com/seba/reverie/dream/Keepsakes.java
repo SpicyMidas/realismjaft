@@ -11,17 +11,41 @@ import com.seba.reverie.registry.ModTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 
-/** Most of the time you bring nothing back. */
+/** Most of the time you bring nothing back, unless a Dream Catcher was waiting at home. */
 public final class Keepsakes {
+    /** Chance an open Dream Catcher catches something (if you had anything at all). */
+    public static final double CATCH_CHANCE = 0.95;
+    /** Chance the catch is what you held as you left, when you held something. */
+    public static final double HELD_CATCH_CHANCE = 0.7;
+
     private Keepsakes() {
     }
 
-    public static List<ItemStack> roll(List<ItemStack> dreamItems, RandomSource random, boolean dreamCatcher) {
-        List<ItemStack> candidates = new ArrayList<>();
+    private static List<ItemStack> candidates(List<ItemStack> dreamItems) {
+        List<ItemStack> out = new ArrayList<>();
         for (ItemStack stack : dreamItems) {
             // The item carried into the dream is gone either way.
-            if (!stack.isEmpty() && !stack.has(ModComponents.DREAM_ORIGIN.get())) candidates.add(stack);
+            if (!stack.isEmpty() && !stack.has(ModComponents.DREAM_ORIGIN.get())) out.add(stack);
         }
+        return out;
+    }
+
+    /**
+     * The Dream Catcher's catch: almost surely one stack from the dream inventory, most likely {@code held} (what was
+     * in hand on the way out). Returns the dream stack itself (not a copy) so it can be left out of {@link #roll}, or
+     * empty.
+     */
+    public static ItemStack catchOne(List<ItemStack> dreamItems, ItemStack held, RandomSource random) {
+        List<ItemStack> candidates = candidates(dreamItems);
+        if (candidates.isEmpty() || random.nextDouble() >= CATCH_CHANCE) return ItemStack.EMPTY;
+        if (candidates.contains(held) && random.nextDouble() < HELD_CATCH_CHANCE) return held;
+        return candidates.get(random.nextInt(candidates.size()));
+    }
+
+    /** The ordinary keepsakes, never including {@code except} (already caught). */
+    public static List<ItemStack> roll(List<ItemStack> dreamItems, RandomSource random, ItemStack except) {
+        List<ItemStack> candidates = candidates(dreamItems);
+        candidates.removeIf(s -> s == except);
         Collections.shuffle(candidates, new java.util.Random(random.nextLong()));
         int max = ReverieConfig.get(ReverieConfig.MAX_KEEPSAKES);
         double base = ReverieConfig.get(ReverieConfig.KEEPSAKE_CHANCE);
@@ -30,13 +54,14 @@ public final class Keepsakes {
         for (ItemStack stack : candidates) {
             if (kept.size() >= max) break;
             double chance = stack.is(ModTags.Items.LUCID_KEEPSAKES) ? lucky : base;
-            if (dreamCatcher && kept.isEmpty()) chance = Math.max(chance, 0.5);
-            if (random.nextDouble() < chance) {
-                ItemStack copy = stack.copy();
-                copy.remove(ModComponents.DREAM_ORIGIN.get());
-                kept.add(copy);
-            }
+            if (random.nextDouble() < chance) kept.add(clean(stack));
         }
         return kept;
+    }
+
+    public static ItemStack clean(ItemStack stack) {
+        ItemStack copy = stack.copy();
+        copy.remove(ModComponents.DREAM_ORIGIN.get());
+        return copy;
     }
 }

@@ -19,6 +19,11 @@ public final class ModComponents {
             COMPONENTS.registerComponentType("dream_origin", b -> b.persistent(net.minecraft.util.Unit.CODEC)
                     .networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)));
 
+    /** What a Dream Catcher caught in the last dream (it comes back closed; using it opens it). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.world.item.component.ItemContainerContents>> CAUGHT =
+            COMPONENTS.registerComponentType("caught", b -> b.persistent(net.minecraft.world.item.component.ItemContainerContents.CODEC)
+                    .networkSynchronized(net.minecraft.world.item.component.ItemContainerContents.STREAM_CODEC));
+
     private ModComponents() {
     }
 }

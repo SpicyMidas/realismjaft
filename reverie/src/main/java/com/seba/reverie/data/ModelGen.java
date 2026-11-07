@@ -30,7 +30,9 @@ final class ModelGen {
             withExistingParent("wild_melatonia", "item/generated").texture("layer0", modLoc("block/wild_melatonia"));
             basicItem(ModItems.LUCID_SHARD.get());
             basicItem(ModItems.DREAM_DUST.get());
-            basicItem(ModItems.DREAM_CATCHER.get());
+            // Closed (something caught) shows the animated closed catcher.
+            basicItem(ModItems.DREAM_CATCHER.get()).override().predicate(modLoc("closed"), 1f)
+                    .model(getExistingFile(modLoc("item/dream_catcher_closed"))).end();
             // While gliding, the held glider draws nothing: GliderClient draws the 3D one overhead.
             basicItem(ModItems.PAPER_GLIDER.get()).override().predicate(modLoc("gliding"), 1f)
                     .model(getExistingFile(modLoc("item/paper_glider_gliding"))).end();

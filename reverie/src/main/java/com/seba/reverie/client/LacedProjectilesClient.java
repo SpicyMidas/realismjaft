@@ -33,6 +33,8 @@ public final class LacedProjectilesClient {
         modBus.addListener((RegisterColorHandlersEvent.Item e) -> {
             e.register((stack, layer) -> layer == 0 ? snowTint(stack) : -1, ModItems.LACED_SNOWBALL.get());
             e.register((stack, layer) -> layer == 0 ? headTint(stack) : -1, ModItems.LACED_ARROW.get());
+            // Golden String: vanilla's string texture in a gold palette.
+            e.register((stack, layer) -> FastColor.ARGB32.color(255, 255, 206, 72), ModItems.GOLDEN_STRING.get());
         });
     }
 

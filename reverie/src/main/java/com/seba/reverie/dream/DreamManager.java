@@ -168,6 +168,8 @@ public final class DreamManager {
 
         Inventory inv = player.getInventory();
         int heldSlot = findHeldSlot(player);
+        // A Dream Catcher stays home even in hand: it works from your inventory.
+        if (heldSlot >= 0 && inv.getItem(heldSlot).getItem() instanceof com.seba.reverie.content.DreamCatcherItem) heldSlot = -1;
         ItemStack held = heldSlot >= 0 ? inv.getItem(heldSlot).copy() : ItemStack.EMPTY;
         List<ItemStack> items = new ArrayList<>(DreamSession.SLOTS);
         for (int i = 0; i < DreamSession.SLOTS; i++) items.add(i == heldSlot ? ItemStack.EMPTY : inv.getItem(i).copy());
@@ -185,7 +187,7 @@ public final class DreamManager {
         long end = now + ReverieConfig.get(ReverieConfig.DREAM_LENGTH_TICKS);
         List<DreamSession.SnapshotBlock> snapshot = bed != null && ReverieConfig.get(ReverieConfig.MEMORY_ISLAND)
                 ? snapshot(origin, bed) : List.of();
-        boolean catcher = isDreamCatcher(held);
+        boolean catcher = items.stream().anyMatch(com.seba.reverie.content.DreamCatcherItem::isOpen);
         DreamSession session = new DreamSession(new DreamSession.Stash(items, inv.selected, heldSlot, held), vitals, ret,
                 now, end, snapshot, catcher);
 
@@ -240,10 +242,6 @@ public final class DreamManager {
         if (held.stack().isEmpty()) return -1;
         for (int i = 0; i < 9; i++) if (ItemStack.isSameItemSameComponents(inv.getItem(i), held.stack())) return i;
         return -1; // it moved somewhere unexpected: take nothing rather than risk a duplicate
-    }
-
-    private static boolean isDreamCatcher(ItemStack held) {
-        return held.is(com.seba.reverie.registry.ModItems.DREAM_CATCHER.get());
     }
 
     /** Block states only (no block entities, no inventories, no text) of a 9x6x9 box around the bed. */
@@ -383,7 +381,9 @@ public final class DreamManager {
             List<ItemStack> dreamItems = new ArrayList<>();
             for (int i = 0; i < inv.getContainerSize(); i++) dreamItems.add(inv.getItem(i));
             dreamItems.add(player.containerMenu.getCarried());
-            List<ItemStack> keepsakes = Keepsakes.roll(dreamItems, player.getRandom(), session.dreamCatcher());
+            ItemStack caught = session.dreamCatcher() ? Keepsakes.catchOne(dreamItems, inv.getSelected(), player.getRandom()) : ItemStack.EMPTY;
+            List<ItemStack> keepsakes = Keepsakes.roll(dreamItems, player.getRandom(), caught);
+            caught = caught.isEmpty() ? caught : Keepsakes.clean(caught);
 
             restoreInventory(player, session);
             restored = true;
@@ -399,6 +399,7 @@ public final class DreamManager {
             for (ItemStack k : keepsakes) {
                 if (!inv.add(k)) player.drop(k, false);
             }
+            if (!caught.isEmpty()) giveCaught(player, caught);
             if (!keepsakes.isEmpty()) {
                 player.displayClientMessage(Component.translatable("reverie.dream.keepsake", keepsakes.get(0).getHoverName())
                         .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC), false);
@@ -415,6 +416,21 @@ public final class DreamManager {
             WAKING.remove(player.getUUID());
             OUTSIDE_TICKS.remove(player.getUUID());
         }
+    }
+
+    /** Closes the first open Dream Catcher in the inventory around the catch (or just gives it, if there is none). */
+    private static void giveCaught(ServerPlayer player, ItemStack caught) {
+        Inventory inv = player.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (com.seba.reverie.content.DreamCatcherItem.isOpen(stack)) {
+                com.seba.reverie.content.DreamCatcherItem.close(stack, caught);
+                player.displayClientMessage(Component.translatable("reverie.dream.caught", caught.getHoverName())
+                        .withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC), false);
+                return;
+            }
+        }
+        if (!inv.add(caught)) player.drop(caught, false);
     }
 
     private static void restoreInventory(ServerPlayer player, DreamSession session) {

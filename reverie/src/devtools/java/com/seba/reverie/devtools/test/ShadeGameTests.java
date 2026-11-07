@@ -100,7 +100,7 @@ public final class ShadeGameTests {
                     h.assertTrue(ShadeCrowdManager.startEvent(p[1], ShadeCrowdManager.Event.HUSH), "Hush did not start");
                     for (ShadeEntity s : shadesOf(dream, p[1])) h.assertTrue(s.fading(), "a shade stayed during the Hush");
                 })
-                .thenIdle(30)
+                .thenIdle(ShadeEntity.FADE_TICKS + 8)
                 .thenExecute(() -> {
                     h.assertTrue(shadesOf(dream, p[1]).isEmpty(), "shades still present during the Hush: " + shadesOf(dream, p[1]).size());
                     h.assertTrue(shadesOf(dream, p[0]).size() >= 4, "the other dreamer's crowd was affected by the Hush");

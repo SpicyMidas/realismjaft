@@ -1,0 +1,26 @@
+{
+  "type": "neoforge:add_table",
+  "conditions": [
+    {
+      "condition": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate": {
+        "type": [
+          "minecraft:spider",
+          "minecraft:cave_spider"
+        ],
+        "location": {
+          "structures": "minecraft:trial_chambers"
+        }
+      }
+    },
+    {
+      "condition": "minecraft:killed_by_player"
+    },
+    {
+      "chance": 0.01,
+      "condition": "minecraft:random_chance"
+    }
+  ],
+  "table": "reverie:gameplay/golden_string"
+}

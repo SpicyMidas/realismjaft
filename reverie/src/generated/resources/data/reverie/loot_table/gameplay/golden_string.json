@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:generic",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "reverie:golden_string"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

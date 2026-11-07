@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_lucid_shard": {
+    "has_golden_string": {
       "conditions": {
         "items": [
           {
-            "items": "reverie:lucid_shard"
+            "items": "reverie:golden_string"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_lucid_shard"
+      "has_golden_string"
     ]
   ],
   "rewards": {

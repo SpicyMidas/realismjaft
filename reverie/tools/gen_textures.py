@@ -10,6 +10,7 @@ import argparse
 import math
 import os
 import random
+import shutil
 import sys
 
 from PIL import Image
@@ -31,7 +32,14 @@ def mix(a, b, t):
     return tuple(int(round(a[i] + (b[i] - a[i]) * t)) for i in range(len(a)))
 
 
+# Hand-made textures (tools/art/hand/, same layout as textures/, with any .png.mcmeta beside them) always win:
+# the generator does not draw over them, and main() copies them in.
+HAND = os.path.join(os.path.dirname(os.path.abspath(__file__)), "art", "hand")
+
+
 def save(img, rel):
+    if os.path.exists(os.path.join(HAND, rel + ".png")):
+        return
     path = os.path.join(TEX, rel + ".png")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     img.save(path)
@@ -1465,7 +1473,15 @@ def main():
     args = ap.parse_args()
     for g in GROUPS:
         g()
-    print(f"wrote {len(WRITTEN)} textures")
+    hand = 0
+    for folder, _, files in os.walk(HAND):
+        for f in files:
+            src = os.path.join(folder, f)
+            dst = os.path.join(TEX, os.path.relpath(src, HAND))
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copyfile(src, dst)
+            hand += 1
+    print(f"wrote {len(WRITTEN)} textures, copied {hand} hand-made files")
     if args.preview:
         contact_sheet(args.preview)
 

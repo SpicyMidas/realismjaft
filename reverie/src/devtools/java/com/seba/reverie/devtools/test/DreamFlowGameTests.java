@@ -204,13 +204,27 @@ public final class DreamFlowGameTests {
         if (DreamManager.isDreaming(p)) DreamManager.wake(p, DreamManager.Reason.COMMAND);
         DreamManager.resetCooldown(p);
         p.getInventory().clearContent();
-        p.getInventory().setItem(0, new ItemStack(com.seba.reverie.registry.ModItems.DREAM_CATCHER.get()));
-        p.getInventory().selected = 0;
+        var catcherItem = com.seba.reverie.registry.ModItems.DREAM_CATCHER.get();
+        p.getInventory().setItem(0, new ItemStack(catcherItem));
+        p.getInventory().selected = 0;   // even held, it stays home
         h.assertTrue(DreamManager.startDream(p, null), "dream did not start");
-        h.assertTrue(DreamManager.data(p).session().dreamCatcher(), "holding a Dream Catcher did not mark the dream");
+        h.assertTrue(DreamManager.data(p).session().dreamCatcher(), "owning a Dream Catcher did not mark the dream");
+        h.assertFalse(p.getInventory().contains(s -> s.is(catcherItem)), "the Dream Catcher was carried into the dream");
+        // In the dream: hold something on the way out.
+        p.getInventory().setItem(0, new ItemStack(net.minecraft.world.item.Items.AMETHYST_SHARD, 5));
+        p.getInventory().selected = 0;
         DreamManager.wake(p, DreamManager.Reason.COMMAND);
-        h.assertFalse(p.getInventory().contains(s -> s.is(com.seba.reverie.registry.ModItems.DREAM_CATCHER.get())),
-                "the Dream Catcher came back (it is carried into the dream like any held item)");
+        ItemStack back = ItemStack.EMPTY;
+        for (int i = 0; i < p.getInventory().getContainerSize(); i++) if (p.getInventory().getItem(i).is(catcherItem)) back = p.getInventory().getItem(i);
+        h.assertFalse(back.isEmpty(), "the Dream Catcher did not stay home");
+        var caught = back.get(com.seba.reverie.registry.ModComponents.CAUGHT.get());
+        if (caught != null) {   // 95% of the time; then using it gives the catch
+            ItemStack inside = caught.copyOne();
+            p.getInventory().selected = java.util.stream.IntStream.range(0, 9).filter(i -> p.getInventory().getItem(i).is(catcherItem)).findFirst().orElse(0);
+            back.use(h.getLevel(), p, net.minecraft.world.InteractionHand.MAIN_HAND);
+            h.assertTrue(com.seba.reverie.content.DreamCatcherItem.isOpen(back), "using the catcher did not open it");
+            h.assertTrue(p.getInventory().contains(s -> s.is(inside.getItem())), "opening the catcher gave nothing");
+        }
         server.getPlayerList().remove(p);
         com.seba.reverie.devtools.ReverieDevTools.log("PASS dreamCatcherMarksTheDream");
         h.succeed();
