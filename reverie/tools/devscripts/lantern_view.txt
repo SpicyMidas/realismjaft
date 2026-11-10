@@ -1,0 +1,23 @@
+newworld lantern_view flat 4242
+wait 40
+cmd gamemode survival
+cmd item replace entity @s weapon.mainhand with reverie:sky_lantern
+cmd time set 13000
+wait 20
+look 0 -5
+holdkey use on
+wait 40
+screenshot lv_first
+holdkey use off
+cmd reverie dream Dev
+wait 200
+hidegui on
+cmd gamemode spectator
+cmd tp @s ~ ~45 ~
+look 40 18
+wait 160
+screenshot lv_variety
+look 220 18
+wait 60
+screenshot lv_variety2
+stop

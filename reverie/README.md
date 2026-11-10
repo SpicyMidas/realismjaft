@@ -30,8 +30,8 @@ Without them Reverie works on its own. Their content simply does not exist, and 
    at the edge of sight. Only you can see them, and they fade away when you look straight at one or come close. **Sleep in any bed, at any time**. Whatever you hold goes with you into the dream. Everything else
    stays behind, safe (see *Your items are safe* below).
 5. A dream lasts 5 minutes. It ends when the time runs out, when you die, or when you lie down in a bed inside the
-   dream (the Great Bed islands are the kind way out). Falling never wakes you: just before the bottom of the dream
-   the fog closes, and you come out above the spot you fell from, still falling, and land back where you were. You
+   dream (the Great Bed islands are the kind way out). Falling never wakes you: near the bottom of the dream your fall
+   slows into a pale mist, and you drift down out of it onto the spot you fell from. You
    wake in your bed with your own inventory back. Each stack you picked up in the dream has a small chance to come
    back with you.
 
@@ -60,8 +60,9 @@ other plain recipes.
 
 The islands float in three depths of sleep, one above the other. **Deep Sleep** (the lowest layer) is where the
 nightmares are, **Dreaming** (the middle, where you arrive) is the old dream, **Lucid** (high up) is clear and
-beautiful, and Cloudreach is above it all. Every biome has its own sky, and walking or gliding from one into the next
-fades the sky, fog, light and air over a few seconds, the way the Nether's biomes do.
+beautiful, and Cloudreach is above it all. Every island is its own biome (a dream is short: you see many of them),
+drawn from its depth's mix. Every biome has its own sky, and crossing from one island to the next fades the sky,
+fog, light and air over a few seconds, the way the Nether's biomes do.
 
 - The dream biomes: Pillow Fields, Mirror Marsh, Sandglass Dunes, Upside-Down Town, Cloudreach, the uneasy Hollow
   Spires and Eye Meadow, and the Void Between.
@@ -109,10 +110,11 @@ fades the sky, fog, light and air over a few seconds, the way the Nether's biome
 - Dream weather: Starfall (sometimes a star lands and leaves a Lucid Shard), Petal Drift, Fog Tide, Upward Rain,
   and The Long Silence.
 - **Shades**: a crowd of harmless silhouettes always 28 to 52 blocks away, watching. Walk toward one and it is gone.
-  Every minute or so one of them breaks into a sprint straight at you and vanishes just before it hits (**The
-  Rush**). Now and then the whole crowd does something stranger, and once in a while one of them is shaped like you.
-  There are more of them in the nightmares (and they creep closer even while you walk), half as many and no Rush in
-  the lucid biomes, and in a nightmare dream (Evil Sleepyness) The Rush comes twice as often.
+  Now and then the whole crowd does something stranger, and once in a while one of them is shaped like you. There
+  are more of them in the nightmares (and they creep closer even while you walk), half as many in the lucid biomes.
+- **The Rush**, the nightmares' jumpscare: in a nightmare biome one of them breaks into a sprint straight at you and
+  vanishes just before it hits. Every 20 to 50 seconds in a nightmare dream (Evil Sleepyness); in an ordinary dream
+  that wanders into a nightmare biome, every few minutes at most. Never in the other biomes.
 - It is a lucid dream, not a calm one: dusky light, muted slate, moss and umber instead of pastels, no music, and now
   and then reality slips (the horizon tilts, footsteps follow right behind you, a whisper scrambles itself over the
   hotbar, the view breathes in and out).
@@ -130,6 +132,10 @@ fades the sky, fog, light and air over a few seconds, the way the Nether's biome
 
 **Paper Glider** (paper and sticks): hold use while in the air to drift down slowly, forward where you look. The fall
 does not hurt, and in Dreamland it carries you from island to island. **Floating Lanterns** can be placed in mid-air.
+
+**Sky Lantern** (paper around a torch, string below): the glider's opposite. Hold use to raise it overhead with one hand:
+its hot air carries you up, slowly, drifting a little where you look. Let go and it stops (then the glider brings you
+down). Let go of the lantern itself (drop it) and it floats away upward and burns out near the top of the sky.
 
 **Dream Catcher** (sticks, string, Golden String, feathers and a Lucid Shard): keep it in your inventory; you need not
 hold it, and it never goes into the dream. While you dream it almost surely catches one thing from your dream

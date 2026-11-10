@@ -19,13 +19,13 @@ import net.minecraft.world.entity.RelativeMovement;
 
 /**
  * The endless fall. Falling never wakes you: a little before the bottom of the dream you come out above the
- * spot you fell from, still falling, and land back where you were. The client closes the fog on the way down
- * and opens it again on the way in, so the jump is never seen.
+ * spot you fell from, still falling, and drift back down onto it. On the client the fall slows as you sink into a
+ * pale mist that stays through the move and thins as you come down, so the jump is never seen.
  */
 public final class FallLoop {
     /** Blocks above the bottom of the world where the loop catches you (the void fog is thickest there). */
     public static final int DEPTH = 40;
-    /** ShadeEventPayload id: the client opens the fog again. */
+    /** ShadeEventPayload id: the client keeps the mist and lets you drift down for this many ticks. */
     public static final int EVENT = 31;
     private static final int DROP = 42;
     private static final Map<UUID, BlockPos> GROUND = new HashMap<>();
@@ -54,10 +54,11 @@ public final class FallLoop {
         }
         double y = Math.max(stand.getY() + 0.1, top);
         p.resetFallDistance();
-        p.teleportTo(level, stand.getX() + 0.5, y, stand.getZ() + 0.5, EnumSet.of(RelativeMovement.X_ROT, RelativeMovement.Y_ROT),
-                p.getYRot(), p.getXRot());
+        // Fully relative: the client keeps its (by now slow, see BiomeMechanicsClient) fall and its view, and its
+        // interpolation is shifted along, so nothing jumps; the mist it is falling through hides the rest.
+        p.teleportTo(level, stand.getX() + 0.5, y, stand.getZ() + 0.5, EnumSet.allOf(RelativeMovement.class), p.getYRot(), p.getXRot());
         p.resetFallDistance();
-        Net.send(p, new ShadeEventPayload(EVENT, 50));
+        Net.send(p, new ShadeEventPayload(EVENT, 90));
     }
 
     private static BlockPos target(ServerLevel level, ServerPlayer p, DreamSession session) {

@@ -21,7 +21,10 @@ public final class IslandSearch {
         int z = is.cz + (int) Math.round(Math.sin(angle) * is.radius * fraction);
         int top = field.topOf(is, x, z);
         if (top == Integer.MIN_VALUE) return null;
-        level.getChunk(x >> 4, z >> 4);
+        // Load every chunk the search reads: an unloaded column reads as empty, and the spot would then depend on
+        // whatever happened to be loaded (a Home that moves between dreams).
+        for (int cx = (x - 6) >> 4; cx <= (x + 6) >> 4; cx++)
+            for (int cz = (z - 6) >> 4; cz <= (z + 6) >> 4; cz++) level.getChunk(cx, cz);
         return HomeIsland.findSafe(level, new BlockPos(x, top, z), 6, top - 6, top + 12);
     }
 

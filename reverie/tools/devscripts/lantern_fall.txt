@@ -1,0 +1,48 @@
+newworld lantern_fall flat 4242
+wait 40
+cmd gamemode survival
+cmd item replace entity @s weapon.mainhand with reverie:sky_lantern
+cmd time set 13000
+wait 20
+look 0 -10
+holdkey use on
+wait 40
+camera THIRD_PERSON_FRONT
+wait 10
+screenshot lf_third
+camera FIRST_PERSON
+wait 10
+screenshot lf_first
+holdkey use off
+wait 30
+cmd tp @s ~ ~ ~ 0 0
+cmd summon item ~ ~1 ~3 {Item:{id:"reverie:sky_lantern",count:1},PickupDelay:400}
+wait 50
+look 0 -35
+wait 5
+screenshot lf_dropped
+cmd reverie dream Dev
+wait 200
+hidegui on
+cmd tp @s ~ 40 ~
+look 0 70
+wait 30
+screenshot lf_fall_a
+wait 30
+screenshot lf_fall_b
+wait 30
+screenshot lf_fall_c
+wait 30
+screenshot lf_fall_d
+wait 30
+screenshot lf_fall_e
+wait 40
+screenshot lf_fall_f
+wait 40
+screenshot lf_fall_g
+cmd gamemode spectator
+cmd tp @s ~ 330 ~
+look 30 55
+wait 120
+screenshot lf_variety
+stop

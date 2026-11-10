@@ -133,7 +133,7 @@ public final class ReverieConfig {
         EVENT_EVERYONE_TURNS = b.define("everyoneTurns", true);
         EVENT_BEHIND_YOU = b.define("behindYou", true);
         EVENT_MIMIC = b.define("mimic", true);
-        EVENT_RUSH = b.comment("The Rush: now and then a Shade sprints straight at you and vanishes just before it hits.").define("rush", true);
+        EVENT_RUSH = b.comment("The Rush: in the nightmare biomes a Shade now and then sprints straight at you and vanishes just before it hits.").define("rush", true);
         EVENT_COUNTING = b.define("counting", true);
         EVENT_GRAVITY_HICCUP = b.define("gravityHiccup", true);
         EVENT_FAREWELL = b.define("farewell", true);

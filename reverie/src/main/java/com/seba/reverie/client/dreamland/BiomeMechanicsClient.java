@@ -52,7 +52,11 @@ public final class BiomeMechanicsClient {
     public static Kind region = Kind.VOID;
     private static final float[] WEIGHTS = new float[Kind.values().length];
     private static boolean fresh = true;
-    public static int fallReveal;
+    /** 0..1: the mist at the bottom of the dream. Rises as you sink, then lingers through the fall loop. */
+    private static float haze;
+    /** Ticks left of the slow drift down after coming out on top. */
+    private static int gentle;
+    private static double prevY = Double.NaN;
     public static int lightsOut;
     private static int lightsTotal = 1;
     public static int swallow;
@@ -97,7 +101,10 @@ public final class BiomeMechanicsClient {
                     fresh = false;
                 }
             }
-            case FallLoop.EVENT -> fallReveal = value;
+            case FallLoop.EVENT -> {
+                haze = 1;
+                gentle = value;
+            }
             case BiomeMechanics.LIGHTS_OUT -> {
                 lightsOut = value;
                 lightsTotal = Math.max(1, value);
@@ -137,7 +144,9 @@ public final class BiomeMechanicsClient {
         if (!inDream(mc)) {
             fresh = true;
             region = Kind.VOID;
-            fallReveal = lightsOut = swallow = glitch = 0;
+            lightsOut = swallow = glitch = gentle = 0;
+            haze = 0;
+            prevY = Double.NaN;
             heartbeat = 0;
             ECHOES.clear();
             return;
@@ -147,7 +156,24 @@ public final class BiomeMechanicsClient {
             float target = k == region ? 1 : 0;
             WEIGHTS[k.ordinal()] += Mth.clamp(target - WEIGHTS[k.ordinal()], -0.015f, 0.015f);
         }
-        if (fallReveal > 0) fallReveal--;
+        LocalPlayer self = mc.player;
+        // The mist: follows how deep you are, and once thick it fades only slowly (about 3.5 s), so it is still
+        // there after the fall loop has moved you up. A sudden rise of many blocks means the loop just happened.
+        if (!Double.isNaN(prevY) && self.getY() - prevY > 30) {
+            haze = 1;
+            gentle = Math.max(gentle, 90);
+        }
+        prevY = self.getY();
+        haze = Math.max(depth(mc, self.getY()), haze - 1f / 70f);
+        if (gentle > 0 && (--gentle == 0 || self.onGround())) gentle = 0;
+        if (haze > 0.15f && !mc.isPaused()) {
+            RandomSource r = self.getRandom();
+            // Wisps going past: drifting up beside you, so you feel yourself sinking through them.
+            for (int i = 0; i < 2; i++) {
+                mc.level.addParticle(ParticleTypes.CLOUD, self.getX() + (r.nextDouble() - 0.5) * 9, self.getY() - 3 + r.nextDouble() * 5,
+                        self.getZ() + (r.nextDouble() - 0.5) * 9, 0, 0.12 + r.nextDouble() * 0.1, 0);
+            }
+        }
         if (lightsOut > 0) lightsOut--;
         if (swallow > 0) swallow--;
         if (glitch > 0) glitch--;
@@ -219,7 +245,30 @@ public final class BiomeMechanicsClient {
             }
             if (dy > 0 && !state.isAir() && !state.is(ModBlocks.SKY_KELP.get()) && !state.is(ModBlocks.SKY_CORAL.get())) break;
         }
+        // The endless fall: slow down into the mist near the bottom, and drift gently down after coming out on top.
+        float depth = depth(Minecraft.getInstance(), p.getY());
+        if (v.y < 0 && (depth > 0 || gentle > 0)) {
+            double cap = gentle > 0 ? -0.45 : Mth.lerp(depth, -1.4, -0.3);
+            if (v.y < cap) {
+                v = new Vec3(v.x * 0.96, Mth.lerp(0.25, v.y, cap), v.z * 0.96);
+                changed = true;
+            }
+            p.resetFallDistance();
+        }
         if (changed) p.setDeltaMovement(v);
+    }
+
+    /** 0 above the bottom stretch of the dream, 1 at the line where the fall loops you back up. */
+    private static float depth(Minecraft mc, double y) {
+        if (mc.level == null) return 0;
+        double bottom = mc.level.getMinBuildHeight() + FallLoop.DEPTH;
+        float t = (float) Mth.clamp((bottom + 70 - y) / 70.0, 0, 1);
+        return t * t * (3 - 2 * t);
+    }
+
+    /** The mist right now (render time: also covers the frame before the next tick after a move). */
+    static float mist(Minecraft mc, double cameraY) {
+        return Math.max(haze, depth(mc, cameraY));
     }
 
     /** Lucid Geodes: every footstep comes back a moment later, softer, from the crystal. */
@@ -246,11 +295,9 @@ public final class BiomeMechanicsClient {
         for (Kind k : Kind.values()) f += WEIGHTS[k.ordinal()] * fogOf(k);
         if (f <= 0) f = 1;
         f *= 1 - 0.12f * heartbeat;
-        // The bottom of the dream: the fog closes in completely just before the fall loops you back up.
-        double bottom = mc.level.getMinBuildHeight() + FallLoop.DEPTH;
-        float closing = (float) Mth.clamp((bottom + 70 - cameraY) / 70.0, 0, 1);
-        if (fallReveal > 0) closing = Math.max(closing, fallReveal / 50f);
-        f = Mth.lerp(closing * closing * (3 - 2 * closing), f, 0.03f);
+        // The bottom of the dream: a mist that closes in as you sink, and thins again as you drift back down.
+        float m = mist(mc, cameraY);
+        f = Mth.lerp(m * m * (3 - 2 * m), f, 0.05f);
         if (lightsOut > 0) f = Math.min(f, 0.12f + 0.88f * (1 - Math.min(1, lightsOut / (float) lightsTotal * 1.3f)));
         if (swallow > 0) f = Math.min(f, 0.05f);
         return f;
@@ -276,6 +323,12 @@ public final class BiomeMechanicsClient {
         if (!inDream(mc) || mc.options.hideGui && swallow <= 0) return;
         int w = g.guiWidth();
         int h = g.guiHeight();
+        float m = mist(mc, mc.gameRenderer.getMainCamera().getPosition().y);
+        if (m > 0.01f) {
+            // A pale veil over everything at the deepest point, so the move up is never seen; it thins smoothly.
+            float a = (float) Math.pow(m, 1.6) * 0.9f;
+            g.fill(0, 0, w, h, (int) (a * 255) << 24 | 0xD6D0EA);
+        }
         if (swallow > 0) {
             float a = Mth.clamp(swallow / 30f, 0, 1);
             g.fill(0, 0, w, h, (int) (a * 255) << 24 | 0x3A0008);

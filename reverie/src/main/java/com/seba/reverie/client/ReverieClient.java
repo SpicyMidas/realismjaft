@@ -25,6 +25,7 @@ public final class ReverieClient {
         com.seba.reverie.client.dreamland.LucidConfusionClient.init(modBus);
         com.seba.reverie.client.dreamland.BiomeMechanicsClient.init(modBus);
         com.seba.reverie.client.glider.GliderClient.init(modBus);
+        com.seba.reverie.client.glider.SkyLanternClient.init(modBus);
         modBus.addListener((net.neoforged.fml.event.lifecycle.FMLClientSetupEvent e) -> e.enqueueWork(() ->
                 net.minecraft.client.renderer.item.ItemProperties.register(com.seba.reverie.registry.ModItems.DREAM_CATCHER.get(),
                         Reverie.id("closed"), (stack, level, entity, seed) -> com.seba.reverie.content.DreamCatcherItem.isOpen(stack) ? 0f : 1f)));

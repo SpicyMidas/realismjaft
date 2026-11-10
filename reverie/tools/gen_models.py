@@ -345,9 +345,42 @@ def melatonia_cake():
     write("blockstates/melatonia_cake.json", {"variants": variants})
 
 
+def sky_lantern():
+    """The Sky Lantern: a paper lantern on a bamboo stick, a small flame in its open bottom. The body's bottom centre is
+    at (8, 4, 8); the stick reaches below the block for the fist. Glowing (emissive) paper. In hand and inventory this
+    is the item model; while lifting, SkyLanternClient draws it over the raised hand instead."""
+    sides = ("north", "south", "east", "west")
+    els = [
+        box([4, 4, 4], [12, 14, 12], "sheet", uv=dict({f: [0, 0, 8, 10] for f in sides}, up=[8, 0, 14, 6], down=[8, 6, 16, 14]),
+            emissive=True, name="paper"),
+        box([5, 14, 5], [11, 15, 11], "sheet", uv=dict({f: [8, 0, 14, 1] for f in sides}, up=[8, 0, 14, 6], down=[8, 0, 14, 6]),
+            emissive=True, name="cap"),
+        box([4.5, 3, 4.5], [11.5, 4, 11.5], "sheet", uv=dict({f: [0, 10, 7, 11] for f in sides}, up=[8, 6, 16, 14], down=[8, 6, 16, 14]),
+            name="frame"),
+        box([7.5, -6, 7.5], [8.5, 3, 8.5], "sheet", uv={f: [0, 11, 1, 16] for f in sides + ("up", "down")}, name="stick"),
+        box([6.5, 3.2, 8], [9.5, 6.2, 8], "sheet", faces=("north", "south"), uv={"north": [2, 11, 5, 15], "south": [2, 11, 5, 15]},
+            emissive=True, shade=False, name="flame_a"),
+        box([8, 3.2, 6.5], [8, 6.2, 9.5], "sheet", faces=("east", "west"), uv={"east": [2, 11, 5, 15], "west": [2, 11, 5, 15]},
+            emissive=True, shade=False, name="flame_b"),
+    ]
+    held = {"rotation": [0, 0, 0], "translation": [0, 3, 1], "scale": [0.55, 0.55, 0.55]}
+    first = {"rotation": [0, -90, 15], "translation": [1.5, 1.6, 0.5], "scale": [0.45, 0.45, 0.45]}
+    display = {
+        "gui": {"rotation": [25, 45, 0], "translation": [0, 1.25, 0], "scale": [0.68, 0.68, 0.68]},
+        "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.5, 0.5, 0.5]},
+        "fixed": {"rotation": [0, 0, 0], "translation": [0, 1.5, 0], "scale": [0.7, 0.7, 0.7]},
+        "thirdperson_righthand": held, "thirdperson_lefthand": held,
+        "firstperson_righthand": first, "firstperson_lefthand": first,
+    }
+    write("models/item/sky_lantern_3d.json", model({"sheet": "reverie:item/sky_lantern_sheet", "particle": "reverie:item/sky_lantern_sheet"},
+                                                   els, render_type="minecraft:cutout", display=display))
+    write("models/item/sky_lantern_lifting.json", {"parent": "minecraft:item/generated", "textures": {"layer0": "reverie:item/empty"}})
+
+
 if __name__ == "__main__":
     melatonia_cake()
     paper_glider()
+    sky_lantern()
     dream_decor()
     gearshift()
     print("models written")

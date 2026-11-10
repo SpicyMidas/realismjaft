@@ -90,6 +90,13 @@ public final class DreamlandClient {
             event.setGreen(net.minecraft.util.Mth.lerp(tide, event.getGreen(), 0.66f));
             event.setBlue(net.minecraft.util.Mth.lerp(tide, event.getBlue(), 0.92f));
         }
+        float mist = BiomeMechanicsClient.mist(mc, event.getCamera().getPosition().y);
+        if (mist > 0) {
+            float k = mist * mist;
+            event.setRed(net.minecraft.util.Mth.lerp(k, event.getRed(), 0.84f));
+            event.setGreen(net.minecraft.util.Mth.lerp(k, event.getGreen(), 0.81f));
+            event.setBlue(net.minecraft.util.Mth.lerp(k, event.getBlue(), 0.92f));
+        }
         float dark = BiomeMechanicsClient.lightsOut > 0 ? 0.85f : 0;
         float red = BiomeMechanicsClient.swallow > 0 ? 1f : BiomeMechanicsClient.heartbeat * 0.25f * BiomeMechanicsClient.weight(com.seba.reverie.dreamland.IslandField.Kind.THE_MAW);
         if (dark > 0) {

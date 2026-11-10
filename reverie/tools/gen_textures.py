@@ -1954,7 +1954,39 @@ def biome_textures():
     save(grid(cloud, {'X': (255, 84, 104), 'w': (40, 26, 58), 'c': (78, 52, 104)}), "mob_effect/evil_sleepyness")
 
 
-GROUPS = [melatonia_cake_textures, tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture, fauna_textures, paper_glider_texture, biome_textures]
+def sky_lantern_texture():
+    """Sheet for models/item/sky_lantern_3d: paper side, top, glowing open bottom, bamboo frame and stick, flame."""
+    img = Image.new("RGBA", (16, 16), T)
+    for y in range(10):
+        for x in range(8):
+            c = mix((168, 38, 40), (250, 150, 62), y / 9)
+            if x % 2 == 0:
+                c = shade(c, 0.82)  # the bamboo ribs show through the paper
+            if y in (0, 9):
+                c = (96, 30, 26)
+            img.putpixel((x, y), rgba(c))
+    for (x, y) in ((3, 4), (4, 4), (3, 5), (4, 5)):
+        img.putpixel((x, y), rgba((246, 206, 110)))
+    for y in range(6):
+        for x in range(8, 14):
+            img.putpixel((x, y), rgba((60, 20, 20) if 10 <= x <= 11 and 2 <= y <= 3 else (122, 30, 34)))
+    for y in range(6, 14):
+        for x in range(8, 16):
+            d = max(abs(x - 11.5), abs(y - 9.5))
+            img.putpixel((x, y), rgba((90, 50, 30) if d > 3 else mix((255, 226, 130), (238, 132, 56), d / 3)))
+    for x in range(8):
+        img.putpixel((x, 10), rgba((176, 140, 80)))
+    for y in range(11, 16):
+        img.putpixel((0, y), rgba((150, 116, 64) if y % 3 == 0 else (172, 138, 80)))
+    flame = [".y.", "yYy", "oYo", ".o."]
+    for ry, row in enumerate(flame):
+        for rx, ch in enumerate(row):
+            if ch != '.':
+                img.putpixel((2 + rx, 11 + ry), rgba({'y': (255, 232, 130), 'Y': (255, 255, 224), 'o': (255, 150, 40)}[ch]))
+    save(img, "item/sky_lantern_sheet")
+
+
+GROUPS = [melatonia_cake_textures, tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture, fauna_textures, paper_glider_texture, biome_textures, sky_lantern_texture]
 
 
 def contact_sheet(out_dir):

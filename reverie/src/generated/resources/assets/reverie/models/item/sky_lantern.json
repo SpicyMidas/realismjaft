@@ -1,0 +1,11 @@
+{
+  "parent": "reverie:item/sky_lantern_3d",
+  "overrides": [
+    {
+      "model": "reverie:item/sky_lantern_lifting",
+      "predicate": {
+        "reverie:lifting": 1.0
+      }
+    }
+  ]
+}

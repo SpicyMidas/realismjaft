@@ -282,11 +282,12 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         if (!farewell) maybeEvent(level, p, c, shades, elapsed, left, rng);
         // The Rush comes far more often than the rare events: every minute or so one of them runs at you.
         long time = level.getGameTime();
-        // Not in the lucid places; twice as often in a nightmare (Evil Sleepyness).
+        // The Rush is the nightmares' jumpscare: only in a nightmare biome, every 20-50 s in a nightmare dream
+        // (Evil Sleepyness), and much more seldom when an ordinary dream wanders into one.
         if (!farewell && c.hushTicks <= 0 && c.rushId < 0 && c.event != Event.COUNTING && elapsed > 300 && time >= c.nextRush
-                && !region.lucid() && enabled(Event.RUSH) && rng.nextInt(40) == 0) {
+                && region.nightmare() && enabled(Event.RUSH) && rng.nextInt(session.nightmare() ? 40 : 120) == 0) {
             startRush(level, p, c, shades, rng);
-            c.nextRush = time + (session.nightmare() ? 450 + rng.nextInt(600) : 900 + rng.nextInt(1200));
+            c.nextRush = time + (session.nightmare() ? 450 + rng.nextInt(600) : 1800 + rng.nextInt(1800));
         }
         return spawned;
     }
@@ -393,7 +394,8 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         Event[] all = Event.values();
         Event e = all[rng.nextInt(all.length)];
         long now = level.getGameTime();
-        if (!enabled(e) || c.cooldowns.getOrDefault(e, 0L) > now) return;
+        // The Rush has its own timing (see update): never as one of the random events.
+        if (e == Event.RUSH || !enabled(e) || c.cooldowns.getOrDefault(e, 0L) > now) return;
         startEvent(level, p, c, shades, e, rng);
         c.cooldowns.put(e, now + 2400 + rng.nextInt(2400));
     }

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "S": {
+      "item": "minecraft:string"
+    },
+    "T": {
+      "item": "minecraft:torch"
+    }
+  },
+  "pattern": [
+    " P ",
+    "PTP",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "reverie:sky_lantern"
+  }
+}

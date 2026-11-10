@@ -8,6 +8,15 @@
         "class": "com/seba/reverie/client/glider/GliderArmPose",
         "field": "PROXY"
       }
+    },
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "REVERIE_LANTERN",
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "com/seba/reverie/client/glider/LanternArmPose",
+        "field": "PROXY"
+      }
     }
   ]
 }

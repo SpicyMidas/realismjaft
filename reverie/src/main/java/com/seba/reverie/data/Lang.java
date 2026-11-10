@@ -76,6 +76,9 @@ final class Lang {
         s.add("subtitles.reverie.caption.clock_backwards", "A clock ticks backwards", "Un orologio ticchetta all'indietro");
         s.add("item.reverie.dream_catcher", "Dream Catcher", "Acchiappasogni");
         s.add("item.reverie.paper_glider", "Paper Glider", "Aliante di Carta");
+        s.add("item.reverie.sky_lantern", "Sky Lantern", "Lanterna Volante");
+        s.add("item.reverie.sky_lantern.desc", "Hold use to raise it: its hot air lifts you. Let go to stop.",
+                "Tieni premuto usa per alzarla: l'aria calda ti solleva. Lascia per fermarti.");
         s.add("item.reverie.paper_glider.desc", "Hold use in the air: drift down slowly, forward where you look.",
                 "Tieni premuto in aria: scendi piano, in avanti dove guardi.");
         s.add("reverie.gearshift.screen.too_fast", "Too fast!", "Troppo veloce!");

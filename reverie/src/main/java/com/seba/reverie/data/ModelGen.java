@@ -36,6 +36,9 @@ final class ModelGen {
             // While gliding, the held glider draws nothing: GliderClient draws the 3D one overhead.
             basicItem(ModItems.PAPER_GLIDER.get()).override().predicate(modLoc("gliding"), 1f)
                     .model(getExistingFile(modLoc("item/paper_glider_gliding"))).end();
+            // The lit 3D lantern in hand and in the inventory; nothing in hand while it lifts you (drawn overhead).
+            getBuilder("sky_lantern").parent(getExistingFile(modLoc("item/sky_lantern_3d"))).override().predicate(modLoc("lifting"), 1f)
+                    .model(getExistingFile(modLoc("item/sky_lantern_lifting"))).end();
             for (var egg : new String[]{"sleepwalking_sheep_spawn_egg", "lucid_moth_spawn_egg"}) {
                 withExistingParent(egg, mcLoc("item/template_spawn_egg"));
             }

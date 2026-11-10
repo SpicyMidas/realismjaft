@@ -16,7 +16,6 @@ import net.minecraft.world.level.levelgen.synth.ImprovedNoise;
  */
 public final class IslandField {
     public static final int CELL = 96;
-    public static final int REGION = 480;
 
     public enum Shape { PLATEAU, SPIRES, RING, INVERTED, STAIRS, ARCHIPELAGO, GREAT_BED, SEA_OF_DOORS, CLOUD, GEODE }
 
@@ -182,26 +181,13 @@ public final class IslandField {
 
     // ------------------------------------------------------------------ regions (biomes)
 
-    /** Large coherent biome regions, one map per layer: nearest jittered region centre wins. */
-    public Kind regionKind(int x, int z, int layer) {
+    /**
+     * Each island draws its own biome from its layer's mix, so the dream changes from island to island (a dream only
+     * lasts a few minutes: you should see many of them). Cloudreach is the cloud layer's alone.
+     */
+    static Kind islandKind(long h, int layer) {
         if (layer >= LAYERS.length - 1) return Kind.CLOUDREACH;
-        int rx = Math.floorDiv(x, REGION);
-        int rz = Math.floorDiv(z, REGION);
-        double best = Double.MAX_VALUE;
-        long bestHash = 0;
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                long h = hash(rx + dx, 991 + layer * 37L, rz + dz);
-                double px = (rx + dx) * (double) REGION + REGION * (0.15 + 0.7 * unit(h));
-                double pz = (rz + dz) * (double) REGION + REGION * (0.15 + 0.7 * unit(mix(h)));
-                double d = (px - x) * (px - x) + (pz - z) * (pz - z);
-                if (d < best) {
-                    best = d;
-                    bestHash = h;
-                }
-            }
-        }
-        double r = unit(mix(bestHash ^ 0xB10E));
+        double r = unit(mix(h ^ 0xB10EL));
         Object[] mix = LAYER_MIX[Math.max(0, layer)];
         for (int i = 0; i < mix.length; i += 2) {
             r -= (Double) mix[i + 1];
@@ -217,9 +203,33 @@ public final class IslandField {
         return best;
     }
 
-    /** The biome region a point belongs to, island or not: what the sky and the biome mechanics follow. */
+    /**
+     * The biome a point belongs to, island or not: the island it is in, or else the island nearest to it (edge
+     * first) in the nearest layer. What the sky and the biome rules follow, so they change as you cross the void.
+     */
     public Kind regionAt(int x, int y, int z) {
-        return regionKind(x, z, nearestLayer(y));
+        int layer = nearestLayer(y);
+        if (layer == LAYERS.length - 1) return Kind.CLOUDREACH;
+        Island in = islandAt(x, y, z, 6);
+        if (in != null) return in.kind;
+        int cellX = Math.floorDiv(x, CELL);
+        int cellZ = Math.floorDiv(z, CELL);
+        Island best = null;
+        double bestD = Double.MAX_VALUE;
+        for (int reach = 1; reach <= 2 && best == null; reach++) {
+            for (int dx = -reach; dx <= reach; dx++) {
+                for (int dz = -reach; dz <= reach; dz++) {
+                    Island is = island(layer, cellX + dx, cellZ + dz);
+                    if (is == null) continue;
+                    double d = Math.hypot(x - is.cx, z - is.cz) - is.radius;
+                    if (d < bestD) {
+                        bestD = d;
+                        best = is;
+                    }
+                }
+            }
+        }
+        return best == null ? Kind.VOID : best.kind;
     }
 
     public static int layerY(int layer) {
@@ -296,7 +306,7 @@ public final class IslandField {
         int topThick = 3 + (int) (unit(mix(h ^ 0x70)) * 7);
         double bottomFactor = 0.6 + unit(mix(h ^ 0xB0)) * 0.7;
         boolean cloudLayer = layer == LAYERS.length - 1;
-        Kind kind = cloudLayer ? Kind.CLOUDREACH : regionKind(cx, cz, layer);
+        Kind kind = islandKind(h, layer);
         Shape shape = cloudLayer ? Shape.CLOUD : pickShape(kind, unit(mix(h ^ 0x5A)), radius);
         if (shape == Shape.GREAT_BED) radius = Math.max(radius, 26);
         if (shape == Shape.SEA_OF_DOORS) {

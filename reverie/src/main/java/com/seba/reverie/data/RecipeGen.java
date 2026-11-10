@@ -63,6 +63,10 @@ final class RecipeGen extends RecipeProvider {
                 .pattern("PPP").pattern("P/P").pattern(" / ")
                 .define('P', Items.PAPER).define('/', Items.STICK)
                 .unlockedBy("has_paper", has(Items.PAPER)).save(out);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, ModItems.SKY_LANTERN.get())
+                .pattern(" P ").pattern("PTP").pattern(" S ")
+                .define('P', Items.PAPER).define('T', Items.TORCH).define('S', Items.STRING)
+                .unlockedBy("has_paper", has(Items.PAPER)).save(out);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DREAM_CATCHER.get())
                 .pattern("/G/").pattern("SLS").pattern("F F")
                 .define('/', Items.STICK).define('G', ModItems.GOLDEN_STRING.get()).define('S', Items.STRING)
