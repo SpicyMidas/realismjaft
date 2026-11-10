@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
  * @param endTime overworld game time at which the dream ends on its own
  */
 public record DreamSession(Stash stash, Vitals vitals, ReturnPoint ret, long startTime, long endTime,
-                           List<SnapshotBlock> snapshot, boolean dreamCatcher) {
+                           List<SnapshotBlock> snapshot, boolean dreamCatcher, boolean nightmare) {
 
     public static final int SLOTS = 41;
 
@@ -80,10 +80,11 @@ public record DreamSession(Stash stash, Vitals vitals, ReturnPoint ret, long sta
             Codec.LONG.optionalFieldOf("start", 0L).forGetter(DreamSession::startTime),
             Codec.LONG.optionalFieldOf("end", 0L).forGetter(DreamSession::endTime),
             SnapshotBlock.CODEC.listOf().optionalFieldOf("snapshot", List.of()).forGetter(DreamSession::snapshot),
-            Codec.BOOL.optionalFieldOf("dream_catcher", false).forGetter(DreamSession::dreamCatcher)
+            Codec.BOOL.optionalFieldOf("dream_catcher", false).forGetter(DreamSession::dreamCatcher),
+            Codec.BOOL.optionalFieldOf("nightmare", false).forGetter(DreamSession::nightmare)
     ).apply(i, DreamSession::new));
 
     public DreamSession withEnd(long end) {
-        return new DreamSession(stash, vitals, ret, startTime, end, snapshot, dreamCatcher);
+        return new DreamSession(stash, vitals, ret, startTime, end, snapshot, dreamCatcher, nightmare);
     }
 }

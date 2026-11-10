@@ -1,0 +1,25 @@
+newworld nightmare_check flat 4242
+wait 40
+cmd effect give Dev reverie:evil_sleepyness 600
+cmd reverie dream Dev
+wait 45
+screenshot nm_arrive_msg
+wait 160
+screenshot nm_arrive
+look 0 75
+cmd tp Dev ~ -20 ~
+wait 16
+screenshot nm_fall_reveal
+wait 34
+screenshot nm_fall_later
+cmd gamemode spectator
+hidegui on
+tpshape FROSTLIGHT_TUNDRA 10 34
+wait 170
+look 60 -40
+wait 20
+screenshot nm_frost
+look 150 -55
+wait 4
+screenshot nm_frost2
+stop

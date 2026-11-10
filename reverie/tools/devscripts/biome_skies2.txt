@@ -1,0 +1,27 @@
+newworld biome_skies2 flat 4242
+wait 40
+cmd reverie dream Dev
+wait 200
+hidegui on
+cmd gamemode spectator
+tpshape FROSTLIGHT_TUNDRA 10 34
+wait 160
+look 60 -38
+wait 20
+screenshot bs2_frost
+look 200 -12
+wait 4
+screenshot bs2_frost_low
+tpshape THE_NURSERY 6 14
+wait 160
+look 40 -62
+wait 20
+screenshot bs2_nursery
+tpshape BLACKWOOD 6 28
+wait 160
+look 0 -15
+wait 70
+look 180 -15
+wait 2
+screenshot bs2_blackwood
+stop

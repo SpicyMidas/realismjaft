@@ -112,7 +112,7 @@ public final class DreamManager {
 
     /** Sleepyness lets this player dream right now (otherwise Sleepyness only helps day sleeping if... it doesn't). */
     public static boolean canDream(ServerPlayer player) {
-        return player.hasEffect(ModEffects.SLEEPYNESS) && !onCooldown(player) && !isDreaming(player)
+        return ModEffects.sleepy(player) && !onCooldown(player) && !isDreaming(player)
                 && player.server.getLevel(DREAMLAND) != null && !player.level().dimension().equals(DREAMLAND);
     }
 
@@ -127,6 +127,7 @@ public final class DreamManager {
     }
 
     public static void forget(UUID id) {
+        com.seba.reverie.dreamland.FallLoop.forget(id);
         HELD_AT_BED.remove(id);
         WAKE_POSE.remove(id);
         OUTSIDE_TICKS.remove(id);
@@ -176,7 +177,7 @@ public final class DreamManager {
 
         List<MobEffectInstance> effects = new ArrayList<>();
         for (MobEffectInstance e : player.getActiveEffects()) {
-            if (!e.getEffect().is(ModEffects.SLEEPYNESS)) effects.add(new MobEffectInstance(e));
+            if (!e.getEffect().is(ModEffects.SLEEPYNESS) && !e.getEffect().is(ModEffects.EVIL_SLEEPYNESS)) effects.add(new MobEffectInstance(e));
         }
         var vitals = new DreamSession.Vitals(player.getHealth(), player.getFoodData().getFoodLevel(),
                 player.getFoodData().getSaturationLevel(), player.experienceLevel, player.experienceProgress,
@@ -188,8 +189,9 @@ public final class DreamManager {
         List<DreamSession.SnapshotBlock> snapshot = bed != null && ReverieConfig.get(ReverieConfig.MEMORY_ISLAND)
                 ? snapshot(origin, bed) : List.of();
         boolean catcher = items.stream().anyMatch(com.seba.reverie.content.DreamCatcherItem::isOpen);
+        boolean nightmare = player.hasEffect(ModEffects.EVIL_SLEEPYNESS);
         DreamSession session = new DreamSession(new DreamSession.Stash(items, inv.selected, heldSlot, held), vitals, ret,
-                now, end, snapshot, catcher);
+                now, end, snapshot, catcher, nightmare);
 
         // Nothing is taken from the player before the backup exists on disk.
         if (DreamBackup.write(player, session, now) == null) {
@@ -220,10 +222,11 @@ public final class DreamManager {
             applyDreamAttributes(player);
             Net.send(player, new DreamTransitionPayload(DreamTransitionPayload.ENTER));
 
-            BlockPos home = HomeIsland.findOrBuild(dream, player.getUUID());
+            BlockPos home = arrival(dream, player.getUUID(), nightmare);
             teleporter.teleport(player, dream, Vec3.atBottomCenterOf(home), player.getYRot(), 0);
             syncState(player);
             player.inventoryMenu.broadcastChanges();
+
             for (Listener l : LISTENERS) safely(() -> l.started(player, session));
             return true;
         } catch (RuntimeException e) {
@@ -231,6 +234,15 @@ public final class DreamManager {
             emergencyRestore(player, session);
             return false;
         }
+    }
+
+    /** Where a dreamer arrives: Home, or for Evil Sleepyness the nearest nightmare in Deep Sleep. */
+    public static BlockPos arrival(ServerLevel dream, UUID id, boolean nightmare) {
+        if (nightmare) {
+            BlockPos spot = com.seba.reverie.dreamland.IslandSearch.nightmareSpot(dream, HomeIsland.homeColumn(id));
+            if (spot != null) return spot;
+        }
+        return HomeIsland.findOrBuild(dream, id);
     }
 
     private static int findHeldSlot(ServerPlayer player) {
@@ -279,6 +291,7 @@ public final class DreamManager {
     }
 
     public static void removeDreamAttributes(ServerPlayer player) {
+        com.seba.reverie.dreamland.BiomeMechanics.clear(player);
         AttributeInstance gravity = player.getAttribute(Attributes.GRAVITY);
         if (gravity != null) gravity.removeModifier(GRAVITY_ID);
         AttributeInstance safeFall = player.getAttribute(Attributes.SAFE_FALL_DISTANCE);
@@ -319,10 +332,17 @@ public final class DreamManager {
         food.setFoodLevel(20);
         food.setSaturation(Math.max(food.getSaturationLevel(), 5f));
         food.setExhaustion(0);
-        if (player.getY() < player.level().getMinBuildHeight() + 4) {
-            wake(player, Reason.VOID);
-            return;
+        com.seba.reverie.dreamland.FallLoop.track(player);
+        if (player.getY() < player.level().getMinBuildHeight() + com.seba.reverie.dreamland.FallLoop.DEPTH) {
+            // Falling never wakes you: you come out of the bottom of the dream above where you fell from.
+            if (ReverieConfig.get(ReverieConfig.FALL_LOOP)) {
+                com.seba.reverie.dreamland.FallLoop.loop(player, data.session);
+            } else if (player.getY() < player.level().getMinBuildHeight() + 4) {
+                wake(player, Reason.VOID);
+                return;
+            }
         }
+        com.seba.reverie.dreamland.BiomeMechanics.tick(player, data.session);
         long left = data.session.endTime() - now(player.server);
         if (left <= 0) {
             wake(player, Reason.TIMEOUT);
@@ -346,6 +366,7 @@ public final class DreamManager {
     public static void onLogin(ServerPlayer player) {
         DreamData data = data(player);
         if (data.session == null) return;
+        com.seba.reverie.dreamland.BiomeMechanics.clear(player); // stale biome rules from before the logout
         if (now(player.server) >= data.session.endTime()) {
             scheduleWake(player, Reason.LOGIN_EXPIRED);
             return;
@@ -354,7 +375,7 @@ public final class DreamManager {
         ServerLevel dream = player.server.getLevel(DREAMLAND);
         if (dream != null && !player.level().dimension().equals(DREAMLAND)) {
             try {
-                BlockPos home = HomeIsland.findOrBuild(dream, player.getUUID());
+                BlockPos home = arrival(dream, player.getUUID(), data.session.nightmare());
                 teleporter.teleport(player, dream, Vec3.atBottomCenterOf(home), player.getYRot(), 0);
             } catch (RuntimeException e) {
                 Reverie.LOGGER.error("Could not return {} to their dream; waking them", player.getName().getString(), e);

@@ -29,9 +29,11 @@ Without them Reverie works on its own. Their content simply does not exist, and 
 4. While Sleepy your eyes keep closing and the world dims. Sometimes, when your eyes open again, Shades are standing
    at the edge of sight. Only you can see them, and they fade away when you look straight at one or come close. **Sleep in any bed, at any time**. Whatever you hold goes with you into the dream. Everything else
    stays behind, safe (see *Your items are safe* below).
-5. A dream lasts 5 minutes. It ends when the time runs out, when you fall into the void, when you die, or when you
-   lie down in a bed inside the dream (the Great Bed islands are the kind way out). You wake in your bed with your
-   own inventory back. Each stack you picked up in the dream has a small chance to come back with you.
+5. A dream lasts 5 minutes. It ends when the time runs out, when you die, or when you lie down in a bed inside the
+   dream (the Great Bed islands are the kind way out). Falling never wakes you: just before the bottom of the dream
+   the fog closes, and you come out above the spot you fell from, still falling, and land back where you were. You
+   wake in your bed with your own inventory back. Each stack you picked up in the dream has a small chance to come
+   back with you.
 
 Food: any food can be **laced** with an Extract in the crafting grid (strongly with a Concentrated one). Nobody can
 tell: the name shows **(Laced)** only to whoever laced it, or to someone who has held it in hand for 30 seconds (for
@@ -39,7 +41,9 @@ good, and only to them): pinkish for Extract, deep purple for Concentrated. Lace
 can share a stack: click one onto the other in the inventory. The laced ones are always the first eaten (and the first
 thrown or split off), worst first, and whoever knows sees the order, e.g. "First 3 laced" in deep purple, "Next 3
 laced" in pink, on a stack that looks like plain bread to anyone else. Eating it is much worse than a Melatonia dish: strong Dizziness,
-nausea and slowness, and with Concentrated also Sleepyness, weakness and a moment of black. Foods that carry it well
+nausea and slowness, and with Concentrated also weakness and a moment of black. Laced food also brings **Evil
+Sleepyness** (2 minutes, 4 with Concentrated): it works like Sleepyness, but a dream that starts with it always starts in
+a nightmare. Foods that carry it well
 (cakes, pies, cookies, soups, stews) also give a gift: Night Vision, Speed or Jump Boost for up to 3 minutes, or a
 15 second glimpse of **Lucid Sight** (ores show through the stone). Concentrated gives two gifts.
 
@@ -54,10 +58,46 @@ other plain recipes.
 
 ### Dreamland
 
-- Eight biomes: Pillow Fields, Hollow Spires, Mirror Marsh, Sandglass Dunes, Eye Meadow, Upside-Down Town,
-  Cloudreach and the Void Between.
-- Islands in nine shapes: plateaus, spires, rings, inverted islands, a stairway into the sky, archipelagos, the
-  Great Bed, the Sea of Doors and clouds.
+The islands float in three depths of sleep, one above the other. **Deep Sleep** (the lowest layer) is where the
+nightmares are, **Dreaming** (the middle, where you arrive) is the old dream, **Lucid** (high up) is clear and
+beautiful, and Cloudreach is above it all. Every biome has its own sky, and walking or gliding from one into the next
+fades the sky, fog, light and air over a few seconds, the way the Nether's biomes do.
+
+- The dream biomes: Pillow Fields, Mirror Marsh, Sandglass Dunes, Upside-Down Town, Cloudreach, the uneasy Hollow
+  Spires and Eye Meadow, and the Void Between.
+- **Frostlight Tundra** (lucid): Dreamsnow, Rime Stone and slick Starlight Ice that twinkles; frozen lakes to skate on,
+  frosted pines hung with Ice Chimes, spires of ice, Frostbloom. Snow falls *up*, your breath shows, and the whole sky
+  is aurora: curtains in every direction and a corona opening overhead. Landmark: a **Snow Globe** the size of a house.
+- **Skyreef** (lucid): the underside of a sea, seen from below: a rippling surface overhead, light shafts coming down,
+  bubbles. Reef Stone, Tide and Dusk Coral, Sky Coral, Sky Kelp hanging off the islands. You **swim through the air**
+  (jump to rise, sneak to sink, no fall damage), and **Bubble Vents** carry you straight up. Landmark: a **Sky Wreck**
+  with a chest.
+- **Lucid Geodes** (lucid, the purple one): islands that are giant geodes cracked open, Geode Shell, Lilac Calcite and
+  Violet Moss outside, **Resonant Crystal** inside. The crystals light up and chime as you walk past (your own small
+  light), and a struck crystal sends a ripple of light and notes through its neighbours. Your footsteps echo. The
+  sky: drifting crystal shards, arcs of split light, a moon broken in two. Landmark: the **Crystal Choir**, seven
+  pillars that play a scale.
+- **The Nursery** (lucid, a little uncanny): the islands are torn-off pieces of a child's floor: Nursery Rug, Stuffing
+  (soft landings), floorboards, Toy Blocks. Here **you shrink** to under half your size. The sky is a bedroom ceiling
+  with glow-in-the-dark stars and a mobile turning slowly above your head. Landmarks: a giant **Teddy**, towers of
+  lettered toy blocks, crayons.
+- **Blackwood** (nightmare): dense dead black trees, Ashen Soil, Withered Grass, thick red-brown fog, a grinning moon
+  that keeps behind you. **You cannot run**, you walk a little slower, and the Shades keep coming closer between the
+  trees whenever you look away. Landmark: a cabin whose **Watching Windows** are lit until you come close.
+- **The Waiting Rooms** (nightmare): pieces of an endless office floating in the void: Stale Carpet, Yellowed
+  Wallpaper, Ceiling Tiles with holes in them, buzzing **Flickering Lights**, rows of chairs, reception desks, and
+  far above, an endless lit ceiling. You get a number. A chime calls the next ones now and then. When yours is
+  called, the lights go out.
+- **The Maw** (nightmare): Dream Flesh that throbs and slows you, Sinew, Enamel teeth, Vein Vines, a ribcage arching
+  over the ground, ring islands whose hole is a mouth lined with teeth. A black sun beats like a heart, and so does
+  the fog. **Stand still on the flesh** and it takes hold; stay and it swallows you and spits you out on another
+  island.
+- **Signal Lost** (nightmare): corrupted islands of Dead Pixels and Static, columns slipped out of place, holes where
+  data is missing, patches drawn from other biomes, Test Cards. The sky is static that tunes in to a daytime sky for
+  a moment now and then. Frames drop: the picture tears, and now and then you are put back where you were three
+  seconds ago. Landmark: an old **television** the size of a room, showing static, with an armchair in front.
+- Islands in ten shapes: plateaus, spires, rings, inverted islands, a stairway into the sky, archipelagos, geodes,
+  the Great Bed, the Sea of Doors and clouds.
 - Landmarks: Lone Doors (walk through and you arrive somewhere else, and sometimes they lie), the Staircase to
   Nowhere, hanging houses, the Sleep Bell Grove, hourglasses with time bubbles, a giant clock, the Impossible
   Stairs (climb its viewing tower), and a **Memory Island**: a scrambled echo of the room you fell asleep in.
@@ -71,6 +111,8 @@ other plain recipes.
 - **Shades**: a crowd of harmless silhouettes always 28 to 52 blocks away, watching. Walk toward one and it is gone.
   Every minute or so one of them breaks into a sprint straight at you and vanishes just before it hits (**The
   Rush**). Now and then the whole crowd does something stranger, and once in a while one of them is shaped like you.
+  There are more of them in the nightmares (and they creep closer even while you walk), half as many and no Rush in
+  the lucid biomes, and in a nightmare dream (Evil Sleepyness) The Rush comes twice as often.
 - It is a lucid dream, not a calm one: dusky light, muted slate, moss and umber instead of pastels, no music, and now
   and then reality slips (the horizon tilts, footsteps follow right behind you, a whisper scrambles itself over the
   hotbar, the view breathes in and out).
@@ -154,7 +196,7 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `melatonia.nightBloomerGrowthBoost` | true | Faster growth at night and in the dark, slower in full sun |
 | `melatonia.wildMelatoniaFrequency` | 24 | 1 patch in N chunks, 0 = none (needs a restart) |
 | `latch_remote.transmitWhileInContainers` | false | Keep transmitting from inside a shulker box or backpack |
-| `dreamland.shadeCount` | 28 | Shades per dreamer (×1.6 in Hollow Spires) |
+| `dreamland.shadeCount` | 28 | Shades per dreamer (more in Hollow Spires and the nightmares, half in the lucid biomes) |
 | `dreamland.shadeFleeRadius` | 20 | A Shade vanishes when you come this close |
 | `dreamland.maxShadesPerDreamer` | 48 | Hard cap |
 | `dreamland.maxShadesPerServer` | 400 | Hard cap |
@@ -164,6 +206,8 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `dreamland.wrongRain` | true | In some biomes petals, pages and rain fall upward |
 | `dreamland.recurringObjects` | true | The object the dream keeps returning to |
 | `dreamland.lyingDoors` | true | Lone Doors sometimes lead to a copy of where you were, one block off |
+| `dreamland.fallLoop` | true | Falling out of the bottom brings you back above where you fell from (false = falling wakes you, as before) |
+| `dreamland.biomeMechanics` | true | The biome rules: Skyreef swimming, shrinking in The Nursery, heavy legs in Blackwood, the Waiting Rooms queue, The Maw, Signal Lost skips |
 | `dreamland.enableRareEvents` | true | Master switch for the Shade events below |
 | `dreamland.events.hush` / `everyoneTurns` / `behindYou` / `counting` / `gravityHiccup` / `farewell` | true | Each Shade event |
 | `dreamland.events.mimic` | true | Mimic: your own silhouette copies you, three seconds late |
@@ -183,6 +227,11 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `lucidConfusion` | true | Reality slips while dreaming (tilt, footsteps behind you, whispers, a breathing view) |
 
 ## Known limitations
+
+- **Older worlds.** Dreamland chunks that were already generated keep their old look; the new biomes appear in the
+  parts not visited yet, with a seam at the border. To see the new Dreamland everywhere, delete
+  `<world>/dimensions/reverie/dreamland` while nobody is dreaming. Homes rebuild themselves, and the dream backups are
+  in `<world>/reverie_backups`, not in that folder.
 
 - **"Experimental settings" prompt.** Minecraft warns once, when you open a world, that it uses experimental
   settings. That is how vanilla treats any world with a mod-added dimension. Choose *Proceed* (NeoForge

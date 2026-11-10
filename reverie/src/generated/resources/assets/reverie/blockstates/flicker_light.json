@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "reverie:block/flicker_light_off"
+    },
+    "lit=true": {
+      "model": "reverie:block/flicker_light_on"
+    }
+  }
+}

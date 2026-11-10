@@ -118,6 +118,7 @@ public final class DreamSky {
             }
         }
         lastPos = pos;
+        BiomeSkies.tick(mc.gameRenderer.getMainCamera());
         moonVel *= 0.95; // settles slowly when you stop
         moonAz += moonVel;
         for (int i = STREAKS.size() - 1; i >= 0; i--) {
@@ -161,30 +162,42 @@ public final class DreamSky {
 
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
                 GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        stars(m, level.getGameTime(), time);
-        aurora(m, time);
+        float starLight = BiomeSkies.stars();
+        if (starLight > 0.01f) stars(m, level.getGameTime(), time, starLight);
+        float aurora = BiomeSkies.aurora();
+        if (aurora > 0.01f) aurora(m, time, aurora);
         streaks(m, partial);
+        BiomeSkies.additive(m, time, partial);
+        BiomeSkies.blendAdditive();
 
         RenderSystem.defaultBlendFunc();
-        planet(m, time);
-        whale(m, time);
-        moons(m, time, partial);
-        eye(m, level, camera);
+        float classic = BiomeSkies.classic();
+        if (classic > 0.01f) {
+            planet(m, time, classic);
+            whale(m, time, classic);
+            moons(m, time, partial, classic);
+            eye(m, level, camera, classic);
+        }
+        BiomeSkies.normal(m, time, partial, camera);
     }
 
-    /** Aurora ribbons: slow curtains of colour high in the sky, brighter in Cloudreach. */
-    private static void aurora(Matrix4f m, float time) {
+    /**
+     * Aurora ribbons: slow curtains of colour high in the sky, brighter in Cloudreach. {@code boost} is the
+     * biome's share: above 1 (Frostlight Tundra) more curtains fill the sky and a corona opens overhead.
+     */
+    private static void aurora(Matrix4f m, float time, float boost) {
         var shader = com.seba.reverie.client.shader.ReverieShaders.aurora();
         if (shader != null) {
-            auroraShaded(m, time, shader);
+            auroraShaded(m, time, shader, boost);
             return;
         }
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        float strength = 0.42f * closeness * closeness;
-        for (int ribbon = 0; ribbon < 2; ribbon++) {
-            float az0 = ribbon == 0 ? 0.6f : 3.4f;
-            float base = ribbon == 0 ? 0.62f : 0.78f;
+        float strength = 0.42f * closeness * closeness * Math.min(boost, 2f);
+        int ribbons = boost > 1.2f ? 6 : 2;
+        for (int ribbon = 0; ribbon < ribbons; ribbon++) {
+            float az0 = ribbon == 0 ? 0.6f : ribbon == 1 ? 3.4f : ribbon * 1.1f + 0.3f;
+            float base = ribbon == 0 ? 0.62f : ribbon == 1 ? 0.78f : 0.35f + (ribbon % 3) * 0.2f;
             int segments = 72;
             for (int i = 0; i < segments; i++) {
                 float t0 = i / (float) segments;
@@ -206,12 +219,26 @@ public final class DreamSky {
         draw(b);
     }
 
+    // Frostlight's extra curtains: azimuth, span, base elevation, height, then a tint (r, g, b).
+    private static final float[][] FROST_RIBBONS = {
+            {1.6f, 2.4f, 0.30f, 0.58f, 1f, 1f, 1f}, {4.3f, 2.2f, 0.24f, 0.56f, 1f, 0.7f, 1f}, {2.7f, 1.4f, 0.82f, 0.42f, 0.7f, 0.9f, 1f},
+            {5.6f, 1.8f, 0.60f, 0.48f, 1f, 1f, 1f}, {0.1f, 1.2f, 0.95f, 0.36f, 1f, 0.6f, 0.9f}, {3.9f, 1.0f, 0.16f, 0.50f, 0.8f, 1f, 0.9f},
+            {0.9f, 1.6f, 0.45f, 0.52f, 1f, 0.75f, 1f}, {3.1f, 2.0f, 0.55f, 0.46f, 1f, 1f, 1f}, {5.0f, 1.3f, 0.36f, 0.44f, 0.7f, 0.85f, 1f}};
+
     /** The shader aurora: the folds, rays and colours are all in aurora.fsh; here only the ribbons' shape. */
-    private static void auroraShaded(Matrix4f m, float time, net.minecraft.client.renderer.ShaderInstance shader) {
+    private static void auroraShaded(Matrix4f m, float time, net.minecraft.client.renderer.ShaderInstance shader, float boost) {
         RenderSystem.setShader(() -> shader);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        float strength = 0.75f * Math.min(1.3f, closeness * closeness);
+        float strength = 0.75f * Math.min(1.3f, closeness * closeness) * Math.min(boost, 2.2f);
+        float extra = Mth.clamp((boost - 1f) / 2f, 0, 1);
+        if (extra > 0.01f) {
+            for (int r = 0; r < FROST_RIBBONS.length; r++) {
+                float[] f = FROST_RIBBONS[r];
+                ribbon(b, m, time, 10 + r, f[0], f[1], f[2], f[3], 2.3f * extra, f[4], f[5], f[6]);
+            }
+            corona(b, m, time, 1.8f * extra);
+        }
         for (int ribbon = 0; ribbon < 3; ribbon++) {
             float az0 = new float[]{0.6f, 3.4f, 5.2f}[ribbon];
             float span = new float[]{1.9f, 1.6f, 0.9f}[ribbon];
@@ -240,6 +267,49 @@ public final class DreamSky {
                 GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
     }
 
+    private static void ribbon(BufferBuilder b, Matrix4f m, float time, int seed, float az0, float span, float base, float height, float strength,
+                               float tr, float tg, float tb) {
+        int segments = 96;
+        for (int i = 0; i < segments; i++) {
+            float t0 = i / (float) segments;
+            float t1 = (i + 1) / (float) segments;
+            float a0 = Mth.sin(t0 * Mth.PI) * strength;
+            float a1 = Mth.sin(t1 * Mth.PI) * strength;
+            double z0 = az0 + t0 * span + Math.sin(time * 0.0035 + t0 * 4 + seed) * 0.12;
+            double z1 = az0 + t1 * span + Math.sin(time * 0.0035 + t1 * 4 + seed) * 0.12;
+            double e0 = base + Math.sin(t0 * 5 + time * 0.006 + seed * 1.3) * 0.08;
+            double e1 = base + Math.sin(t1 * 5 + time * 0.006 + seed * 1.3) * 0.08;
+            float u0 = t0 * span * 9f + seed * 7f;
+            float u1 = t1 * span * 9f + seed * 7f;
+            tinted(b, m, dir(z0, e0), u0, 0, a0, tr, tg, tb);
+            tinted(b, m, dir(z1, e1), u1, 0, a1, tr, tg, tb);
+            tinted(b, m, dir(z1, e1 + height), u1, 1, a1, tr, tg, tb);
+            tinted(b, m, dir(z0, e0 + height), u0, 1, a0, tr, tg, tb);
+        }
+    }
+
+    private static void tinted(BufferBuilder b, Matrix4f m, Vec3 d, float u, float v, float alpha, float r, float g, float bl) {
+        b.addVertex(m, (float) d.x * R, (float) d.y * R, (float) d.z * R).setUv(u, v).setColor(r, g, bl, alpha);
+    }
+
+    /** The aurora corona: rays from all around converging overhead, where the curtains meet. */
+    private static void corona(BufferBuilder b, Matrix4f m, float time, float strength) {
+        int segments = 64;
+        double e0 = Math.toRadians(58);
+        double e1 = Math.toRadians(86);
+        for (int i = 0; i < segments; i++) {
+            double a0 = i * Mth.TWO_PI / segments + time * 0.0004;
+            double a1 = (i + 1) * Mth.TWO_PI / segments + time * 0.0004;
+            float u0 = i / (float) segments * 26f;
+            float u1 = (i + 1) / (float) segments * 26f;
+            float pulse = strength * (0.75f + 0.25f * Mth.sin(time * 0.01f + i * 0.4f));
+            auroraVertex(b, m, dir(a0, e0), u0, 0, pulse);
+            auroraVertex(b, m, dir(a1, e0), u1, 0, pulse);
+            auroraVertex(b, m, dir(a1, e1), u1, 1, pulse);
+            auroraVertex(b, m, dir(a0, e1), u0, 1, pulse);
+        }
+    }
+
     private static void auroraVertex(BufferBuilder b, Matrix4f m, Vec3 d, float u, float v, float alpha) {
         b.addVertex(m, (float) d.x * R, (float) d.y * R, (float) d.z * R).setUv(u, v).setColor(1f, 1f, 1f, alpha);
     }
@@ -255,7 +325,7 @@ public final class DreamSky {
     }
 
     /** The Paper Whale: a huge, slow, folded-paper silhouette swimming across the sky (purely visual). */
-    private static void whale(Matrix4f m, float time) {
+    private static void whale(Matrix4f m, float time, float fade) {
         double orbit = time / 12000.0 * Mth.TWO_PI; // one crossing every ten minutes
         double az = orbit + 1.1;
         double el = Math.toRadians(22 + 6 * Math.sin(orbit * 3));
@@ -263,7 +333,7 @@ public final class DreamSky {
         RenderSystem.setShaderTexture(0, WHALE);
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         float bob = Mth.sin(time * 0.01f) * 0.05f;
-        texturedQuad(b, m, dir(az, el), 22 * closeness, 11 * closeness, bob, 0, 0, 1, 1, 0.7f);
+        texturedQuad(b, m, dir(az, el), 22 * closeness, 11 * closeness, bob, 0, 0, 1, 1, 0.7f * fade);
         draw(b);
     }
 
@@ -353,7 +423,7 @@ public final class DreamSky {
         return targets != null && targets[i] != null ? targets[i] : BASE[i];
     }
 
-    private static void stars(Matrix4f m, long gameTime, float time) {
+    private static void stars(Matrix4f m, long gameTime, float time, float light) {
         long cycle = Math.floorDiv(gameTime, CYCLE);
         ensureCycle(cycle);
         float phase = (float) (Math.floorMod(gameTime, CYCLE) + (time - gameTime)) / CYCLE;
@@ -370,12 +440,12 @@ public final class DreamSky {
             current[i] = new float[]{az, el};
             boolean lit = targetsNow[i] != null;
             float twinkle = 0.65f + 0.35f * Mth.sin(time * 0.05f + TINT[i][3]);
-            float size = (lit ? 0.42f : 0.22f + (i % 5) * 0.03f);
-            float a1 = (lit ? 1f : 0.75f) * twinkle;
+            float size = (lit ? 0.42f : 0.22f + (i % 5) * 0.03f) * (light > 1 ? 1 + (light - 1) * 0.5f : 1);
+            float a1 = Math.min(1f, (lit ? 1f : 0.75f) * twinkle * light);
             billboard(b, m, dir(az, el), size, 0, new float[]{TINT[i][0], TINT[i][1], TINT[i][2], a1});
         }
         // Faint lines once a constellation has formed; they fade before the next rearrangement.
-        float lineAlpha = Mth.clamp((phase - 0.35f) / 0.1f, 0, 1) * Mth.clamp((0.9f - phase) / 0.1f, 0, 1) * 0.28f;
+        float lineAlpha = Mth.clamp((phase - 0.35f) / 0.1f, 0, 1) * Mth.clamp((0.9f - phase) / 0.1f, 0, 1) * 0.28f * Math.min(1f, light);
         if (lineAlpha > 0.01f) {
             for (int[] l : linesNow) {
                 if (l == null) continue;
@@ -404,26 +474,26 @@ public final class DreamSky {
 
     // --- planet, moons, eye
 
-    private static void planet(Matrix4f m, float time) {
+    private static void planet(Matrix4f m, float time, float fade) {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, PLANET);
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        texturedQuad(b, m, dir(Math.toRadians(128), Math.toRadians(34)), 34 * closeness, 17 * closeness, time * 0.00035f + 0.35f, 0, 0, 1, 1, 0.92f);
+        texturedQuad(b, m, dir(Math.toRadians(128), Math.toRadians(34)), 34 * closeness, 17 * closeness, time * 0.00035f + 0.35f, 0, 0, 1, 1, 0.92f * fade);
         draw(b);
     }
 
-    private static void moons(Matrix4f m, float time, float partial) {
+    private static void moons(Matrix4f m, float time, float partial, float fade) {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, MOON);
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         // The big one (full, follows you), a small crescent and a half moon that is lit from the wrong side.
-        texturedQuad(b, m, dir(moonAz + moonVel * partial, Math.toRadians(27)), 15 * closeness, 15 * closeness, 0, 0, 0, 0.25f, 1, 1f);
-        texturedQuad(b, m, dir(Math.toRadians(300), Math.toRadians(52)), 3.2f, 3.2f, 0.4f, 0.75f, 0, 1f, 1, 0.95f);
-        texturedQuad(b, m, dir(Math.toRadians(40), Math.toRadians(16)), 6, 6, (float) Math.PI, 0.5f, 0, 0.75f, 1, 0.9f);
+        texturedQuad(b, m, dir(moonAz + moonVel * partial, Math.toRadians(27)), 15 * closeness, 15 * closeness, 0, 0, 0, 0.25f, 1, fade);
+        texturedQuad(b, m, dir(Math.toRadians(300), Math.toRadians(52)), 3.2f, 3.2f, 0.4f, 0.75f, 0, 1f, 1, 0.95f * fade);
+        texturedQuad(b, m, dir(Math.toRadians(40), Math.toRadians(16)), 6, 6, (float) Math.PI, 0.5f, 0, 0.75f, 1, 0.9f * fade);
         draw(b);
     }
 
-    private static void eye(Matrix4f m, ClientLevel level, Camera camera) {
+    private static void eye(Matrix4f m, ClientLevel level, Camera camera, float fade) {
         // 0 closed .. 3 open. Opens over the Farewell; stays shut while any Shade is close.
         int frame = 0;
         if (DreamEffectsClient.farewellTicks > 0) {
@@ -434,7 +504,7 @@ public final class DreamSky {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, EYE);
         BufferBuilder b = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        texturedQuad(b, m, dir(0, Math.toRadians(5.5)), 30, 15, 0, 0, frame * 0.25f, 1, (frame + 1) * 0.25f, 0.8f);
+        texturedQuad(b, m, dir(0, Math.toRadians(5.5)), 30, 15, 0, 0, frame * 0.25f, 1, (frame + 1) * 0.25f, 0.8f * fade);
         draw(b);
     }
 

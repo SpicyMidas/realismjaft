@@ -115,8 +115,10 @@ public final class Lacing {
         entity.addEffect(new MobEffectInstance(ModEffects.DIZZINESS, ticks(strong ? 3600 : 2400, scale), strong ? 2 : 1));
         entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, ticks(strong ? 300 : 200, scale)));
         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, ticks(strong ? 900 : 600, scale), strong ? 1 : 0));
+        // Laced Melatonia makes you sleepy the wrong way: whoever falls asleep with it dreams a nightmare.
+        entity.removeEffect(ModEffects.SLEEPYNESS);
+        entity.addEffect(new MobEffectInstance(ModEffects.EVIL_SLEEPYNESS, ticks(strong ? 4800 : 2400, scale)));
         if (strong) {
-            entity.addEffect(new MobEffectInstance(ModEffects.SLEEPYNESS, ticks(4800, scale)));
             entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, ticks(600, scale)));
             entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, ticks(60, scale)));
         }

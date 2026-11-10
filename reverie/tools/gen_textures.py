@@ -1443,7 +1443,518 @@ def shade_textures():
     save(img, "entity/shade")
 
 
-GROUPS = [melatonia_cake_textures, tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture, fauna_textures, paper_glider_texture]
+
+# ---------------------------------------------------------------- the new Dreamland biomes
+def save_anim(frames, rel, frametime, interpolate=False):
+    """Frames stacked vertically plus the .mcmeta (unless a hand-made texture replaces it)."""
+    if os.path.exists(os.path.join(HAND, rel + ".png")):
+        return
+    w, h = frames[0].size
+    strip = Image.new("RGBA", (w, h * len(frames)), T)
+    for i, f in enumerate(frames):
+        strip.paste(f, (0, i * h))
+    save(strip, rel)
+    with open(os.path.join(TEX, rel + ".png.mcmeta"), "w") as fh:
+        fh.write('{"animation": {"frametime": %d%s}}\n' % (frametime, ', "interpolate": true' if interpolate else ''))
+
+
+def shade(c, f):
+    return tuple(max(0, min(255, int(round(v * f)))) for v in c[:3])
+
+
+def walk_lines(img, color, count, length, seed, wrap=True):
+    """Random-walk veins (tile-wrapping)."""
+    rnd = random.Random(seed)
+    w, h = img.size
+    for _ in range(count):
+        x, y = rnd.randrange(w), rnd.randrange(h)
+        dx, dy = rnd.choice(((1, 0), (0, 1), (1, 1), (1, -1)))
+        for _ in range(length):
+            img.putpixel((x % w, y % h), rgba(color))
+            if rnd.random() < 0.35:
+                dx, dy = rnd.choice(((1, 0), (0, 1), (1, 1), (1, -1), (-1, 1)))
+            x, y = x + dx, y + dy
+    return img
+
+
+def disc(img, cx, cy, r, color):
+    w, h = img.size
+    for y in range(h):
+        for x in range(w):
+            if (x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2 <= r * r:
+                img.putpixel((x, y), rgba(color))
+
+
+def star_shape(size, points=5, inner=0.45, rot=-math.pi / 2):
+    """Point-in-star mask (supersampled) as a size x size float grid in [0,1]."""
+    verts = []
+    for i in range(points * 2):
+        r = 1.0 if i % 2 == 0 else inner
+        a = rot + i * math.pi / points
+        verts.append((math.cos(a) * r, math.sin(a) * r))
+    def inside(px, py):
+        c = False
+        j = len(verts) - 1
+        for i in range(len(verts)):
+            xi, yi = verts[i]
+            xj, yj = verts[j]
+            if (yi > py) != (yj > py) and px < (xj - xi) * (py - yi) / (yj - yi + 1e-9) + xi:
+                c = not c
+            j = i
+        return c
+    out = [[0.0] * size for _ in range(size)]
+    for y in range(size):
+        for x in range(size):
+            hits = 0
+            for sy in range(3):
+                for sx in range(3):
+                    px = ((x + (sx + 0.5) / 3) / size) * 2 - 1
+                    py = ((y + (sy + 0.5) / 3) / size) * 2 - 1
+                    hits += inside(px * 1.05, py * 1.05)
+            out[y][x] = hits / 9
+    return out
+
+
+TOY_LETTERS = {
+    'A': ["..####..", ".##..##.", "##....##", "##....##", "########", "##....##", "##....##", "##....##"],
+    'B': ["######..", "##...##.", "##...##.", "######..", "##...##.", "##....##", "##...##.", "######.."],
+    'C': ["..#####.", ".##...##", "##......", "##......", "##......", "##......", ".##...##", "..#####."],
+    'Z': ["########", ".....##.", "....##..", "...##...", "..##....", ".##.....", "##......", "########"],
+}
+
+
+def biome_textures():
+    # --- Frostlight Tundra
+    snow = ramp_fill(16, 16, [(204, 216, 234), (216, 226, 242), (228, 236, 250), (240, 245, 255)], 2001, cell=4, jitter=0.25)
+    speckle(snow, [(255, 255, 255)], 10, 2002)
+    speckle(snow, [(170, 212, 250), (212, 194, 255)], 5, 2003)
+    save(snow, "block/dreamsnow")
+    rime = ramp_fill(16, 16, [(90, 104, 122), (106, 120, 138), (122, 136, 154), (140, 154, 170)], 2004, cell=4, jitter=0.2)
+    walk_lines(rime, (212, 226, 240), 3, 9, 2005)
+    speckle(rime, [(232, 242, 252)], 5, 2006)
+    save(rime, "block/rime_stone")
+    frames = []
+    stars = [(3, 4), (11, 2), (7, 9), (13, 12), (2, 13), (9, 14), (12, 7)]
+    base = ramp_fill(16, 16, [(54, 92, 160), (66, 108, 180), (80, 124, 198), (98, 142, 214)], 2007, cell=4, jitter=0.15)
+    for x in range(16):
+        for y in range(16):
+            if (x + y) % 9 == 0 or (x + y) % 9 == 1 and x % 3 == 0:
+                base.putpixel((x, y), rgba((140, 184, 236)))
+    for f in range(4):
+        img = base.copy()
+        for i, (sx, sy) in enumerate(stars):
+            b = 0.35 + 0.65 * (0.5 + 0.5 * math.cos((f / 4 + i * 0.37) * 2 * math.pi))
+            c = mix((120, 160, 220), (255, 252, 236), b)
+            img.putpixel((sx, sy), rgba(c))
+            if b > 0.8:
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    img.putpixel(((sx + dx) % 16, (sy + dy) % 16), rgba(mix((110, 150, 214), c, 0.5)))
+        for y in range(16):
+            for x in range(16):
+                r, g, bb, _ = img.getpixel((x, y))
+                img.putpixel((x, y), (r, g, bb, 214))
+        frames.append(img)
+    save_anim(frames, "block/starlight_ice", 10, True)
+    save(grid([
+        "................", "......w.w.......", ".....wcwcw......", "....wcCCCcw.....", "...wcCWWWCcw....", "....cCWbWCc.....",
+        "...wcCWWWCcw....", "....wcCCCcw.....", ".....wcwcw......", "......wsw.......", ".......s........", ".......s..l.....",
+        "...l...s.ll.....", "....ll.s.l......", ".....lls........", ".......s........"],
+        {'w': (236, 248, 255), 'c': (160, 214, 246), 'C': (110, 180, 236), 'W': (220, 242, 255), 'b': (255, 255, 255),
+         's': (132, 160, 176), 'l': (150, 184, 196)}), "block/frostbloom")
+    save(grid([
+        "bbbbbbbbbbbbbbbb", ".hh..h...hh..h..", ".cw..c...cw..c..", ".cw..w...cw..c..", ".cw..c...cw..w..", ".cw..c....w..c..",
+        ".cw..w....c..c..", ".cw..c....w..w..", "..w..c....c..c..", "..c..w....d..c..", "..c..c.......w..", "..d..w.......c..",
+        ".....c.......c..", ".....d.......w..", ".............d..", "................"],
+        {'b': (176, 200, 220), 'h': (210, 230, 246), 'c': (170, 214, 246), 'w': (236, 248, 255), 'd': (255, 255, 255)}), "block/ice_chime")
+
+    # --- Skyreef
+    reef = ramp_fill(16, 16, [(170, 150, 118), (186, 166, 132), (200, 182, 146), (214, 198, 162)], 2010, cell=4, jitter=0.25)
+    rnd = random.Random(2011)
+    for _ in range(9):
+        x, y = rnd.randrange(16), rnd.randrange(16)
+        reef.putpixel((x, y), rgba((120, 100, 78)))
+        reef.putpixel(((x + 1) % 16, y), rgba((140, 120, 94)))
+        reef.putpixel((x, (y + 1) % 16), rgba((222, 206, 172)))
+    save(reef, "block/reef_stone")
+    for name, ramp, polyp in (("tide_coral", [(36, 120, 128), (46, 142, 148), (60, 164, 166), (84, 188, 184)], (150, 230, 216)),
+                              ("dusk_coral", [(176, 74, 84), (198, 92, 98), (218, 114, 112), (234, 144, 132)], (252, 200, 172))):
+        img = ramp_fill(16, 16, ramp, 2012 + len(name), cell=2, jitter=0.35)
+        rnd = random.Random(2014 + len(name))
+        for gy in range(0, 16, 4):
+            for gx in range(0, 16, 4):
+                x, y = (gx + rnd.randint(0, 2)) % 16, (gy + rnd.randint(0, 2)) % 16
+                img.putpixel((x, y), rgba(polyp))
+                img.putpixel(((x + 1) % 16, (y + 1) % 16), rgba(shade(ramp[0], 0.85)))
+        save(img, "block/" + name)
+    save(grid([
+        "................", "...p......o.....", "..pPp..o.oOo....", "...Pp..oOoO.....", ".p.P.pp.OOo..p..", ".pPPpP...O..pPp.",
+        "..pPP..o.O.pPp..", "...P..oOoO.Pp...", "...PP..OOOPP....", "....PP..OPP.....", ".....PPOOP......", "......POP.......",
+        ".......P........", ".......P........", "......sPs.......", "......sss......."],
+        {'p': (246, 150, 150), 'P': (222, 98, 112), 'o': (252, 196, 120), 'O': (232, 150, 70), 's': (180, 160, 130)}), "block/sky_coral")
+    kelp = Image.new("RGBA", (16, 16), T)
+    for strand, x0, ph in ((0, 5, 0.0), (1, 10, 1.7)):
+        for y in range(16):
+            x = int(round(x0 + math.sin(y * 0.55 + ph) * 1.4))
+            kelp.putpixel((x, y), rgba((58, 132, 98)))
+            kelp.putpixel((x + 1, y), rgba((84, 164, 118)))
+            if (y + strand * 3) % 5 == 0:
+                kelp.putpixel((x + 2, y), rgba((112, 192, 140)))
+                kelp.putpixel((x - 1, y + 1 if y < 15 else y), rgba((96, 176, 128)))
+    save(kelp, "block/sky_kelp")
+    top = reef.copy()
+    for y in range(16):
+        for x in range(16):
+            d = ((x - 7.5) ** 2 + (y - 7.5) ** 2) ** 0.5
+            if d < 4.2:
+                top.putpixel((x, y), rgba(mix((20, 34, 44), (48, 70, 84), d / 4.2)))
+            elif d < 5.2:
+                top.putpixel((x, y), rgba((150, 130, 100)))
+    for (x, y) in ((6, 6), (9, 8), (7, 10), (10, 5)):
+        top.putpixel((x, y), rgba((200, 240, 255)))
+    save(top, "block/bubble_vent_top")
+    side = reef.copy()
+    for x in (3, 8, 12):
+        for y in range(16):
+            if (y + x) % 7 != 0:
+                side.putpixel((x, y), rgba((132, 112, 88)))
+    save(side, "block/bubble_vent_side")
+
+    # --- Lucid Geodes
+    shell = ramp_fill(16, 16, [(34, 28, 44), (44, 36, 56), (54, 44, 68), (64, 52, 80)], 2020, cell=3, jitter=0.3)
+    speckle(shell, [(84, 70, 104), (22, 18, 28)], 12, 2021)
+    save(shell, "block/geode_shell")
+    calc = Image.new("RGBA", (16, 16))
+    n = value_noise(16, 16, 2022, cell=4)
+    for y in range(16):
+        for x in range(16):
+            v = 0.5 + 0.5 * math.sin((y + n[y][x] * 3) * 0.8)
+            calc.putpixel((x, y), rgba(mix((184, 168, 206), (224, 212, 238), v)))
+    save(calc, "block/lilac_calcite")
+    moss = ramp_fill(16, 16, [(84, 46, 120), (102, 58, 142), (120, 72, 162), (140, 90, 182)], 2023, cell=2, jitter=0.35)
+    speckle(moss, [(216, 164, 255), (190, 130, 250)], 5, 2024)
+    save(moss, "block/violet_moss")
+    def crystal(ramp, hi, seed):
+        img = Image.new("RGBA", (16, 16))
+        rnd = random.Random(seed)
+        pts = [(rnd.uniform(0, 16), rnd.uniform(0, 16), rnd.randrange(len(ramp))) for _ in range(7)]
+        for y in range(16):
+            for x in range(16):
+                best = None
+                for (px, py, c) in pts:
+                    for ox in (-16, 0, 16):
+                        for oy in (-16, 0, 16):
+                            d = (x - px - ox) ** 2 + (y - py - oy) ** 2
+                            if best is None or d < best[0]:
+                                best = (d, c, px + ox, py + oy)
+                shade_i = best[1]
+                img.putpixel((x, y), rgba(ramp[shade_i]))
+        for y in range(16):
+            for x in range(16):
+                c0 = img.getpixel((x, y))
+                c1 = img.getpixel(((x + 1) % 16, (y + 1) % 16))
+                if c0 != c1:
+                    img.putpixel((x, y), rgba(hi))
+        return img
+    save(crystal([(96, 54, 160), (118, 70, 186), (138, 88, 206), (160, 110, 224)], (196, 150, 250), 2025), "block/resonant_crystal")
+    lit = crystal([(176, 116, 244), (196, 142, 252), (214, 168, 255), (234, 200, 255)], (255, 244, 255), 2025)
+    speckle(lit, [(255, 255, 255)], 6, 2026)
+    save(lit, "block/resonant_crystal_lit")
+
+    # --- The Nursery
+    for name, color, letter in (("toy_block_red", (196, 58, 54), 'A'), ("toy_block_yellow", (226, 182, 58), 'B'),
+                                ("toy_block_blue", (62, 108, 198), 'C'), ("toy_block_green", (72, 156, 82), 'Z')):
+        img = ramp_fill(16, 16, [shade(color, 0.94), color, shade(color, 1.05)], 2030 + len(name) + ord(letter), cell=4, jitter=0.2)
+        for i in range(16):
+            for (x, y) in ((i, 0), (i, 15), (0, i), (15, i)):
+                img.putpixel((x, y), rgba(shade(color, 0.62)))
+            for (x, y) in ((i, 1), (1, i)):
+                if 0 < i < 15:
+                    img.putpixel((x, y), rgba(shade(color, 1.18)))
+        rows = TOY_LETTERS[letter]
+        for ry, row in enumerate(rows):
+            for rx, ch in enumerate(row):
+                if ch == '#':
+                    img.putpixel((4 + rx + 1, 4 + ry + 1), rgba(shade(color, 0.55)))
+        for ry, row in enumerate(rows):
+            for rx, ch in enumerate(row):
+                if ch == '#':
+                    img.putpixel((4 + rx, 4 + ry), rgba((246, 236, 206)))
+        save(img, "block/" + name)
+    rug = Image.new("RGBA", (16, 16))
+    # Soft stripes, close in value so a whole island of rug does not shimmer.
+    bands = [(178, 128, 136)] * 5 + [(204, 182, 164)] * 2 + [(128, 150, 150)] * 4 + [(204, 182, 164)] * 2 + [(184, 160, 116)] * 3
+    for y in range(16):
+        for x in range(16):
+            c = bands[y]
+            f = 1.03 if (x + y) % 2 == 0 else 0.97
+            if y in (5, 11) and x % 4 == 1:
+                c = shade(c, 0.9)
+            rug.putpixel((x, y), rgba(shade(c, f)))
+    save(rug, "block/nursery_rug")
+    stuffing = ramp_fill(16, 16, [(214, 212, 206), (226, 224, 218), (238, 236, 230), (248, 247, 242)], 2035, cell=2, jitter=0.4)
+    speckle(stuffing, [(200, 198, 192)], 8, 2036)
+    save(stuffing, "block/stuffing")
+    light = Image.new("RGBA", (16, 16), rgba((120, 96, 60)))
+    for y in range(1, 15):
+        for x in range(1, 15):
+            light.putpixel((x, y), rgba(mix((244, 214, 130), (252, 236, 170), y / 14)))
+    for y in range(16):
+        for x in range(16):
+            d1 = ((x - 7) ** 2 + (y - 8) ** 2) ** 0.5
+            d2 = ((x - 9.5) ** 2 + (y - 6.5) ** 2) ** 0.5
+            if d1 < 5 and d2 > 4.2:
+                light.putpixel((x, y), rgba((255, 250, 222)))
+    for (x, y) in ((11, 3), (12, 11), (3, 4)):
+        light.putpixel((x, y), rgba((255, 255, 236)))
+    save(light, "block/night_light")
+
+    # --- Blackwood
+    ash = ramp_fill(16, 16, [(40, 36, 36), (50, 45, 44), (60, 54, 52), (72, 66, 62)], 2040, cell=3, jitter=0.3)
+    speckle(ash, [(96, 72, 50), (110, 86, 58)], 7, 2041)
+    speckle(ash, [(128, 124, 120)], 4, 2042)
+    save(ash, "block/ashen_soil")
+    bark = [(20, 18, 20), (28, 25, 28), (36, 32, 34), (46, 42, 42)]
+    log = Image.new("RGBA", (16, 16))
+    for y in range(16):
+        for x in range(16):
+            v = bark[[1, 2, 1, 0, 1, 2, 3, 2, 1, 0, 1, 2, 2, 1, 0, 1][x]]
+            log.putpixel((x, y), rgba(shade(v, 0.92 + 0.16 * ((y * 7 + x * 3) % 5) / 5)))
+    for (x, y0, n) in ((5, 2, 5), (11, 9, 4)):  # a couple of thin cracks, no pattern that repeats loudly
+        for t in range(n):
+            log.putpixel((x, y0 + t), rgba((58, 54, 54)))
+    save(log, "block/blackwood_log")
+    logtop = Image.new("RGBA", (16, 16), rgba(bark[0]))
+    for y in range(16):
+        for x in range(16):
+            d = max(abs(x - 7.5), abs(y - 7.5))
+            if d < 6.5:
+                logtop.putpixel((x, y), rgba((58, 48, 46) if int(d) % 2 == 0 else (40, 34, 34)))
+    save(logtop, "block/blackwood_log_top")
+    save(grid([
+        "................", "..........b.....", "...a......b.....", "...a.....b......", "....a....b...c..", "....a...b...c...",
+        ".c..a..ab...c...", "..c.a..a...c....", "..c..a.a..b.....", "...c.a.a..b..a..", "...c..aa.b..a...", "....c.a.ab..a...",
+        "....c.a.ab.a....", ".....caab.a.....", ".....caabaa.....", "......aaaa......"][:16],
+        {'a': (120, 104, 84), 'b': (96, 84, 68), 'c': (140, 124, 100)}), "block/withered_grass")
+    for lit_state in (False, True):
+        win = Image.new("RGBA", (16, 16), rgba((46, 32, 24)))
+        for y in range(16):
+            for x in range(16):
+                if 2 <= x <= 13 and 2 <= y <= 13 and x not in (7, 8) and y not in (7, 8):
+                    if lit_state:
+                        win.putpixel((x, y), rgba(mix((255, 214, 130), (236, 146, 62), (y - 2) / 11)))
+                    else:
+                        win.putpixel((x, y), rgba((16, 18, 26) if (x - y) % 7 else (40, 44, 60)))
+        if lit_state:
+            # Somebody stands at the window.
+            for (x, y) in ((10, 3), (11, 3), (10, 4), (11, 4), (9, 5), (10, 5), (11, 5), (12, 5), (9, 6), (12, 6)):
+                win.putpixel((x, y), rgba((70, 40, 22)))
+        for i in range(16):
+            for (x, y) in ((i, 0), (0, i), (i, 15), (15, i)):
+                win.putpixel((x, y), rgba((30, 20, 16)))
+        save(win, "block/watching_window_lit" if lit_state else "block/watching_window")
+
+    # --- The Waiting Rooms
+    carpet = ramp_fill(16, 16, [(160, 144, 100), (170, 154, 108), (180, 164, 116)], 2050, cell=2, jitter=0.4)
+    for y in range(16):
+        for x in range(16):
+            if x % 4 == 0 and y % 4 == 0:
+                carpet.putpixel((x, y), rgba((146, 130, 88)))
+    for (cx, cy) in ((4, 11), (12, 3)):
+        for y in range(16):
+            for x in range(16):
+                if (x - cx) ** 2 + (y - cy) ** 2 < 5:
+                    carpet.putpixel((x, y), rgba(shade(carpet.getpixel((x, y)), 0.88)))
+    save(carpet, "block/stale_carpet")
+    paper = Image.new("RGBA", (16, 16))
+    for y in range(16):
+        for x in range(16):
+            c = (198, 186, 126) if x % 4 in (0, 1) else (214, 202, 146)
+            if x % 4 == 2 and y % 4 == 1:
+                c = (180, 166, 110)
+            if y >= 12:
+                c = shade(c, 1 - (y - 11) * 0.04)
+            paper.putpixel((x, y), rgba(c))
+    save(paper, "block/yellowed_wallpaper")
+    tile = Image.new("RGBA", (16, 16), rgba((224, 222, 210)))
+    speckle(tile, [(186, 184, 172), (198, 196, 184)], 22, 2052, avoid_edge=1)
+    for i in range(16):
+        tile.putpixel((i, 15), rgba((196, 194, 182)))
+        tile.putpixel((15, i), rgba((196, 194, 182)))
+    save(tile, "block/ceiling_tile")
+    for on in (True, False):
+        panel = Image.new("RGBA", (16, 16), rgba((172, 174, 170)))
+        for y in range(1, 15):
+            for x in range(1, 15):
+                base_c = (250, 252, 242) if on else (126, 130, 126)
+                grid_c = (230, 236, 232) if on else (114, 118, 114)
+                panel.putpixel((x, y), rgba(grid_c if x % 3 == 0 or y % 3 == 0 else base_c))
+        save(panel, "block/flicker_light_on" if on else "block/flicker_light_off")
+
+    # --- The Maw
+    flesh = ramp_fill(16, 16, [(150, 56, 70), (170, 70, 82), (190, 86, 96), (206, 104, 110)], 2060, cell=4, jitter=0.25)
+    walk_lines(flesh, (110, 30, 46), 4, 10, 2061)
+    speckle(flesh, [(232, 152, 150)], 6, 2062)
+    frames = []
+    for f in range(4):
+        k = [0.92, 1.0, 1.08, 1.0][f]
+        img = Image.new("RGBA", (16, 16))
+        for y in range(16):
+            for x in range(16):
+                img.putpixel((x, y), rgba(shade(flesh.getpixel((x, y)), k)))
+        frames.append(img)
+    save_anim(frames, "block/dream_flesh", 7, True)
+    sinew = Image.new("RGBA", (16, 16))
+    rnd = random.Random(2063)
+    for y in range(16):
+        c = [(112, 34, 42), (138, 50, 58), (98, 28, 36), (124, 42, 50)][y % 4]
+        for x in range(16):
+            sinew.putpixel((x, y), rgba(shade(c, 0.9 + rnd.random() * 0.2)))
+    walk_lines(sinew, (170, 80, 84), 2, 8, 2064)
+    save(sinew, "block/sinew")
+    enamel = ramp_fill(16, 16, [(220, 212, 186), (228, 222, 200), (236, 230, 212), (242, 238, 224)], 2065, cell=4, jitter=0.15)
+    walk_lines(enamel, (204, 194, 168), 2, 6, 2066)
+    save(enamel, "block/enamel")
+    veins = Image.new("RGBA", (16, 16), T)
+    for x0, ph in ((5, 0.4), (10, 2.1)):
+        for y in range(16):
+            x = int(round(x0 + math.sin(y * 0.4 + ph)))
+            veins.putpixel((x, y), rgba((140, 26, 38)))
+            if y % 4 == 2:
+                veins.putpixel((x + 1, y), rgba((210, 80, 92)))
+                veins.putpixel((x - 1, y), rgba((170, 40, 54)))
+    save(veins, "block/vein_vines")
+
+    # --- Signal Lost
+    frames = []
+    rnd = random.Random(2070)
+    for f in range(8):
+        img = Image.new("RGBA", (16, 16))
+        line = rnd.randrange(16)
+        for y in range(16):
+            for x in range(16):
+                v = rnd.randint(40, 230)
+                if y == line:
+                    v = min(255, v + 50)
+                img.putpixel((x, y), (v, v, min(255, v + 12), 255))
+        frames.append(img)
+    save_anim(frames, "block/static_block", 1)
+    dead = Image.new("RGBA", (16, 16), rgba((24, 24, 28)))
+    for y in range(16):
+        if y % 4 == 3:
+            continue
+        for x in range(16):
+            dead.putpixel((x, y), rgba([(54, 22, 26), (22, 50, 28), (24, 28, 60)][x % 3]))
+    dead.putpixel((4, 5), rgba((250, 60, 60)))
+    dead.putpixel((11, 9), rgba((60, 250, 90)))
+    save(dead, "block/dead_pixel")
+    card = Image.new("RGBA", (16, 16))
+    bars = [(192, 192, 192), (192, 192, 0), (0, 192, 192), (0, 192, 0), (192, 0, 192), (192, 0, 0), (0, 0, 192)]
+    widths = [2, 2, 3, 2, 2, 3, 2]
+    low = [(0, 0, 192), (16, 16, 16), (192, 0, 192), (16, 16, 16), (0, 192, 192), (16, 16, 16), (192, 192, 192)]
+    x = 0
+    for i, wdt in enumerate(widths):
+        for dx in range(wdt):
+            for y in range(16):
+                c = bars[i] if y < 11 else low[i] if y < 13 else ((236, 236, 236) if x < 5 else (8, 8, 8) if x < 11 else (40, 40, 40))
+                card.putpixel((x, y), rgba(c))
+            x += 1
+    save(card, "block/test_card")
+
+    # --- sky pieces
+    grin = Image.new("RGBA", (32, 32), T)
+    for y in range(32):
+        for x in range(32):
+            outer = ((x + 0.5 - 16) ** 2 + (y + 0.5 - 12) ** 2) ** 0.5
+            inner = ((x + 0.5 - 16) ** 2 + (y + 0.5 - 7.5) ** 2) ** 0.5
+            if outer < 14 and inner > 13:
+                edge = min(14 - outer, inner - 13)
+                c = mix((176, 168, 146), (236, 230, 208), min(1, edge / 1.6))
+                grin.putpixel((x, y), rgba(c))
+    for (x, y) in ((9, 23), (20, 25), (15, 26)):
+        grin.putpixel((x, y), rgba((196, 188, 164)))
+    for cx in (10, 22):  # two eyes you only half see
+        for dx in range(-2, 3):
+            grin.putpixel((cx + dx, 10 - (1 if abs(dx) < 2 else 0)), (220, 214, 196, 70))
+    save(grin, "environment/grin_moon")
+    sun = Image.new("RGBA", (32, 32), T)
+    for y in range(32):
+        for x in range(32):
+            d = ((x + 0.5 - 16) ** 2 + (y + 0.5 - 16) ** 2) ** 0.5
+            if d < 11:
+                sun.putpixel((x, y), (6, 4, 6, 255))
+            elif d < 13:
+                a = int(255 * (1 - (d - 11) / 2))
+                sun.putpixel((x, y), (255, 96, 64, a))
+    save(sun, "environment/black_sun")
+    corona = Image.new("RGBA", (32, 32), T)
+    for y in range(32):
+        for x in range(32):
+            dx, dy = x + 0.5 - 16, y + 0.5 - 16
+            d = (dx * dx + dy * dy) ** 0.5 / 16
+            if d < 1:
+                ang = math.atan2(dy, dx)
+                rays = 0.75 + 0.25 * math.cos(ang * 12)
+                a = int(255 * (1 - d) ** 2 * rays)
+                corona.putpixel((x, y), (255, 255, 255, a))
+    save(corona, "environment/corona")
+    stat = Image.new("RGBA", (64, 64))
+    rnd = random.Random(2080)
+    for y in range(64):
+        for x in range(64):
+            v = rnd.randint(30, 200)
+            if y % 2:
+                v = int(v * 0.85)
+            stat.putpixel((x, y), (v, v, v + 8 if v < 247 else 255, 255))
+    save(stat, "environment/sky_static")
+    ceil = ramp_fill(32, 32, [(28, 32, 70), (32, 36, 76), (36, 42, 84), (40, 46, 90)], 2081, cell=8, jitter=0.15)
+    save(ceil, "environment/nursery_ceiling")
+    mask = star_shape(16)
+    stk = Image.new("RGBA", (16, 16), T)
+    for y in range(16):
+        for x in range(16):
+            if mask[y][x] > 0:
+                stk.putpixel((x, y), (214, 255, 160, int(255 * min(1, mask[y][x] * 1.3))))
+    save(stk, "environment/glow_star")
+    mob = Image.new("RGBA", (64, 16), T)
+    o = (60, 50, 70)
+    for y in range(16):
+        for x in range(16):
+            d1 = ((x - 8) ** 2 + (y - 8) ** 2) ** 0.5
+            d2 = ((x - 10.5) ** 2 + (y - 6) ** 2) ** 0.5
+            if d1 < 6.5 and d2 > 5.2:
+                mob.putpixel((x, y), rgba((250, 226, 130)))
+    smask = star_shape(14)
+    for y in range(14):
+        for x in range(14):
+            if smask[y][x] > 0.5:
+                mob.putpixel((16 + 1 + x, 1 + y), rgba((250, 210, 90)))
+    for (cx, cy, r) in ((38, 9, 4), (43, 7, 4.5), (47, 10, 3.5), (41, 11, 3)):
+        disc(mob, cx, cy, r, (238, 240, 250))
+    disc(mob, 56, 9, 4.6, (240, 238, 230))
+    disc(mob, 51.5, 7.5, 2.2, (60, 56, 60))
+    for lx in (53, 58):
+        for ly in (13, 14):
+            mob.putpixel((lx, ly), rgba((60, 56, 60)))
+    outline(mob, o)
+    save(mob, "environment/mobile")
+
+    # --- particles and the effect icon
+    save(grid(["........", "...w....", ".w.W.w..", "..WWW...", ".WWbWW..", "..WWW...", ".w.W.w..", "...w...."],
+              {'w': (200, 220, 246), 'W': (236, 244, 255), 'b': (255, 255, 255)}), "particle/dream_snow_0")
+    save(grid(["........", "........", "...W....", "..WbW...", "...W....", "........", "........", "........"],
+              {'W': (226, 238, 255), 'b': (255, 255, 255)}), "particle/dream_snow_1")
+    save(grid(["........", "..cccc..", ".c...hc.", ".c....c.", ".c....c.", ".c....c.", "..cccc..", "........"],
+              {'c': (170, 230, 250), 'h': (255, 255, 255)}), "particle/dream_bubble_0")
+    cloud = [
+        "...........XXXXX..", "..............X...", ".............X....", "............X.....",
+        "...........XXXXX..", "......XXX.........", "........X.........", ".......X..........",
+        "......XXX.........", "..................", "...wwww..wwww.....", "..wccccwwccccw....",
+        ".wccccccccccccw...", "wccccccccccccccw..", "wccccccccccccccw..", ".wccccccccccccw...",
+        "..wwwwwwwwwwww....", ".................."]
+    save(grid(cloud, {'X': (255, 84, 104), 'w': (40, 26, 58), 'c': (78, 52, 104)}), "mob_effect/evil_sleepyness")
+
+
+GROUPS = [melatonia_cake_textures, tuff_alloy, gearshift_textures, latch_remote, melatonia_textures, misc_textures, dreamland_textures, shade_textures, fd_textures, sky_textures, particle_textures, dream_catcher_texture, paper_whale_texture, fauna_textures, paper_glider_texture, biome_textures]
 
 
 def contact_sheet(out_dir):

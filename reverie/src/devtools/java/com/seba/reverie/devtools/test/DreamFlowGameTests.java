@@ -103,11 +103,14 @@ public final class DreamFlowGameTests {
                     h.assertTrue(p[0].getInventory().getItem(1).isEmpty(), "dream inventory not kept across relog");
                 })
                 .thenExecute(() -> {
-                    // Falling below the void line wakes you.
+                    // Falling out of the bottom never wakes you: it loops you back above where you fell from.
                     var dream = server.getLevel(DreamManager.DREAMLAND);
-                    p[0].teleportTo(dream, p[0].getX(), dream.getMinBuildHeight() + 1, p[0].getZ(), 0, 0);
+                    p[0].teleportTo(dream, p[0].getX(), dream.getMinBuildHeight() + 10, p[0].getZ(), 0, 0);
                     p[0].doTick();
-                    h.assertFalse(DreamManager.isDreaming(p[0]), "falling into the void did not wake");
+                    h.assertTrue(DreamManager.isDreaming(p[0]), "falling into the void woke the dreamer");
+                    h.assertTrue(p[0].getY() > dream.getMinBuildHeight() + 100, "the fall did not loop back up: y=" + p[0].getY());
+                    DreamManager.wake(p[0], DreamManager.Reason.COMMAND);
+                    h.assertFalse(DreamManager.isDreaming(p[0]), "the dream did not end");
                     h.assertTrue(p[0].level().dimension().equals(h.getLevel().dimension()), "did not return to the bed's dimension");
                     h.assertTrue(p[0].position().distanceTo(net.minecraft.world.phys.Vec3.atCenterOf(h.absolutePos(head))) < 4, "woke far from the bed");
                     DreamGameTests.assertRestored(h, p[0], before[0], 0);

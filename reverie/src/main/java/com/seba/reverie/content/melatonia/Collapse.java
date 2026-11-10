@@ -37,7 +37,7 @@ public final class Collapse {
         if (!(target.level() instanceof ServerLevel level) || target.getType().is(Tags.EntityTypes.BOSSES) || !target.isAlive()) return;
         int ticks;
         if (target instanceof Player player) {
-            if (!player.hasEffect(ModEffects.SLEEPYNESS) || player.isSpectator() || player.getAbilities().invulnerable
+            if (!ModEffects.sleepy(player) || player.isSpectator() || player.getAbilities().invulnerable
                     || target.getRandom().nextFloat() >= PLAYER_CHANCE) {
                 return;
             }

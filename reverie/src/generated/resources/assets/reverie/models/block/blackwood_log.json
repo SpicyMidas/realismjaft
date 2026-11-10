@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "reverie:block/blackwood_log_top",
+    "side": "reverie:block/blackwood_log"
+  }
+}

@@ -77,6 +77,7 @@ final class IslandDecorator {
                     BlockPos under = new BlockPos(x, bot - 1, z);
                     if (level.getBlockState(under).isAir() && !level.getBlockState(under.above()).isAir()) hangingTree(level, under, rng);
                 }
+                underside(level, field, is, x, z, rng);
             }
         }
     }
@@ -127,8 +128,153 @@ final class IslandDecorator {
                 if (grass && r < 0.02f) place(level, above, Blocks.SHORT_GRASS.defaultBlockState());
                 else if (r < 0.023f) place(level, above.above(4), ModBlocks.FLOATING_LANTERN.get().defaultBlockState());
             }
+            case FROSTLIGHT_TUNDRA -> {
+                if (!g.is(ModBlocks.DREAMSNOW.get())) return;
+                if (r < 0.011f && d < 0.78) pine(level, above, rng);
+                else if (r < 0.04f) place(level, above, ModBlocks.FROSTBLOOM.get().defaultBlockState());
+                else if (r < 0.11f) place(level, above, Blocks.SNOW.defaultBlockState().setValue(net.minecraft.world.level.block.SnowLayerBlock.LAYERS, 1 + rng.nextInt(2)));
+            }
+            case SKYREEF -> {
+                if (r < 0.07f) place(level, above, ModBlocks.SKY_CORAL.get().defaultBlockState());
+                else if (r < 0.0715f && d < 0.8 && g.is(ModBlocks.REEF_STONE.get())) level.setBlock(ground, ModBlocks.BUBBLE_VENT.get().defaultBlockState(), FLAGS);
+            }
+            case LUCID_GEODES -> {
+                if (r < 0.05f) place(level, above, ModBlocks.LUCID_CRYSTAL_CLUSTER.get().defaultBlockState().setValue(AmethystClusterBlock.FACING, Direction.UP));
+                else if (r < 0.062f) {
+                    int h = 2 + rng.nextInt(3);
+                    for (int i = 0; i < h && level.getBlockState(above.above(i)).isAir(); i++) level.setBlock(above.above(i), ModBlocks.RESONANT_CRYSTAL.get().defaultBlockState(), FLAGS);
+                } else if (r < 0.08f && g.is(ModBlocks.VIOLET_MOSS.get())) place(level, above, ModBlocks.WILD_MELATONIA.get().defaultBlockState());
+            }
+            case THE_NURSERY -> {
+                if (r < 0.012f) {
+                    var toys = new net.neoforged.neoforge.registries.DeferredBlock<?>[]{ModBlocks.TOY_BLOCK_RED, ModBlocks.TOY_BLOCK_YELLOW,
+                            ModBlocks.TOY_BLOCK_BLUE, ModBlocks.TOY_BLOCK_GREEN};
+                    place(level, above, toys[rng.nextInt(toys.length)].get().defaultBlockState());
+                } else if (r < 0.0135f) place(level, above, ModBlocks.NIGHT_LIGHT.get().defaultBlockState());
+            }
+            case BLACKWOOD -> {
+                if (r < 0.034f && d < 0.9) deadTree(level, above, rng);
+                else if (r < 0.15f) place(level, above, ModBlocks.WITHERED_GRASS.get().defaultBlockState());
+            }
+            case WAITING_ROOMS -> furniture(level, above, r);
+            case THE_MAW -> {
+                if (r < 0.012f) {
+                    int h = 1 + rng.nextInt(3);
+                    for (int i = 0; i < h && level.getBlockState(above.above(i)).isAir(); i++) level.setBlock(above.above(i), ModBlocks.ENAMEL.get().defaultBlockState(), FLAGS);
+                }
+            }
+            case SIGNAL_LOST -> {
+                if (r < 0.006f) {
+                    int h = 2 + rng.nextInt(4);
+                    for (int i = 0; i < h && level.getBlockState(above.above(i)).isAir(); i++) level.setBlock(above.above(i), ModBlocks.STATIC_BLOCK.get().defaultBlockState(), FLAGS);
+                } else if (r < 0.009f) place(level, above.above(rng.nextInt(4)), ModBlocks.TEST_CARD.get().defaultBlockState());
+            }
             default -> {
             }
+        }
+    }
+
+    /** Things that hang off the bottom of an island: kelp in the reef, veins under the Maw, chimes under the ice. */
+    private static void underside(WorldGenLevel level, IslandField field, Island is, int x, int z, RandomSource rng) {
+        BlockState hang;
+        float chance;
+        int max;
+        switch (is.kind) {
+            case SKYREEF -> { hang = ModBlocks.SKY_KELP.get().defaultBlockState(); chance = 0.03f; max = 9; }
+            case THE_MAW -> { hang = ModBlocks.VEIN_VINES.get().defaultBlockState(); chance = 0.025f; max = 7; }
+            case FROSTLIGHT_TUNDRA -> { hang = ModBlocks.ICE_CHIME.get().defaultBlockState(); chance = 0.012f; max = 2; }
+            case LUCID_GEODES -> {
+                hang = ModBlocks.LUCID_CRYSTAL_CLUSTER.get().defaultBlockState().setValue(AmethystClusterBlock.FACING, Direction.DOWN);
+                chance = 0.02f;
+                max = 1;
+            }
+            default -> { return; }
+        }
+        if (rng.nextFloat() >= chance || is.shape == Shape.INVERTED) return;
+        int bot;
+        if (is.shape == Shape.GEODE) {
+            double dx = x + 0.5 - is.cx;
+            double dz = z + 0.5 - is.cz;
+            double h2 = is.radius * (double) is.radius - dx * dx - dz * dz;
+            if (h2 <= 0) return;
+            bot = (int) Math.floor(IslandField.geodeCenterY(is) - Math.sqrt(h2));
+        } else {
+            bot = field.plateauBottom(is, x, z);
+            if (bot == Integer.MAX_VALUE) return;
+        }
+        BlockPos p = new BlockPos(x, bot - 1, z);
+        if (!level.getBlockState(p).isAir() || level.getBlockState(p.above()).isAir()) return;
+        int n = 1 + rng.nextInt(max);
+        for (int i = 0; i < n && level.getBlockState(p.below(i)).isAir(); i++) level.setBlock(p.below(i), hang, FLAGS);
+    }
+
+    /** Frostlight pines: a narrow cone of frosted leaves, snow on every ledge, ice chimes under the lowest boughs. */
+    private static void pine(WorldGenLevel level, BlockPos base, RandomSource rng) {
+        int h = 6 + rng.nextInt(4);
+        for (int i = 0; i < h + 2; i++) if (!level.getBlockState(base.above(i)).isAir()) return;
+        BlockState log = ModBlocks.DREAMWOOD_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y);
+        for (int i = 0; i < h; i++) level.setBlock(base.above(i), log, FLAGS);
+        for (int i = 2; i <= h + 1; i++) {
+            double r = (h + 1 - i) * 0.42 + (i % 2 == 0 ? 0.6 : 0.1);
+            int ri = (int) Math.ceil(r);
+            for (int dx = -ri; dx <= ri; dx++)
+                for (int dz = -ri; dz <= ri; dz++) {
+                    if (dx * dx + dz * dz > r * r + 0.3) continue;
+                    BlockPos p = base.offset(dx, i, dz);
+                    place(level, p, leaves());
+                }
+        }
+        for (int dx = -3; dx <= 3; dx++)
+            for (int dz = -3; dz <= 3; dz++)
+                for (int i = h + 2; i >= 2; i--) {
+                    BlockPos p = base.offset(dx, i, dz);
+                    if (level.getBlockState(p).is(ModBlocks.DREAMWOOD_LEAVES.get())) {
+                        place(level, p.above(), Blocks.SNOW.defaultBlockState());
+                        break;
+                    }
+                }
+        for (int k = 0; k < 2; k++) {
+            BlockPos under = base.offset(rng.nextInt(3) - 1, 1, rng.nextInt(3) - 1);
+            if (level.getBlockState(under).isAir() && level.getBlockState(under.above()).is(ModBlocks.DREAMWOOD_LEAVES.get())) {
+                level.setBlock(under, ModBlocks.ICE_CHIME.get().defaultBlockState(), FLAGS);
+            }
+        }
+    }
+
+    /** Blackwood trees: tall, dead, black, a few crooked branches near the top. */
+    private static void deadTree(WorldGenLevel level, BlockPos base, RandomSource rng) {
+        int h = 9 + rng.nextInt(10);
+        for (int i = 0; i < h; i++) if (!level.getBlockState(base.above(i)).isAir()) return;
+        BlockState log = ModBlocks.BLACKWOOD_LOG.get().defaultBlockState();
+        for (int i = 0; i < h; i++) level.setBlock(base.above(i), log.setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y), FLAGS);
+        int branches = 1 + rng.nextInt(3);
+        for (int b = 0; b < branches; b++) {
+            Direction d = Direction.Plane.HORIZONTAL.getRandomDirection(rng);
+            BlockPos p = base.above(h - 2 - rng.nextInt(Math.max(1, h / 3)));
+            int len = 2 + rng.nextInt(3);
+            for (int k = 1; k <= len; k++) {
+                p = p.relative(d);
+                if (k == len - 1 || rng.nextInt(3) == 0) p = p.above();
+                if (!level.getBlockState(p).isAir()) break;
+                level.setBlock(p, log.setValue(RotatedPillarBlock.AXIS, d.getAxis()), FLAGS);
+            }
+        }
+    }
+
+    /** Waiting Rooms: chairs along the walls, now and then a dead plant or a water cooler. */
+    private static void furniture(WorldGenLevel level, BlockPos above, float r) {
+        if (r > 0.3f || !level.getBlockState(above).isAir() || !level.getBlockState(above.above()).isAir()) return;
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            BlockPos wall = above.relative(d);
+            if (!level.getBlockState(wall).is(ModBlocks.YELLOWED_WALLPAPER.get()) || !level.getBlockState(wall.above()).is(ModBlocks.YELLOWED_WALLPAPER.get())) continue;
+            if (r < 0.012f) place(level, above, Blocks.POTTED_DEAD_BUSH.defaultBlockState());
+            else if (r < 0.02f) {
+                place(level, above, Blocks.WHITE_CONCRETE.defaultBlockState());
+                place(level, above.above(), Blocks.LIGHT_BLUE_STAINED_GLASS.defaultBlockState());
+            } else {
+                place(level, above, Blocks.BIRCH_STAIRS.defaultBlockState().setValue(net.minecraft.world.level.block.StairBlock.FACING, d));
+            }
+            return;
         }
     }
 
@@ -228,8 +374,24 @@ final class IslandDecorator {
         int top = field.topOf(is, ax, az);
         if (top == Integer.MIN_VALUE) return;
         BlockPos ground = new BlockPos(ax, top, az);
+        RandomSource lr = new XoroshiroRandomSource(IslandField.mix(h ^ 0x5EA5L));
+        Direction facing = Direction.from2DDataValue((int) (IslandField.mix(h ^ 0xFACEL) & 3));
         if (is.kind == Kind.PILLOW_FIELDS && roll < 0.12) sleepBellGrove(level, field, is, ground);
         else if (is.kind == Kind.SANDGLASS_DUNES && roll < 0.7) hourglass(level, ground.above());
+        else if (is.kind == Kind.FROSTLIGHT_TUNDRA && roll < 0.38 && is.shape == Shape.PLATEAU) DreamStructures.snowGlobe(level, ground);
+        else if (is.kind == Kind.SKYREEF && roll < 0.34 && is.shape != Shape.INVERTED) DreamStructures.skyWreck(level, ground, lr);
+        else if (is.kind == Kind.LUCID_GEODES && roll < 0.42 && is.shape != Shape.GEODE) DreamStructures.crystalChoir(level, field, is, ground);
+        else if (is.kind == Kind.THE_NURSERY && roll < 0.3 && is.shape == Shape.PLATEAU) DreamStructures.teddy(level, ground, facing);
+        else if (is.kind == Kind.THE_NURSERY && roll < 0.55 && is.shape == Shape.PLATEAU) DreamStructures.blockTower(level, ground, lr);
+        else if (is.kind == Kind.THE_NURSERY && roll < 0.75) DreamStructures.crayons(level, ground, lr);
+        else if (is.kind == Kind.BLACKWOOD && roll < 0.36 && is.shape == Shape.PLATEAU) DreamStructures.cabin(level, ground, facing);
+        else if (is.kind == Kind.WAITING_ROOMS && roll < 0.55) {
+            // Snap to the middle of a room.
+            int rx = is.cx + Math.round((ax - is.cx) / 11f) * 11;
+            int rz = is.cz + Math.round((az - is.cz) / 11f) * 11;
+            if (inChunk(rx, rz, x0, z0) && field.plateauTop(is, rx, rz) == is.cy) DreamStructures.reception(level, new BlockPos(rx, is.cy, rz), facing);
+        } else if (is.kind == Kind.THE_MAW && roll < 0.45 && is.shape == Shape.PLATEAU) DreamStructures.ribcage(level, ground, (h & 4) == 0, lr);
+        else if (is.kind == Kind.SIGNAL_LOST && roll < 0.42 && is.shape != Shape.INVERTED) DreamStructures.television(level, ground, facing);
         else if (roll > 0.982 && is.shape != Shape.SPIRES) giantClock(level, ground.above(9), IslandField.mix(h ^ 0xC10CL));
         else if (roll > 0.94 && is.shape == Shape.PLATEAU && is.kind != Kind.UPSIDE_DOWN_TOWN) impossibleStairs(level, ground);
     }

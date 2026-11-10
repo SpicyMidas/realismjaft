@@ -80,6 +80,7 @@ public final class DreamEffectsClient {
                 farewellTotal = Math.max(1, payload.durationTicks());
             }
             default -> {
+                if (com.seba.reverie.client.dreamland.BiomeMechanicsClient.onEvent(payload.event(), payload.durationTicks())) return;
                 DreamWeather.Kind kind = DreamWeather.Kind.byId(payload.event());
                 if (kind != null) startWeather(mc, kind, payload.durationTicks());
             }

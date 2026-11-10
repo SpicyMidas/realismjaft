@@ -1,0 +1,31 @@
+newworld biome_tour flat 4242
+wait 40
+cmd reverie dream Dev
+wait 200
+hidegui on
+cmd gamemode spectator
+tpshape FROSTLIGHT_TUNDRA 34 16
+wait 180
+screenshot bt_frost
+tpshape SKYREEF 30 12
+wait 180
+screenshot bt_reef
+tpshape LUCID_GEODES 34 18
+wait 180
+screenshot bt_geode
+tpshape THE_NURSERY 30 12
+wait 180
+screenshot bt_nursery
+tpshape BLACKWOOD 26 10
+wait 180
+screenshot bt_blackwood
+tpshape WAITING_ROOMS 24 8
+wait 180
+screenshot bt_waiting
+tpshape THE_MAW 26 10
+wait 180
+screenshot bt_maw
+tpshape SIGNAL_LOST 28 12
+wait 180
+screenshot bt_signal
+stop

@@ -1,0 +1,43 @@
+{
+  "carvers": {},
+  "downfall": 0.0,
+  "effects": {
+    "additions_sound": {
+      "sound": {
+        "sound_id": "minecraft:block.amethyst_block.resonate"
+      },
+      "tick_chance": 0.002
+    },
+    "ambient_sound": "reverie:ambient.glass_hum",
+    "fog_color": 6045310,
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "reverie:ambient.far_bell",
+      "tick_delay": 6000
+    },
+    "particle": {
+      "options": {
+        "type": "minecraft:witch"
+      },
+      "probability": 0.0025
+    },
+    "sky_color": 3022410,
+    "water_color": 9071320,
+    "water_fog_color": 6045310
+  },
+  "features": [],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.6
+}

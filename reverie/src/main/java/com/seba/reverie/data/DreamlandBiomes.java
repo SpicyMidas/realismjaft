@@ -43,14 +43,35 @@ final class DreamlandBiomes {
                 com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.AMETHYST_BLOCK_CHIME, 0.0006);
         reg(ctx, DreamlandBiomeKeys.VOID_BETWEEN, DreamlandBiomeKeys.FOG_VOID, 0x1C1A32, 0x403E76, ParticleTypes.END_ROD, 0.0004f,
                 com.seba.reverie.registry.ModSounds.VOID_WIND, com.seba.reverie.registry.ModSounds.FAR_BELL, 0.0005);
+
+        // Lucid: clear, cold, bright skies.
+        reg(ctx, DreamlandBiomeKeys.FROSTLIGHT_TUNDRA, DreamlandBiomeKeys.FOG_FROST, 0x15304F, 0x3A6E9A, ParticleTypes.SNOWFLAKE, 0.004f,
+                com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.AMETHYST_BLOCK_CHIME, 0.0022);
+        reg(ctx, DreamlandBiomeKeys.SKYREEF, DreamlandBiomeKeys.FOG_REEF, 0x1D5A78, 0x3FB6C8, ParticleTypes.GLOW, 0.004f,
+                SoundEvents.AMBIENT_UNDERWATER_LOOP, SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS, 0.004);
+        reg(ctx, DreamlandBiomeKeys.LUCID_GEODES, DreamlandBiomeKeys.FOG_GEODE, 0x2E1E4A, 0x8A6AD8, ParticleTypes.WITCH, 0.0025f,
+                com.seba.reverie.registry.ModSounds.GLASS_HUM, SoundEvents.AMETHYST_BLOCK_RESONATE, 0.002);
+        reg(ctx, DreamlandBiomeKeys.THE_NURSERY, DreamlandBiomeKeys.FOG_NURSERY, 0x1C2246, 0x6A7ACA, com.seba.reverie.registry.ModParticles.DREAM_Z.get(),
+                0.0012f, com.seba.reverie.registry.ModSounds.DREAM_HUM, SoundEvents.NOTE_BLOCK_CHIME.value(), 0.0012);
+        // Nightmares: close, dark, wrong.
+        reg(ctx, DreamlandBiomeKeys.BLACKWOOD, DreamlandBiomeKeys.FOG_BLACKWOOD, 0x160E10, 0x3A2A2A, ParticleTypes.ASH, 0.004f,
+                com.seba.reverie.registry.ModSounds.VOID_WIND, SoundEvents.AMBIENT_CAVE, 0.0012);
+        reg(ctx, DreamlandBiomeKeys.WAITING_ROOMS, DreamlandBiomeKeys.FOG_WAITING, 0x4A4430, 0x8A8A60, ParticleTypes.WHITE_ASH, 0.0025f,
+                SoundEvents.BEACON_AMBIENT, SoundEvents.BOOK_PAGE_TURN, 0.0009);
+        reg(ctx, DreamlandBiomeKeys.THE_MAW, DreamlandBiomeKeys.FOG_MAW, 0x24060A, 0x6A1420, ParticleTypes.CRIMSON_SPORE, 0.006f,
+                SoundEvents.AMBIENT_CRIMSON_FOREST_LOOP, SoundEvents.SLIME_SQUISH_SMALL, 0.002);
+        reg(ctx, DreamlandBiomeKeys.SIGNAL_LOST, DreamlandBiomeKeys.FOG_SIGNAL, 0x1A1A1E, 0x5A5A66, ParticleTypes.ELECTRIC_SPARK, 0.002f,
+                com.seba.reverie.registry.ModSounds.VOID_WIND, SoundEvents.NOTE_BLOCK_BIT, 0.003);
     }
 
     /** Sleepwalking Sheep drift over the soft biomes. */
     private static net.minecraft.world.level.biome.MobSpawnSettings spawns(ResourceKey<Biome> key) {
         var b = new net.minecraft.world.level.biome.MobSpawnSettings.Builder();
-        if (key == DreamlandBiomeKeys.PILLOW_FIELDS || key == DreamlandBiomeKeys.EYE_MEADOW || key == DreamlandBiomeKeys.CLOUDREACH) {
+        if (key == DreamlandBiomeKeys.PILLOW_FIELDS || key == DreamlandBiomeKeys.EYE_MEADOW || key == DreamlandBiomeKeys.CLOUDREACH
+                || key == DreamlandBiomeKeys.THE_NURSERY || key == DreamlandBiomeKeys.FROSTLIGHT_TUNDRA) {
             b.addSpawn(net.minecraft.world.entity.MobCategory.CREATURE, new net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData(
-                    com.seba.reverie.registry.ModEntities.SLEEPWALKING_SHEEP.get(), key == DreamlandBiomeKeys.PILLOW_FIELDS ? 12 : 6, 1, 3));
+                    com.seba.reverie.registry.ModEntities.SLEEPWALKING_SHEEP.get(),
+                    key == DreamlandBiomeKeys.PILLOW_FIELDS || key == DreamlandBiomeKeys.THE_NURSERY ? 12 : 6, 1, 3));
         }
         return b.build();
     }
@@ -81,7 +102,6 @@ final class DreamlandBiomes {
     }
 
     static BiomeSource biomeSource(HolderGetter<Biome> biomes) {
-        var b = DreamlandBiomeKeys.ALL.stream().map(biomes::getOrThrow).toList();
-        return new DreamBiomeSource(b.get(0), b.get(1), b.get(2), b.get(3), b.get(4), b.get(5), b.get(6), b.get(7));
+        return new DreamBiomeSource(biomes);
     }
 }

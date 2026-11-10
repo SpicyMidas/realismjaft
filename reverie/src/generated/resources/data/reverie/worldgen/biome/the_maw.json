@@ -1,0 +1,43 @@
+{
+  "carvers": {},
+  "downfall": 0.0,
+  "effects": {
+    "additions_sound": {
+      "sound": {
+        "sound_id": "minecraft:entity.slime.squish_small"
+      },
+      "tick_chance": 0.002
+    },
+    "ambient_sound": "minecraft:ambient.crimson_forest.loop",
+    "fog_color": 4853270,
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "reverie:ambient.far_bell",
+      "tick_delay": 6000
+    },
+    "particle": {
+      "options": {
+        "type": "minecraft:crimson_spore"
+      },
+      "probability": 0.006
+    },
+    "sky_color": 2360842,
+    "water_color": 6951968,
+    "water_fog_color": 4853270
+  },
+  "features": [],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.6
+}

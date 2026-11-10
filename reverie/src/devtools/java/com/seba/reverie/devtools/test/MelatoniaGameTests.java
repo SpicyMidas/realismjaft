@@ -139,7 +139,7 @@ public final class MelatoniaGameTests {
         player.removeAllEffects();
         ItemStack laced = Lacing.lace(new ItemStack(Items.BREAD), 2, null);
         NeoForge.EVENT_BUS.post(new LivingEntityUseItemEvent.Finish(player, laced, 0, ItemStack.EMPTY));
-        h.assertTrue(player.hasEffect(ModEffects.DIZZINESS) && player.hasEffect(ModEffects.SLEEPYNESS), "strong lacing did not apply effects");
+        h.assertTrue(player.hasEffect(ModEffects.DIZZINESS) && player.hasEffect(ModEffects.EVIL_SLEEPYNESS), "strong lacing did not apply effects");
         player.removeEffectsCuredBy(EffectCures.MILK);
         h.assertFalse(player.hasEffect(ModEffects.DIZZINESS), "milk did not clear Dizziness");
         // The extract's own food effect.
@@ -253,7 +253,7 @@ public final class MelatoniaGameTests {
         NeoForge.EVENT_BUS.post(new LivingEntityUseItemEvent.Finish(player, before, 0, top));
         var c = com.seba.reverie.content.melatonia.LacedStacks.concrete(top);
         h.assertTrue(c.get(0).count() == 2 && c.get(0).level() == 2, "eating did not pop the top: " + c);
-        h.assertTrue(player.getEffect(ModEffects.SLEEPYNESS) != null, "the Concentrated one was not the one eaten");
+        h.assertTrue(player.getEffect(net.minecraft.world.effect.MobEffects.WEAKNESS) != null, "the Concentrated one was not the one eaten");
         // A plain stack once the laced ones are gone has no component at all (it stacks with plain bread again).
         ItemStack plain = stack.split(5);
         plain.shrink(2);

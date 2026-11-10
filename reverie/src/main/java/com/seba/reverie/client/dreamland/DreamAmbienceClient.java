@@ -49,6 +49,16 @@ public final class DreamAmbienceClient {
         else if (biome.is(DreamlandBiomeKeys.CLOUDREACH)) emit(mc, rng, p, ModParticles.DREAM_PETAL.get(), 0.15f, wrongRain ? 0.02f : -0.02f);
         else emit(mc, rng, p, ModParticles.DREAM_PAGE.get(), 0.03f, -0.02f);
 
+        // The new biomes by region, so it snows up toward the aurora even out over the void.
+        if (BiomeMechanicsClient.weight(com.seba.reverie.dreamland.IslandField.Kind.FROSTLIGHT_TUNDRA) > 0.5f) {
+            emit(mc, rng, p, ModParticles.DREAM_SNOW.get(), 1.4f, 0.022f);
+            emit(mc, rng, p, ModParticles.DREAM_SNOW.get(), 0.5f, -0.03f);
+            if (rng.nextInt(300) == 0) DreamSky.shootingStar(rng, rng.nextBoolean() ? mc.player.getYRot() : Float.NaN);
+        } else if (BiomeMechanicsClient.weight(com.seba.reverie.dreamland.IslandField.Kind.SKYREEF) > 0.5f) {
+            emit(mc, rng, p, ModParticles.DREAM_BUBBLE.get(), 0.9f, 0.05f);
+        } else if (BiomeMechanicsClient.weight(com.seba.reverie.dreamland.IslandField.Kind.THE_NURSERY) > 0.5f) {
+            emit(mc, rng, p, ModParticles.DREAM_Z.get(), 0.06f, 0.02f);
+        }
         // Cloudreach: the sky is closest and shooting stars are frequent.
         if (biome.is(DreamlandBiomeKeys.CLOUDREACH) && rng.nextInt(140) == 0) DreamSky.shootingStar(rng, rng.nextBoolean() ? mc.player.getYRot() : Float.NaN);
         DreamSky.closeness = Mth.lerp(0.02f, DreamSky.closeness, biome.is(DreamlandBiomeKeys.CLOUDREACH) ? 1.35f : 1f);

@@ -46,6 +46,20 @@ final class ModelGen {
                 getBuilder(block).parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile(modLoc("block/" + block)));
             }
             withExistingParent("lucid_crystal_cluster", "item/generated").texture("layer0", modLoc("block/lucid_crystal_cluster"));
+            // The new biomes: plants are flat items, everything else shows its block.
+            for (var b : ModBlocks.biomeBlocks()) {
+                String name = b.getId().getPath();
+                if (BlockStates.PLANTS.contains(name)) {
+                    withExistingParent(name, "item/generated").texture("layer0", modLoc("block/" + name));
+                    continue;
+                }
+                String model = switch (name) {
+                    case "watching_window" -> "watching_window_lit";
+                    case "flicker_light" -> "flicker_light_on";
+                    default -> name;
+                };
+                getBuilder(name).parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile(modLoc("block/" + model)));
+            }
             withExistingParent("eyebloom", "item/generated").texture("layer0", modLoc("block/eyebloom_eye"));
             com.seba.reverie.compat.create.CreateDataGen.itemModels(this);
             com.seba.reverie.compat.fd.FdDataGen.itemModels(this);
@@ -53,6 +67,8 @@ final class ModelGen {
     }
 
     static final class BlockStates extends BlockStateProvider {
+        static final java.util.Set<String> PLANTS = java.util.Set.of("frostbloom", "ice_chime", "sky_coral", "sky_kelp", "withered_grass", "vein_vines");
+
         BlockStates(PackOutput output, ExistingFileHelper files) {
             super(output, Reverie.MOD_ID, files);
         }
@@ -91,6 +107,37 @@ final class ModelGen {
                 int y = f.getAxis().isHorizontal() ? ((int) f.toYRot() + 180) % 360 : 0;
                 return net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder().modelFile(cluster).rotationX(x).rotationY(y).build();
             }, net.minecraft.world.level.block.AmethystClusterBlock.WATERLOGGED);
+            biomeBlocks();
+        }
+
+        private void biomeBlocks() {
+            for (var b : ModBlocks.biomeBlocks()) {
+                String name = b.getId().getPath();
+                if (PLANTS.contains(name)) {
+                    simpleBlock(b.get(), models().cross(name, modLoc("block/" + name)).renderType("cutout"));
+                    continue;
+                }
+                switch (name) {
+                    case "starlight_ice" -> simpleBlock(b.get(), models().cubeAll(name, modLoc("block/" + name)).renderType("translucent"));
+                    case "bubble_vent" -> simpleBlock(b.get(), models().cubeBottomTop(name, modLoc("block/bubble_vent_side"),
+                            modLoc("block/reef_stone"), modLoc("block/bubble_vent_top")));
+                    case "blackwood_log" -> logBlock(ModBlocks.BLACKWOOD_LOG.get());
+                    case "resonant_crystal" -> {
+                        var dim = models().cubeAll(name, modLoc("block/resonant_crystal"));
+                        var lit = models().cubeAll("resonant_crystal_lit", modLoc("block/resonant_crystal_lit"));
+                        getVariantBuilder(b.get()).forAllStates(st -> net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder()
+                                .modelFile(st.getValue(com.seba.reverie.dreamland.block.ResonantCrystalBlock.RESONANCE) >= 2 ? lit : dim).build());
+                    }
+                    case "watching_window", "flicker_light" -> {
+                        boolean window = name.equals("watching_window");
+                        var on = models().cubeAll(window ? "watching_window_lit" : "flicker_light_on", modLoc("block/" + (window ? "watching_window_lit" : "flicker_light_on")));
+                        var off = models().cubeAll(window ? "watching_window" : "flicker_light_off", modLoc("block/" + (window ? "watching_window" : "flicker_light_off")));
+                        getVariantBuilder(b.get()).forAllStates(st -> net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder()
+                                .modelFile(st.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT) ? on : off).build());
+                    }
+                    default -> simpleBlock(b.get());
+                }
+            }
         }
     }
 }

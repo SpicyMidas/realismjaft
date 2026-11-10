@@ -18,11 +18,14 @@ public final class DreamColors {
     private static final int[] DUSK = {0x5A6068, 0x666250, 0x545A68};
 
     public static final ColorResolver GRASS = DreamColors::grass;
-    /** Leaves drift through their own palette with position, like the grass. */
+    private static final int[] FROST_LEAVES = {0xB8CCD8, 0xC8D8E4, 0xA8BCCC, 0xD4E0EA};
+
+    /** Leaves drift through their own palette with position; in Frostlight they are rimed with frost. */
     public static final ColorResolver LEAVES = (biome, x, z) -> {
-        double t = (Math.sin(x * 0.05 + z * 0.021) + Math.cos(z * 0.043) + 2) / 4 * (LEAVES_PALETTE.length - 1);
-        int i = Mth.clamp((int) Math.floor(t), 0, LEAVES_PALETTE.length - 2);
-        return lerp(LEAVES_PALETTE[i], LEAVES_PALETTE[i + 1], (float) (t - i));
+        int[] palette = biome.getFogColor() == com.seba.reverie.dreamland.DreamlandBiomeKeys.FOG_FROST ? FROST_LEAVES : LEAVES_PALETTE;
+        double t = (Math.sin(x * 0.05 + z * 0.021) + Math.cos(z * 0.043) + 2) / 4 * (palette.length - 1);
+        int i = Mth.clamp((int) Math.floor(t), 0, palette.length - 2);
+        return lerp(palette[i], palette[i + 1], (float) (t - i));
     };
 
     private DreamColors() {

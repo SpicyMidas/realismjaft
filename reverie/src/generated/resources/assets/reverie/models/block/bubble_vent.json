@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "reverie:block/reef_stone",
+    "side": "reverie:block/bubble_vent_side",
+    "top": "reverie:block/bubble_vent_top"
+  }
+}

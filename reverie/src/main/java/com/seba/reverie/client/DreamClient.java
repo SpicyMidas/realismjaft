@@ -109,7 +109,7 @@ public final class DreamClient {
         else if (fadeTicks > 0) fadeTicks--;
         if (dreaming && ticksLeft > 0) ticksLeft--;
         lidPrev = lid;
-        if (mc.player != null && !dreaming && mc.player.hasEffect(ModEffects.SLEEPYNESS) && !mc.player.isSleeping()) {
+        if (mc.player != null && !dreaming && ModEffects.sleepy(mc.player) && !mc.player.isSleeping()) {
             awakeTicks++;
             sleepyTick();
             if (awakeTicks % 600 == 300 && mc.level != null) {
@@ -127,7 +127,7 @@ public final class DreamClient {
         var fx = com.seba.reverie.client.shader.ScreenEffects.SLEEPY;
         boolean on = ReverieConfig.get(ReverieConfig.EYELID_OVERLAY);
         fx.dark = on ? dark : 0;
-        com.seba.reverie.client.shade.SleepyPhantoms.tick(on && mc.player != null && !dreaming && mc.player.hasEffect(ModEffects.SLEEPYNESS));
+        com.seba.reverie.client.shade.SleepyPhantoms.tick(on && mc.player != null && !dreaming && ModEffects.sleepy(mc.player));
     }
 
     /** Heavy, irregular blinks; sometimes the eyes stay shut a moment (and then the Shades may be there, see SleepyPhantoms). */

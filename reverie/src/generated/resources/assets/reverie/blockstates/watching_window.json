@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "reverie:block/watching_window"
+    },
+    "lit=true": {
+      "model": "reverie:block/watching_window_lit"
+    }
+  }
+}

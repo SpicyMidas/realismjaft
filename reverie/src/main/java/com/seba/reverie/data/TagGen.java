@@ -48,6 +48,18 @@ final class TagGen {
                     ModBlocks.PILLOW_CLOUD.get());
             tag(BlockTags.MINEABLE_WITH_HOE).add(ModBlocks.DREAMWOOD_LEAVES.get());
             tag(BlockTags.LEAVES).add(ModBlocks.DREAMWOOD_LEAVES.get());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.RIME_STONE.get(), ModBlocks.STARLIGHT_ICE.get(), ModBlocks.REEF_STONE.get(),
+                    ModBlocks.TIDE_CORAL.get(), ModBlocks.DUSK_CORAL.get(), ModBlocks.BUBBLE_VENT.get(), ModBlocks.GEODE_SHELL.get(),
+                    ModBlocks.LILAC_CALCITE.get(), ModBlocks.RESONANT_CRYSTAL.get(), ModBlocks.NIGHT_LIGHT.get(), ModBlocks.CEILING_TILE.get(),
+                    ModBlocks.FLICKER_LIGHT.get(), ModBlocks.ENAMEL.get(), ModBlocks.STATIC_BLOCK.get(), ModBlocks.DEAD_PIXEL.get(), ModBlocks.TEST_CARD.get());
+            tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.BLACKWOOD_LOG.get(), ModBlocks.TOY_BLOCK_RED.get(), ModBlocks.TOY_BLOCK_YELLOW.get(),
+                    ModBlocks.TOY_BLOCK_BLUE.get(), ModBlocks.TOY_BLOCK_GREEN.get(), ModBlocks.WATCHING_WINDOW.get(), ModBlocks.YELLOWED_WALLPAPER.get());
+            tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.DREAMSNOW.get(), ModBlocks.VIOLET_MOSS.get(), ModBlocks.ASHEN_SOIL.get(),
+                    ModBlocks.STUFFING.get(), ModBlocks.NURSERY_RUG.get(), ModBlocks.STALE_CARPET.get());
+            tag(BlockTags.MINEABLE_WITH_HOE).add(ModBlocks.DREAM_FLESH.get(), ModBlocks.SINEW.get());
+            tag(BlockTags.LOGS).add(ModBlocks.BLACKWOOD_LOG.get());
+            tag(BlockTags.DIRT).add(ModBlocks.ASHEN_SOIL.get(), ModBlocks.VIOLET_MOSS.get());
+            tag(BlockTags.ICE).add(ModBlocks.STARLIGHT_ICE.get());
             tag(BlockTags.LOGS).add(ModBlocks.DREAMWOOD_LOG.get());
             tag(BlockTags.PLANKS).add(ModBlocks.DREAMWOOD_PLANKS.get());
             tag(BlockTags.DIRT).add(ModBlocks.DREAM_SOIL.get(), ModBlocks.DREAM_GRASS_BLOCK.get());
@@ -70,7 +82,7 @@ final class TagGen {
             tag(ItemTags.VILLAGER_PLANTABLE_SEEDS).add(ModItems.MELATONIA_SEEDS.get());
             tag(ItemTags.SMALL_FLOWERS).add(ModItems.WILD_MELATONIA.get());
             tag(ModTags.Items.LUCID_KEEPSAKES).add(ModItems.LUCID_SHARD.get(), ModItems.DREAM_DUST.get());
-            tag(ItemTags.LOGS).add(ModBlocks.DREAMWOOD_LOG.get().asItem());
+            tag(ItemTags.LOGS).add(ModBlocks.DREAMWOOD_LOG.get().asItem(), ModBlocks.BLACKWOOD_LOG.get().asItem());
             tag(ItemTags.PLANKS).add(ModBlocks.DREAMWOOD_PLANKS.get().asItem());
             tag(ItemTags.LEAVES).add(ModBlocks.DREAMWOOD_LEAVES.get().asItem());
             tag(net.neoforged.neoforge.common.Tags.Items.FOODS).add(ModItems.MELATONIA_COOKIE.get(), ModItems.SLEEPY_STEW.get(), ModItems.DROWSY_TEA.get(),

@@ -88,6 +88,7 @@ final class LootGen {
             add(ModBlocks.DREAMWOOD_LEAVES.get(), b -> createSilkTouchOrShearsDispatchTable(b, applyExplosionCondition(b,
                     LootItem.lootTableItem(ModItems.DREAM_DUST.get())).when(net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition.randomChance(0.05f))));
             add(ModBlocks.MIRROR_WATER.get(), b -> createSilkTouchOnlyTable(b));
+            for (var b : ModBlocks.biomeBlocks()) dropSelf(b.get());
         }
 
         @Override

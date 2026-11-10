@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "resonance=0": {
+      "model": "reverie:block/resonant_crystal"
+    },
+    "resonance=1": {
+      "model": "reverie:block/resonant_crystal"
+    },
+    "resonance=2": {
+      "model": "reverie:block/resonant_crystal_lit"
+    },
+    "resonance=3": {
+      "model": "reverie:block/resonant_crystal_lit"
+    },
+    "resonance=4": {
+      "model": "reverie:block/resonant_crystal_lit"
+    },
+    "resonance=5": {
+      "model": "reverie:block/resonant_crystal_lit"
+    },
+    "resonance=6": {
+      "model": "reverie:block/resonant_crystal_lit"
+    },
+    "resonance=7": {
+      "model": "reverie:block/resonant_crystal_lit"
+    }
+  }
+}

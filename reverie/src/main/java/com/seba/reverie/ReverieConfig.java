@@ -44,6 +44,8 @@ public final class ReverieConfig {
     public static final ModConfigSpec.BooleanValue RECURRING_OBJECTS;
     public static final ModConfigSpec.BooleanValue LYING_DOORS;
     public static final ModConfigSpec.BooleanValue ENABLE_RARE_EVENTS;
+    public static final ModConfigSpec.BooleanValue FALL_LOOP;
+    public static final ModConfigSpec.BooleanValue BIOME_MECHANICS;
     public static final ModConfigSpec.BooleanValue EVENT_HUSH;
     public static final ModConfigSpec.BooleanValue EVENT_EVERYONE_TURNS;
     public static final ModConfigSpec.BooleanValue EVENT_BEHIND_YOU;
@@ -121,6 +123,11 @@ public final class ReverieConfig {
         RECURRING_OBJECTS = b.define("recurringObjects", true);
         LYING_DOORS = b.comment("Lone Doors sometimes lead to a copy of the spot you left, one block off.").define("lyingDoors", true);
         ENABLE_RARE_EVENTS = b.define("enableRareEvents", true);
+        FALL_LOOP = b.comment("Falling out of the bottom of the Dreamland brings you back above where you fell from, instead of waking you.")
+                .define("fallLoop", true);
+        BIOME_MECHANICS = b.comment("Biome rules: swimming through the Skyreef air, shrinking in The Nursery, heavy legs in Blackwood,",
+                "the queue in The Waiting Rooms, The Maw swallowing whoever stands still, Signal Lost skipping you back.")
+                .define("biomeMechanics", true);
         b.push("events");
         EVENT_HUSH = b.define("hush", true);
         EVENT_EVERYONE_TURNS = b.define("everyoneTurns", true);

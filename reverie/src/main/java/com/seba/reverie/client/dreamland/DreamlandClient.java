@@ -76,15 +76,32 @@ public final class DreamlandClient {
         event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_PAGE.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.PAGE));
         event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_RAINDROP.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.RAINDROP));
         event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_Z.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.Z));
+        event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_SNOW.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.SNOW));
+        event.registerSpriteSet(com.seba.reverie.registry.ModParticles.DREAM_BUBBLE.get(), s -> DriftParticle.provider(s, DriftParticle.Kind.BUBBLE));
     }
 
-    /** Fog Tide: the fog turns a pale glowing lavender. */
+    /** Fog Tide: the fog turns a pale glowing lavender. Being swallowed turns it red, lights out turns it black. */
     private static void fogColor(ViewportEvent.ComputeFogColor event) {
+        var mc = Minecraft.getInstance();
+        if (mc.level == null || !mc.level.dimension().equals(DreamManager.DREAMLAND)) return;
         float tide = DreamAmbienceClient.fogTide();
-        if (tide <= 0) return;
-        event.setRed(net.minecraft.util.Mth.lerp(tide, event.getRed(), 0.72f));
-        event.setGreen(net.minecraft.util.Mth.lerp(tide, event.getGreen(), 0.66f));
-        event.setBlue(net.minecraft.util.Mth.lerp(tide, event.getBlue(), 0.92f));
+        if (tide > 0) {
+            event.setRed(net.minecraft.util.Mth.lerp(tide, event.getRed(), 0.72f));
+            event.setGreen(net.minecraft.util.Mth.lerp(tide, event.getGreen(), 0.66f));
+            event.setBlue(net.minecraft.util.Mth.lerp(tide, event.getBlue(), 0.92f));
+        }
+        float dark = BiomeMechanicsClient.lightsOut > 0 ? 0.85f : 0;
+        float red = BiomeMechanicsClient.swallow > 0 ? 1f : BiomeMechanicsClient.heartbeat * 0.25f * BiomeMechanicsClient.weight(com.seba.reverie.dreamland.IslandField.Kind.THE_MAW);
+        if (dark > 0) {
+            event.setRed(event.getRed() * (1 - dark));
+            event.setGreen(event.getGreen() * (1 - dark));
+            event.setBlue(event.getBlue() * (1 - dark));
+        }
+        if (red > 0) {
+            event.setRed(net.minecraft.util.Mth.lerp(red, event.getRed(), 0.35f));
+            event.setGreen(net.minecraft.util.Mth.lerp(red, event.getGreen(), 0.02f));
+            event.setBlue(net.minecraft.util.Mth.lerp(red, event.getBlue(), 0.05f));
+        }
     }
 
     private static void effects(RegisterDimensionSpecialEffectsEvent event) {
@@ -100,6 +117,8 @@ public final class DreamlandClient {
         boolean voidBetween = biome.is(com.seba.reverie.dreamland.DreamlandBiomeKeys.VOID_BETWEEN);
         float far = event.getFarPlaneDistance() * (voidBetween ? 0.8f : 1.0f);
         far = net.minecraft.util.Mth.lerp(DreamAmbienceClient.fogTide(), far, Math.min(far, 26f));
+        far *= BiomeMechanicsClient.fogFactor(mc, event.getCamera().getPosition().y);
+        far = Math.max(far, 2.5f);
         event.setFarPlaneDistance(far);
         event.setNearPlaneDistance(Math.min(event.getNearPlaneDistance(), far * 0.15f));
         event.setCanceled(true);

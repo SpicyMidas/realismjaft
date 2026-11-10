@@ -16,12 +16,51 @@ import net.minecraft.world.level.levelgen.synth.ImprovedNoise;
  */
 public final class IslandField {
     public static final int CELL = 96;
-    public static final int REGION = 720;
+    public static final int REGION = 480;
 
-    public enum Shape { PLATEAU, SPIRES, RING, INVERTED, STAIRS, ARCHIPELAGO, GREAT_BED, SEA_OF_DOORS, CLOUD }
+    public enum Shape { PLATEAU, SPIRES, RING, INVERTED, STAIRS, ARCHIPELAGO, GREAT_BED, SEA_OF_DOORS, CLOUD, GEODE }
 
-    /** Island biomes; VOID is the open air between them. Order matters for the biome source codec. */
-    public enum Kind { PILLOW_FIELDS, HOLLOW_SPIRES, MIRROR_MARSH, SANDGLASS_DUNES, EYE_MEADOW, UPSIDE_DOWN_TOWN, CLOUDREACH, VOID }
+    /**
+     * Island biomes; VOID is the open air between them. The order is DreamlandBiomeKeys.ALL's. Nightmares live
+     * in Deep Sleep (the lowest layer), the lucid ones high up; the old dream biomes sit in between.
+     */
+    public enum Kind {
+        PILLOW_FIELDS(Mood.DREAM), HOLLOW_SPIRES(Mood.NIGHTMARE), MIRROR_MARSH(Mood.DREAM), SANDGLASS_DUNES(Mood.DREAM),
+        EYE_MEADOW(Mood.NIGHTMARE), UPSIDE_DOWN_TOWN(Mood.DREAM), CLOUDREACH(Mood.LUCID), VOID(Mood.DREAM),
+        FROSTLIGHT_TUNDRA(Mood.LUCID), SKYREEF(Mood.LUCID), LUCID_GEODES(Mood.LUCID), THE_NURSERY(Mood.LUCID),
+        BLACKWOOD(Mood.NIGHTMARE), WAITING_ROOMS(Mood.NIGHTMARE), THE_MAW(Mood.NIGHTMARE), SIGNAL_LOST(Mood.NIGHTMARE);
+
+        public final Mood mood;
+
+        Kind(Mood mood) {
+            this.mood = mood;
+        }
+
+        public boolean nightmare() {
+            return mood == Mood.NIGHTMARE;
+        }
+
+        public boolean lucid() {
+            return mood == Mood.LUCID;
+        }
+
+        public static Kind byOrdinal(int i) {
+            Kind[] all = values();
+            return i >= 0 && i < all.length ? all[i] : VOID;
+        }
+    }
+
+    public enum Mood { DREAM, LUCID, NIGHTMARE }
+
+    /** Biome mix per layer: Deep Sleep, Dreaming, Lucid (the cloud layer is always Cloudreach). Weights sum to 1. */
+    private static final Object[][] LAYER_MIX = {
+            {Kind.BLACKWOOD, 0.19, Kind.WAITING_ROOMS, 0.15, Kind.THE_MAW, 0.15, Kind.SIGNAL_LOST, 0.14,
+                    Kind.HOLLOW_SPIRES, 0.14, Kind.EYE_MEADOW, 0.12, Kind.MIRROR_MARSH, 0.11},
+            {Kind.PILLOW_FIELDS, 0.24, Kind.MIRROR_MARSH, 0.12, Kind.SANDGLASS_DUNES, 0.12, Kind.UPSIDE_DOWN_TOWN, 0.12,
+                    Kind.THE_NURSERY, 0.10, Kind.LUCID_GEODES, 0.10, Kind.EYE_MEADOW, 0.08, Kind.HOLLOW_SPIRES, 0.06, Kind.BLACKWOOD, 0.06},
+            {Kind.FROSTLIGHT_TUNDRA, 0.24, Kind.SKYREEF, 0.22, Kind.LUCID_GEODES, 0.18, Kind.THE_NURSERY, 0.12,
+                    Kind.PILLOW_FIELDS, 0.14, Kind.SANDGLASS_DUNES, 0.10},
+    };
 
     record Layer(int centerY, int jitterY, double presence, int minR, int maxR) {
     }
@@ -143,15 +182,16 @@ public final class IslandField {
 
     // ------------------------------------------------------------------ regions (biomes)
 
-    /** Large coherent biome regions: nearest jittered region centre wins. */
-    public Kind regionKind(int x, int z) {
+    /** Large coherent biome regions, one map per layer: nearest jittered region centre wins. */
+    public Kind regionKind(int x, int z, int layer) {
+        if (layer >= LAYERS.length - 1) return Kind.CLOUDREACH;
         int rx = Math.floorDiv(x, REGION);
         int rz = Math.floorDiv(z, REGION);
         double best = Double.MAX_VALUE;
         long bestHash = 0;
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
-                long h = hash(rx + dx, 991, rz + dz);
+                long h = hash(rx + dx, 991 + layer * 37L, rz + dz);
                 double px = (rx + dx) * (double) REGION + REGION * (0.15 + 0.7 * unit(h));
                 double pz = (rz + dz) * (double) REGION + REGION * (0.15 + 0.7 * unit(mix(h)));
                 double d = (px - x) * (px - x) + (pz - z) * (pz - z);
@@ -162,12 +202,28 @@ public final class IslandField {
             }
         }
         double r = unit(mix(bestHash ^ 0xB10E));
-        if (r < 0.30) return Kind.PILLOW_FIELDS;
-        if (r < 0.48) return Kind.HOLLOW_SPIRES;
-        if (r < 0.62) return Kind.MIRROR_MARSH;
-        if (r < 0.74) return Kind.SANDGLASS_DUNES;
-        if (r < 0.87) return Kind.EYE_MEADOW;
-        return Kind.UPSIDE_DOWN_TOWN;
+        Object[] mix = LAYER_MIX[Math.max(0, layer)];
+        for (int i = 0; i < mix.length; i += 2) {
+            r -= (Double) mix[i + 1];
+            if (r < 0) return (Kind) mix[i];
+        }
+        return (Kind) mix[0];
+    }
+
+    /** The layer whose islands are nearest to height {@code y}. */
+    public static int nearestLayer(int y) {
+        int best = 0;
+        for (int i = 1; i < LAYERS.length; i++) if (Math.abs(y - LAYERS[i].centerY) < Math.abs(y - LAYERS[best].centerY)) best = i;
+        return best;
+    }
+
+    /** The biome region a point belongs to, island or not: what the sky and the biome mechanics follow. */
+    public Kind regionAt(int x, int y, int z) {
+        return regionKind(x, z, nearestLayer(y));
+    }
+
+    public static int layerY(int layer) {
+        return LAYERS[layer].centerY;
     }
 
     // ------------------------------------------------------------------ islands
@@ -240,7 +296,7 @@ public final class IslandField {
         int topThick = 3 + (int) (unit(mix(h ^ 0x70)) * 7);
         double bottomFactor = 0.6 + unit(mix(h ^ 0xB0)) * 0.7;
         boolean cloudLayer = layer == LAYERS.length - 1;
-        Kind kind = cloudLayer ? Kind.CLOUDREACH : regionKind(cx, cz);
+        Kind kind = cloudLayer ? Kind.CLOUDREACH : regionKind(cx, cz, layer);
         Shape shape = cloudLayer ? Shape.CLOUD : pickShape(kind, unit(mix(h ^ 0x5A)), radius);
         if (shape == Shape.GREAT_BED) radius = Math.max(radius, 26);
         if (shape == Shape.SEA_OF_DOORS) {
@@ -248,6 +304,10 @@ public final class IslandField {
             topThick = 3;
         }
         if (shape == Shape.SPIRES) radius = Math.max(radius, 16);
+        if (shape == Shape.GEODE) {
+            radius = Mth.clamp(radius, 15, 28);
+            topThick = 3;
+        }
         if (kind == Kind.UPSIDE_DOWN_TOWN && shape == Shape.PLATEAU) {
             // A broad, shallow underside: the "ceiling" the town hangs from.
             radius = Math.max(radius, 26);
@@ -274,6 +334,22 @@ public final class IslandField {
                 return r < 0.85 ? Shape.PLATEAU : Shape.INVERTED;
             case MIRROR_MARSH:
                 return r < 0.35 ? Shape.RING : r < 0.93 ? Shape.PLATEAU : Shape.ARCHIPELAGO;
+            case FROSTLIGHT_TUNDRA:
+                return r < 0.55 ? Shape.PLATEAU : r < 0.72 ? Shape.RING : r < 0.86 ? Shape.ARCHIPELAGO : Shape.SPIRES;
+            case SKYREEF:
+                return r < 0.45 ? Shape.PLATEAU : r < 0.75 ? Shape.ARCHIPELAGO : r < 0.9 ? Shape.RING : Shape.INVERTED;
+            case LUCID_GEODES:
+                return r < 0.5 ? Shape.GEODE : r < 0.78 ? Shape.SPIRES : Shape.PLATEAU;
+            case THE_NURSERY:
+                return r < 0.86 || radius < 18 ? Shape.PLATEAU : Shape.GREAT_BED;
+            case BLACKWOOD:
+                return r < 0.8 ? Shape.PLATEAU : r < 0.9 ? Shape.ARCHIPELAGO : Shape.RING;
+            case WAITING_ROOMS:
+                return Shape.PLATEAU;
+            case THE_MAW:
+                return r < 0.62 ? Shape.PLATEAU : Shape.RING;
+            case SIGNAL_LOST:
+                return r < 0.7 ? Shape.PLATEAU : r < 0.9 ? Shape.ARCHIPELAGO : Shape.INVERTED;
             default:
                 if (r < 0.46) return Shape.PLATEAU;
                 if (r < 0.56) return Shape.RING;
@@ -343,6 +419,11 @@ public final class IslandField {
         is.maxY = is.cy + 6;
         if (is.shape == Shape.INVERTED) is.maxY = is.cy + (int) Math.ceil(is.radius * is.bottomFactor) + 6;
         if (is.shape == Shape.GREAT_BED) is.maxY = is.cy + 16;
+        if (is.shape == Shape.GEODE) {
+            is.minY = geodeCenterY(is) - is.radius - 4;
+            is.maxY = geodeCenterY(is) + (int) Math.ceil(is.radius * 0.5) + 6;
+        }
+        if (is.kind == Kind.WAITING_ROOMS) is.maxY = is.cy + 8;
         for (Spire s : is.spires) {
             int r = (int) Math.ceil(s.radius()) + 3;
             is.minX = Math.min(is.minX, (int) s.x() - r);
@@ -388,7 +469,8 @@ public final class IslandField {
         if (d >= 1) return Integer.MIN_VALUE;
         double n = surface.noise(x * 0.06, is.layer * 31.0, z * 0.06);
         int top = is.cy + (int) Math.round(n * 1.4);
-        if (is.shape == Shape.SEA_OF_DOORS || is.shape == Shape.GREAT_BED) top = is.cy;
+        if (is.shape == Shape.SEA_OF_DOORS || is.shape == Shape.GREAT_BED || is.kind == Kind.WAITING_ROOMS) top = is.cy;
+        else if (is.kind == Kind.THE_NURSERY) top = is.cy + (int) Math.round(n * 0.6);
         double shoulder = 0.7 + 0.06 * edge.noise(x * 0.13, 211, z * 0.13);
         if (d > shoulder) {
             double t = (d - shoulder) / (1 - shoulder);
@@ -419,8 +501,17 @@ public final class IslandField {
 
     public boolean ringHole(Island is, int x, int z) {
         if (is.shape != Shape.RING) return false;
-        double d = normDist(is, x, z);
-        return d < 0.42 + 0.06 * edge.noise(x * 0.1, 77, z * 0.1);
+        return normDist(is, x, z) < ringHoleEdge(x, z);
+    }
+
+    /** normDist at which a ring island's hole ends. */
+    public double ringHoleEdge(int x, int z) {
+        return 0.42 + 0.06 * edge.noise(x * 0.1, 77, z * 0.1);
+    }
+
+    /** Smooth patch noise in [-1, 1] for surface variety (pools, coral, static). */
+    public double patch(int x, int z, double scale, int salt) {
+        return surface.noise(x * scale, 900 + salt, z * scale);
     }
 
     public boolean isOre(int x, int y, int z) {
@@ -455,6 +546,9 @@ public final class IslandField {
     /** Approximate top surface of one island at a column (used for heights, homes, doors). */
     public int topOf(Island is, int x, int z) {
         int best = Integer.MIN_VALUE;
+        if (is.shape == Shape.GEODE) {
+            return geodeTop(is, x, z);
+        }
         if (is.shape == Shape.INVERTED) {
             double d = normDist(is, x, z);
             if (d < 1) best = is.cy + (int) Math.round(Math.pow(1 - d, 1.35) * is.radius * is.bottomFactor * 0.8);
@@ -469,6 +563,35 @@ public final class IslandField {
             if (dx * dx + dz * dz < i.radius() * i.radius()) best = Math.max(best, i.topY());
         }
         return best;
+    }
+
+    // ------------------------------------------------------------------ geodes
+
+    /** A geode is a hollow sphere around this height, its top cracked off: a crystal bowl open to the sky. */
+    public static int geodeCenterY(Island is) {
+        return is.cy - is.radius / 3;
+    }
+
+    /** Height of the jagged rim: everything above it was broken away. */
+    public double geodeCut(Island is, int x, int z) {
+        return geodeCenterY(is) + is.radius * 0.42 + edge.noise(x * 0.17, 505 + is.layer, z * 0.17) * 3.5;
+    }
+
+    /** Where you stand at (x,z): the bowl floor inside, the rim or the outer slope outside. */
+    public int geodeTop(Island is, int x, int z) {
+        double dx = x + 0.5 - is.cx;
+        double dz = z + 0.5 - is.cz;
+        double d2 = dx * dx + dz * dz;
+        double r = is.radius;
+        if (d2 >= r * r) return Integer.MIN_VALUE;
+        int gy = geodeCenterY(is);
+        double inner = r - 3.2;
+        double cut = geodeCut(is, x, z);
+        double outerTop = Math.min(cut, gy + Math.sqrt(r * r - d2));
+        if (d2 < inner * inner && gy + Math.sqrt(inner * inner - d2) > cut) {
+            return (int) Math.floor(gy - Math.sqrt(inner * inner - d2));
+        }
+        return (int) Math.floor(outerTop);
     }
 
     /** Thread-safe, bounded LRU (striped) for per-cell island data. */

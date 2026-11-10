@@ -1,0 +1,49 @@
+newworld biome_skies flat 4242
+wait 40
+cmd reverie dream Dev
+wait 200
+hidegui on
+cmd gamemode spectator
+tpshape FROSTLIGHT_TUNDRA 6 4
+wait 160
+look 30 -42
+wait 20
+screenshot bs_frost
+tpshape SKYREEF 6 4
+wait 160
+look 0 -55
+wait 20
+screenshot bs_reef
+tpshape LUCID_GEODES 6 4
+wait 160
+look -20 -26
+wait 20
+screenshot bs_geode
+tpshape THE_NURSERY 6 3
+wait 160
+look 40 -70
+wait 20
+screenshot bs_nursery
+tpshape BLACKWOOD 6 4
+wait 160
+look 0 -20
+wait 60
+look 180 -20
+wait 2
+screenshot bs_blackwood
+tpshape WAITING_ROOMS 4 2
+wait 160
+look 30 -5
+wait 20
+screenshot bs_waiting
+tpshape THE_MAW 6 4
+wait 160
+look -160 -28
+wait 20
+screenshot bs_maw
+tpshape SIGNAL_LOST 6 4
+wait 160
+look 20 -24
+wait 20
+screenshot bs_signal
+stop

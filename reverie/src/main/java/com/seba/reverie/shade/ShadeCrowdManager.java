@@ -230,6 +230,9 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         if (c.awayTicks > 0 && (c.awayTicks -= 10) <= 0) for (ShadeEntity s : shades) if (s.mode() == ShadeEntity.AWAY) s.setMode(ShadeEntity.FACE);
         if (c.event != null && (c.eventTicks -= 10) <= 0) endEvent(level, c, shades);
 
+        var region = com.seba.reverie.dreamland.BiomeMechanics.region(p);
+        boolean creeping = region.nightmare();
+        int nearest = region == com.seba.reverie.dreamland.IslandField.Kind.BLACKWOOD ? 10 : creeping ? 16 : 24;
         for (ShadeEntity s : shades) {
             if (s.fading()) continue;
             double d = s.position().distanceTo(pos);
@@ -247,11 +250,13 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
                 s.fadeOut();
                 continue;
             }
-            if (still && c.event != Event.COUNTING && d > 27 && rng.nextInt(25) == 0 && !ShadeLook.looksAt(p, s.position().add(0, 1, 0), 0.4)) {
-                // Blinking closer while you are not looking. Never inside 24.
+            if ((still || creeping) && c.event != Event.COUNTING && d > nearest + 3 && rng.nextInt(creeping ? 12 : 25) == 0
+                    && !ShadeLook.looksAt(p, s.position().add(0, 1, 0), 0.4)) {
+                // Blinking closer while you are not looking: only while you stand still, except in the nightmares,
+                // where they keep coming while you walk (and in Blackwood they come right up to the trees beside you).
                 Vec3 toward = pos.subtract(s.position()).multiply(1, 0, 1).normalize().scale(1 + rng.nextInt(3));
                 Vec3 next = s.position().add(toward);
-                if (next.distanceTo(pos) >= 24) s.setPos(next.x, groundY(level, next, s.position().y), next.z);
+                if (next.distanceTo(pos) >= nearest) s.setPos(next.x, groundY(level, next, s.position().y), next.z);
             }
         }
 
@@ -277,10 +282,11 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         if (!farewell) maybeEvent(level, p, c, shades, elapsed, left, rng);
         // The Rush comes far more often than the rare events: every minute or so one of them runs at you.
         long time = level.getGameTime();
+        // Not in the lucid places; twice as often in a nightmare (Evil Sleepyness).
         if (!farewell && c.hushTicks <= 0 && c.rushId < 0 && c.event != Event.COUNTING && elapsed > 300 && time >= c.nextRush
-                && enabled(Event.RUSH) && rng.nextInt(40) == 0) {
+                && !region.lucid() && enabled(Event.RUSH) && rng.nextInt(40) == 0) {
             startRush(level, p, c, shades, rng);
-            c.nextRush = time + 900 + rng.nextInt(1200);
+            c.nextRush = time + (session.nightmare() ? 450 + rng.nextInt(600) : 900 + rng.nextInt(1200));
         }
         return spawned;
     }
@@ -288,6 +294,10 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
     private static int targetCount(ServerLevel level, ServerPlayer p) {
         double n = ReverieConfig.get(ReverieConfig.SHADE_COUNT);
         if (level.getBiome(p.blockPosition()).is(DreamlandBiomeKeys.HOLLOW_SPIRES)) n *= 1.6;
+        var region = com.seba.reverie.dreamland.BiomeMechanics.region(p);
+        if (region == com.seba.reverie.dreamland.IslandField.Kind.BLACKWOOD) n *= 1.8;
+        else if (region.nightmare()) n *= 1.35;
+        else if (region.lucid()) n *= 0.5;
         return (int) Math.min(n, ReverieConfig.get(ReverieConfig.MAX_SHADES_PER_DREAMER));
     }
 

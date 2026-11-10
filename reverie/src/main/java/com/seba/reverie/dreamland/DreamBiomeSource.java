@@ -6,6 +6,9 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
@@ -13,34 +16,20 @@ import net.minecraft.world.level.biome.Climate;
 /**
  * reverie:dream_islands biome source. Vanilla's multi_noise cannot be used: a non-noise generator gets a dummy
  * (all-zero) climate sampler. Instead each island has one biome from large seeded regions, and every position
- * not on an island is The Void Between.
+ * not on an island is The Void Between. The biomes are looked up in the registry, not stored: older saves that
+ * still list the first eight by name decode the same way.
  */
 public class DreamBiomeSource extends BiomeSource {
     public static final MapCodec<DreamBiomeSource> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-            Biome.CODEC.fieldOf("pillow_fields").forGetter(s -> s.biomes[0]),
-            Biome.CODEC.fieldOf("hollow_spires").forGetter(s -> s.biomes[1]),
-            Biome.CODEC.fieldOf("mirror_marsh").forGetter(s -> s.biomes[2]),
-            Biome.CODEC.fieldOf("sandglass_dunes").forGetter(s -> s.biomes[3]),
-            Biome.CODEC.fieldOf("eye_meadow").forGetter(s -> s.biomes[4]),
-            Biome.CODEC.fieldOf("upside_down_town").forGetter(s -> s.biomes[5]),
-            Biome.CODEC.fieldOf("cloudreach").forGetter(s -> s.biomes[6]),
-            Biome.CODEC.fieldOf("void_between").forGetter(s -> s.biomes[7])
+            RegistryOps.retrieveGetter(Registries.BIOME)
     ).apply(i, DreamBiomeSource::new));
 
     @SuppressWarnings("unchecked")
-    private final Holder<Biome>[] biomes = new Holder[8];
+    private final Holder<Biome>[] biomes = new Holder[IslandField.Kind.values().length];
     private volatile IslandField field;
 
-    public DreamBiomeSource(Holder<Biome> pillow, Holder<Biome> spires, Holder<Biome> marsh, Holder<Biome> dunes,
-                            Holder<Biome> eye, Holder<Biome> town, Holder<Biome> cloud, Holder<Biome> voidBetween) {
-        biomes[0] = pillow;
-        biomes[1] = spires;
-        biomes[2] = marsh;
-        biomes[3] = dunes;
-        biomes[4] = eye;
-        biomes[5] = town;
-        biomes[6] = cloud;
-        biomes[7] = voidBetween;
+    public DreamBiomeSource(HolderGetter<Biome> lookup) {
+        for (IslandField.Kind kind : IslandField.Kind.values()) biomes[kind.ordinal()] = lookup.getOrThrow(DreamlandBiomeKeys.of(kind));
     }
 
     void attach(IslandField field) {
@@ -64,8 +53,9 @@ public class DreamBiomeSource extends BiomeSource {
     @Override
     public Holder<Biome> getNoiseBiome(int qx, int qy, int qz, Climate.Sampler sampler) {
         IslandField f = field;
-        if (f == null) return biomes[7];
+        int voidIndex = IslandField.Kind.VOID.ordinal();
+        if (f == null) return biomes[voidIndex];
         IslandField.Island island = f.islandAt((qx << 2) + 2, (qy << 2) + 2, (qz << 2) + 2, 6);
-        return island == null ? biomes[7] : biomes[island.kind.ordinal()];
+        return island == null ? biomes[voidIndex] : biomes[island.kind.ordinal()];
     }
 }

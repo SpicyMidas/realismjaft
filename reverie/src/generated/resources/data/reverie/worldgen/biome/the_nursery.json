@@ -1,0 +1,50 @@
+{
+  "carvers": {},
+  "downfall": 0.0,
+  "effects": {
+    "additions_sound": {
+      "sound": {
+        "sound_id": "minecraft:block.note_block.chime"
+      },
+      "tick_chance": 0.0012
+    },
+    "ambient_sound": "reverie:ambient.dream_hum",
+    "fog_color": 3817318,
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "reverie:ambient.far_bell",
+      "tick_delay": 6000
+    },
+    "particle": {
+      "options": {
+        "type": "reverie:dream_z"
+      },
+      "probability": 0.0012
+    },
+    "sky_color": 1843782,
+    "water_color": 6978250,
+    "water_fog_color": 3817318
+  },
+  "features": [],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "reverie:sleepwalking_sheep",
+        "maxCount": 3,
+        "minCount": 1,
+        "weight": 12
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.6
+}

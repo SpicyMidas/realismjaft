@@ -15,6 +15,22 @@
     "reverie:lucid_crystal_cluster",
     "reverie:mirror_water",
     "reverie:sleep_bell",
-    "reverie:melted_clock"
+    "reverie:melted_clock",
+    "reverie:rime_stone",
+    "reverie:starlight_ice",
+    "reverie:reef_stone",
+    "reverie:tide_coral",
+    "reverie:dusk_coral",
+    "reverie:bubble_vent",
+    "reverie:geode_shell",
+    "reverie:lilac_calcite",
+    "reverie:resonant_crystal",
+    "reverie:night_light",
+    "reverie:ceiling_tile",
+    "reverie:flicker_light",
+    "reverie:enamel",
+    "reverie:static_block",
+    "reverie:dead_pixel",
+    "reverie:test_card"
   ]
 }
