@@ -377,10 +377,29 @@ def sky_lantern():
     write("models/item/sky_lantern_lifting.json", {"parent": "minecraft:item/generated", "textures": {"layer0": "reverie:item/empty"}})
 
 
+def lantern_stand():
+    """The Lantern Stand: a bamboo post on a little foot with a lit Sky Lantern on top (and without, once taken)."""
+    sides = ("north", "south", "east", "west")
+    post = [
+        box([6, 0, 6], [10, 1, 10], "sheet", uv=dict({f: [0, 10, 4, 11] for f in sides}, up=[0, 10, 4, 11], down=[0, 10, 4, 11]), name="foot"),
+        box([7.5, 1, 7.5], [8.5, 10, 8.5], "sheet", uv={f: [0, 11, 1, 16] for f in sides + ("up", "down")}, name="post"),
+    ]
+    lantern = [
+        box([5, 10, 5], [11, 11, 11], "sheet", uv=dict({f: [0, 10, 6, 11] for f in sides}, up=[8, 6, 16, 14], down=[8, 6, 16, 14]), name="frame"),
+        box([4.5, 11, 4.5], [11.5, 15.5, 11.5], "sheet", uv=dict({f: [0, 2, 8, 10] for f in sides}, up=[8, 0, 14, 6], down=[8, 6, 16, 14]),
+            emissive=True, name="paper"),
+        box([5.5, 15.5, 5.5], [10.5, 16, 10.5], "sheet", uv=dict({f: [8, 0, 14, 1] for f in sides}, up=[8, 0, 14, 6]), emissive=True, name="cap"),
+    ]
+    tex = {"sheet": "reverie:item/sky_lantern_sheet", "particle": "reverie:item/sky_lantern_sheet"}
+    write("models/block/lantern_stand.json", model(tex, post + lantern, render_type="minecraft:cutout"))
+    write("models/block/lantern_stand_empty.json", model(tex, post, render_type="minecraft:cutout"))
+
+
 if __name__ == "__main__":
     melatonia_cake()
     paper_glider()
     sky_lantern()
+    lantern_stand()
     dream_decor()
     gearshift()
     print("models written")

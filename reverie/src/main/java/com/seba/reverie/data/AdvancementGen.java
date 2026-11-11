@@ -58,6 +58,11 @@ final class AdvancementGen {
                 .display(ModItems.LUCID_SHARD.get(), title("souvenir"), desc("souvenir"), null, AdvancementType.GOAL, true, true, false)
                 .addCriterion("kept_something", CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance()))
                 .save(saver, Reverie.id("souvenir").toString());
+        Advancement.Builder.advancement().parent(sheep)
+                .display(ModItems.CONCENTRATED_MELATONIA_EXTRACT.get(), title("inception"), desc("inception"), null,
+                        AdvancementType.CHALLENGE, true, true, true)
+                .addCriterion("dreamed_in_a_dream", CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance()))
+                .save(saver, Reverie.id("inception").toString());
     }
 
     /** Gear Head, as raw JSON with a Create mod_loaded condition (its blocks only exist with Create). */

@@ -166,6 +166,12 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> TEST_CARD = BLOCKS.register("test_card",
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(1f).sound(SoundType.GLASS).lightLevel(s -> 4)));
 
+    /** By your first arrival in the dream: a post with your first Sky Lantern. */
+    public static final DeferredBlock<com.seba.reverie.dreamland.block.LanternStandBlock> LANTERN_STAND = BLOCKS.register("lantern_stand",
+            () -> new com.seba.reverie.dreamland.block.LanternStandBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE)
+                    .strength(0.8f).sound(SoundType.BAMBOO).noOcclusion()
+                    .lightLevel(s -> s.getValue(com.seba.reverie.dreamland.block.LanternStandBlock.LANTERN) ? 13 : 0)));
+
     private static BlockBehaviour.Properties plant(MapColor color) {
         return BlockBehaviour.Properties.of().mapColor(color).noCollission().instabreak().sound(SoundType.GRASS)
                 .pushReaction(PushReaction.DESTROY);

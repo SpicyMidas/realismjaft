@@ -49,6 +49,7 @@ final class ModelGen {
                 getBuilder(block).parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile(modLoc("block/" + block)));
             }
             withExistingParent("lucid_crystal_cluster", "item/generated").texture("layer0", modLoc("block/lucid_crystal_cluster"));
+            getBuilder("lantern_stand").parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile(modLoc("block/lantern_stand")));
             // The new biomes: plants are flat items, everything else shows its block.
             for (var b : ModBlocks.biomeBlocks()) {
                 String name = b.getId().getPath();
@@ -111,6 +112,10 @@ final class ModelGen {
                 return net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder().modelFile(cluster).rotationX(x).rotationY(y).build();
             }, net.minecraft.world.level.block.AmethystClusterBlock.WATERLOGGED);
             biomeBlocks();
+            var withLantern = models().getExistingFile(modLoc("block/lantern_stand"));
+            var empty = models().getExistingFile(modLoc("block/lantern_stand_empty"));
+            getVariantBuilder(ModBlocks.LANTERN_STAND.get()).forAllStates(st -> net.neoforged.neoforge.client.model.generators.ConfiguredModel.builder()
+                    .modelFile(st.getValue(com.seba.reverie.dreamland.block.LanternStandBlock.LANTERN) ? withLantern : empty).build());
         }
 
         private void biomeBlocks() {

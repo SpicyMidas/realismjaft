@@ -59,9 +59,11 @@ final class LootGen {
                                     .apply(ApplyBonusCount.addBonusBinomialDistributionCount(fortune, 0.5714286f, 0))
                                     .otherwise(LootItem.lootTableItem(ModItems.MELATONIA_SEEDS.get()))))));
             add(ModBlocks.WILD_MELATONIA.get(), applyExplosionDecay(ModBlocks.WILD_MELATONIA.get(), LootTable.lootTable()
-                    .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.MELATONIA_SEEDS.get())))
-                    .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.MELATONIA_PETALS.get())
-                            .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 1)))))));
+                    // Mostly seeds: one or two, and only now and then a petal.
+                    .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.MELATONIA_SEEDS.get())
+                            .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)))))
+                    .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.MELATONIA_PETALS.get()))
+                            .when(net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition.randomChance(0.15f)))));
             add(ModBlocks.MELATONIA_CAKE.get(), noDrop());   // like a cake: eaten, not mined
             dreamland();
         }
@@ -89,6 +91,12 @@ final class LootGen {
                     LootItem.lootTableItem(ModItems.DREAM_DUST.get())).when(net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition.randomChance(0.05f))));
             add(ModBlocks.MIRROR_WATER.get(), b -> createSilkTouchOnlyTable(b));
             for (var b : ModBlocks.biomeBlocks()) dropSelf(b.get());
+            add(ModBlocks.LANTERN_STAND.get(), LootTable.lootTable()
+                    .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModBlocks.LANTERN_STAND.get())))
+                    .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.SKY_LANTERN.get()))
+                            .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.LANTERN_STAND.get())
+                                    .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                            .hasProperty(com.seba.reverie.dreamland.block.LanternStandBlock.LANTERN, true)))));
         }
 
         @Override

@@ -18,8 +18,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.RelativeMovement;
 
 /**
- * The endless fall. Falling never wakes you: a little before the bottom of the dream you come out above the
- * spot you fell from, still falling, and drift back down onto it. On the client the fall slows as you sink into a
+ * The endless fall. Falling never wakes you: a little before the bottom of the dream you come out above a nightmare
+ * island (or, if you fell from the nightmares, above the spot you fell from), still falling, and drift down onto it. On the client the fall slows as you sink into a
  * pale mist that stays through the move and thins as you come down, so the jump is never seen.
  */
 public final class FallLoop {
@@ -63,6 +63,12 @@ public final class FallLoop {
 
     private static BlockPos target(ServerLevel level, ServerPlayer p, DreamSession session) {
         BlockPos ground = GROUND.get(p.getUUID());
+        // The dream is layered: fall out of the dream or a lucid dream and you come down in the nightmares below.
+        // Only a fall from the nightmares themselves brings you back where you were.
+        if (ground == null || IslandField.nearestLayer(ground.getY()) > 0) {
+            BlockPos below = IslandSearch.nightmareSpot(level, p.blockPosition(), false);
+            if (below != null) return below;
+        }
         if (ground != null) {
             if (HomeIsland.isSafeStand(level, ground) && level.canSeeSky(ground.above(2))) return ground;
             BlockPos near = HomeIsland.findSafe(level, ground, 5, ground.getY() - 12, ground.getY() + 12);

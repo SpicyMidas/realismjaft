@@ -11,13 +11,15 @@ public final class DreamData {
             DreamSession.CODEC.optionalFieldOf("session").forGetter(d -> Optional.ofNullable(d.session)),
             Codec.LONG.optionalFieldOf("cooldown_until", 0L).forGetter(d -> d.cooldownUntil),
             Codec.INT.optionalFieldOf("dreams", 0).forGetter(d -> d.dreamsCompleted),
-            Codec.LONG.optionalFieldOf("last_backup", 0L).forGetter(d -> d.lastBackupTime)
-    ).apply(i, (s, c, n, b) -> {
+            Codec.LONG.optionalFieldOf("last_backup", 0L).forGetter(d -> d.lastBackupTime),
+            Codec.BOOL.optionalFieldOf("first_lantern", false).forGetter(d -> d.firstLantern)
+    ).apply(i, (s, c, n, b, l) -> {
         DreamData d = new DreamData();
         d.session = s.orElse(null);
         d.cooldownUntil = c;
         d.dreamsCompleted = n;
         d.lastBackupTime = b;
+        d.firstLantern = l;
         return d;
     }));
 
@@ -25,6 +27,8 @@ public final class DreamData {
     long cooldownUntil;
     int dreamsCompleted;
     long lastBackupTime;
+    /** The first Sky Lantern has been put out for this dreamer on their Home island. */
+    boolean firstLantern;
 
     public DreamSession session() {
         return session;

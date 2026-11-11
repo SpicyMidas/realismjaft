@@ -234,8 +234,14 @@ final class ClientScript {
             }
             case "close" -> mc.setScreen(null);
             case "holdkey" -> {
-                // holdkey use|attack on|off: hold a mouse key down (e.g. to keep using an item).
-                var map = a[1].equals("attack") ? mc.options.keyAttack : mc.options.keyUse;
+                // holdkey use|attack|jump|forward|sneak on|off: hold a key down (e.g. to keep using an item).
+                var map = switch (a[1]) {
+                    case "attack" -> mc.options.keyAttack;
+                    case "jump" -> mc.options.keyJump;
+                    case "forward" -> mc.options.keyUp;
+                    case "sneak" -> mc.options.keyShift;
+                    default -> mc.options.keyUse;
+                };
                 net.minecraft.client.KeyMapping.set(map.getKey(), a[2].equals("on"));
             }
             case "inventory" -> {

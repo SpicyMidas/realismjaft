@@ -56,7 +56,7 @@ final class DreamlandBiomes {
         // Nightmares: close, dark, wrong.
         reg(ctx, DreamlandBiomeKeys.BLACKWOOD, DreamlandBiomeKeys.FOG_BLACKWOOD, 0x160E10, 0x3A2A2A, ParticleTypes.ASH, 0.004f,
                 com.seba.reverie.registry.ModSounds.VOID_WIND, SoundEvents.AMBIENT_CAVE, 0.0012);
-        reg(ctx, DreamlandBiomeKeys.WAITING_ROOMS, DreamlandBiomeKeys.FOG_WAITING, 0x4A4430, 0x8A8A60, ParticleTypes.WHITE_ASH, 0.0025f,
+        reg(ctx, DreamlandBiomeKeys.WAITING_ROOMS, DreamlandBiomeKeys.FOG_WAITING, 0x706644, 0x8A8A60, ParticleTypes.WHITE_ASH, 0.0025f,
                 SoundEvents.BEACON_AMBIENT, SoundEvents.BOOK_PAGE_TURN, 0.0009);
         reg(ctx, DreamlandBiomeKeys.THE_MAW, DreamlandBiomeKeys.FOG_MAW, 0x24060A, 0x6A1420, ParticleTypes.CRIMSON_SPORE, 0.006f,
                 SoundEvents.AMBIENT_CRIMSON_FOREST_LOOP, SoundEvents.SLIME_SQUISH_SMALL, 0.002);

@@ -115,6 +115,8 @@ public final class DreamlandClient {
         event.register(Reverie.id("dreamland"), new DreamlandEffects());
     }
 
+    private static final float DREAM_FOG = 64f;
+
     /** Thick blue-violet fog in the Void Between, gentler over the islands. */
     private static void fog(ViewportEvent.RenderFog event) {
         var mc = Minecraft.getInstance();
@@ -122,12 +124,14 @@ public final class DreamlandClient {
         if (event.getType() != net.minecraft.world.level.material.FogType.NONE) return;
         var biome = mc.level.getBiome(event.getCamera().getBlockPosition());
         boolean voidBetween = biome.is(com.seba.reverie.dreamland.DreamlandBiomeKeys.VOID_BETWEEN);
-        float far = event.getFarPlaneDistance() * (voidBetween ? 0.8f : 1.0f);
+        // Short, round fog: the levels above and below stay hidden until you are on your way to them.
+        float far = Math.min(event.getFarPlaneDistance(), DREAM_FOG) * (voidBetween ? 0.85f : 1.0f);
         far = net.minecraft.util.Mth.lerp(DreamAmbienceClient.fogTide(), far, Math.min(far, 26f));
         far *= BiomeMechanicsClient.fogFactor(mc, event.getCamera().getPosition().y);
         far = Math.max(far, 2.5f);
         event.setFarPlaneDistance(far);
         event.setNearPlaneDistance(Math.min(event.getNearPlaneDistance(), far * 0.15f));
+        event.setFogShape(com.mojang.blaze3d.shaders.FogShape.SPHERE);
         event.setCanceled(true);
     }
 

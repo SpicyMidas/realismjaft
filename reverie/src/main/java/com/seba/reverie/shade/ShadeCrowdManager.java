@@ -78,6 +78,8 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         int rushId = -1;
         int rushAge;
         long nextRush;
+        /** Inception: a crowd that does not flee, until the dream folds up. */
+        int inceptionTicks;
     }
 
     private static final Map<UUID, Crowd> CROWDS = new HashMap<>();
@@ -227,7 +229,8 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         Vec3 pos = p.position();
         boolean still = pos.distanceToSqr(c.lastPos) < 0.15 * 0.15;
         c.lastPos = pos;
-        if (c.awayTicks > 0 && (c.awayTicks -= 10) <= 0) for (ShadeEntity s : shades) if (s.mode() == ShadeEntity.AWAY) s.setMode(ShadeEntity.FACE);
+        if (c.awayTicks > 0 && (c.awayTicks -= 10) <= 0) for (ShadeEntity s : shades) if (s.mode() == ShadeEntity.AWAY) s.setMode(s.baseMode());
+        if (c.inceptionTicks > 0) c.inceptionTicks -= 10;
         if (c.event != null && (c.eventTicks -= 10) <= 0) endEvent(level, c, shades);
 
         var region = com.seba.reverie.dreamland.BiomeMechanics.region(p);
@@ -246,7 +249,7 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
                 if (d > 78) s.fadeOut();
                 continue;
             }
-            if (d < flee || d > 90) {
+            if (d < flee && c.inceptionTicks <= 0 || d > 90) {
                 s.fadeOut();
                 continue;
             }
@@ -256,12 +259,15 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
                 // where they keep coming while you walk (and in Blackwood they come right up to the trees beside you).
                 Vec3 toward = pos.subtract(s.position()).multiply(1, 0, 1).normalize().scale(1 + rng.nextInt(3));
                 Vec3 next = s.position().add(toward);
-                if (next.distanceTo(pos) >= nearest) s.setPos(next.x, groundY(level, next, s.position().y), next.z);
+                if (next.distanceTo(pos) >= nearest) {
+                    s.setPos(next.x, groundY(level, next, s.position().y), next.z);
+                    s.resetWander();
+                }
             }
         }
 
         int spawned = 0;
-        if (!farewell && c.hushTicks <= 0 && c.event != Event.COUNTING) {
+        if (!farewell && c.hushTicks <= 0 && c.event != Event.COUNTING && c.inceptionTicks <= 0) {
             int target = targetCount(level, p);
             int alive = (int) shades.stream().filter(s -> !s.fading()).count();
             int toSpawn = Math.min(Math.min(4, target - alive), budget);
@@ -299,6 +305,10 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
         if (region == com.seba.reverie.dreamland.IslandField.Kind.BLACKWOOD) n *= 1.8;
         else if (region.nightmare()) n *= 1.35;
         else if (region.lucid()) n *= 0.5;
+        // Some islands are thronged, most nearly empty.
+        var field = com.seba.reverie.dreamland.IslandSearch.field(level);
+        var island = field == null ? null : field.nearestIsland(p.getBlockX(), p.getBlockY(), p.getBlockZ());
+        if (island != null) n *= com.seba.reverie.dreamland.IslandField.crowdFactor(island);
         return (int) Math.min(n, ReverieConfig.get(ReverieConfig.MAX_SHADES_PER_DREAMER));
     }
 
@@ -311,6 +321,11 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
     }
 
     private static ShadeEntity spawn(ServerLevel level, ServerPlayer p, Crowd c, List<ShadeEntity> shades, RandomSource rng, double minDist) {
+        return spawn(level, p, c, shades, rng, minDist, MAX_DIST);
+    }
+
+    private static ShadeEntity spawn(ServerLevel level, ServerPlayer p, Crowd c, List<ShadeEntity> shades, RandomSource rng,
+                                     double minDist, double maxDist) {
         Vec3 pos = p.position();
         for (int attempt = 0; attempt < 14; attempt++) {
             Vec3 at;
@@ -321,11 +336,11 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
                 at = near.position().add(Math.cos(a) * r, 0, Math.sin(a) * r);
             } else {
                 double a = rng.nextDouble() * Math.PI * 2;
-                double r = minDist + rng.nextDouble() * (MAX_DIST - minDist);
+                double r = minDist + rng.nextDouble() * (maxDist - minDist);
                 at = pos.add(Math.cos(a) * r, 0, Math.sin(a) * r);
             }
             double horizontal = Math.hypot(at.x - pos.x, at.z - pos.z);
-            if (horizontal < minDist || horizontal > MAX_DIST) continue;
+            if (horizontal < minDist || horizontal > maxDist) continue;
             int x = Mth.floor(at.x);
             int z = Mth.floor(at.z);
             if (!level.isLoaded(new net.minecraft.core.BlockPos(x, 0, z))) continue;
@@ -335,7 +350,7 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
             if (top > level.getMinBuildHeight() + 4 && Math.abs(top - pos.y) < 45) {
                 y = top;
                 variant = pickGrounded(rng);
-            } else if (rng.nextFloat() < 0.35f) {
+            } else if (rng.nextFloat() < 0.04f) {
                 y = pos.y - 8 + rng.nextDouble() * 26;
                 variant = ShadeEntity.Variant.HANGING;
             } else {
@@ -357,6 +372,11 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
             s.setOwner(p);
             float yaw = (float) (Mth.atan2(pos.z - spot.z, pos.x - spot.x) * (180 / Math.PI)) - 90f;
             s.moveTo(spot.x, spot.y, spot.z, yaw, 0);
+            if (variant == ShadeEntity.Variant.HANGING) {
+                s.setDrift(new Vec3(0, 0.025 + rng.nextDouble() * 0.02, 0)); // floating up toward the sky
+            } else if (variant != ShadeEntity.Variant.DOORFRAME && rng.nextFloat() < 0.65f) {
+                s.setBaseMode(ShadeEntity.WANDER); // most of them walk about like people
+            }
             if (!level.addFreshEntity(s)) return null;
             c.ids.add(s.getId());
             return s;
@@ -401,6 +421,27 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
     }
 
     /** Starts an event now (also used by /reverie debug shadeevent). */
+    /**
+     * Inception: dreaming inside the dream. The island fills with Shades standing close all around, staring, and
+     * they do not leave (the dream wakes you a few seconds later).
+     */
+    public static void inception(ServerPlayer p) {
+        ServerLevel level = p.serverLevel();
+        Crowd c = CROWDS.computeIfAbsent(p.getUUID(), k -> new Crowd());
+        c.inceptionTicks = 200;
+        RandomSource rng = p.getRandom();
+        List<ShadeEntity> shades = new ArrayList<>();
+        for (int id : c.ids) if (level.getEntity(id) instanceof ShadeEntity s && !s.fading()) shades.add(s);
+        for (ShadeEntity s : shades) s.setBaseMode(ShadeEntity.FACE);
+        for (int i = 0; i < 48; i++) {
+            ShadeEntity s = spawn(level, p, c, shades, rng, 4, 22);
+            if (s == null) continue;
+            s.setBaseMode(ShadeEntity.FACE);
+            shades.add(s);
+        }
+        level.playSound(null, p.blockPosition(), SoundEvents.BELL_RESONATE, SoundSource.AMBIENT, 1.6f, 0.5f);
+    }
+
     public static boolean startEvent(ServerPlayer p, Event e) {
         ServerLevel level = p.serverLevel();
         Crowd c = CROWDS.get(p.getUUID());
@@ -648,9 +689,12 @@ public final class ShadeCrowdManager implements DreamManager.Listener {
 
     private static void endEvent(ServerLevel level, Crowd c, List<ShadeEntity> shades) {
         for (ShadeEntity s : shades) {
-            if (s.mode() == ShadeEntity.TURNS || s.mode() == ShadeEntity.FIXED) s.setMode(ShadeEntity.FACE);
+            if (s.mode() == ShadeEntity.TURNS || s.mode() == ShadeEntity.FIXED) s.setMode(s.baseMode());
             Vec3 home = c.countingHomes.get(s.getId());
-            if (home != null) s.setPos(home.x, home.y, home.z);
+            if (home != null) {
+                s.setPos(home.x, home.y, home.z);
+                s.resetWander();
+            }
         }
         c.countingHomes.clear();
         c.event = null;

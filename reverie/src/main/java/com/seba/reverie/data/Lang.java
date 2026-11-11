@@ -77,6 +77,7 @@ final class Lang {
         s.add("item.reverie.dream_catcher", "Dream Catcher", "Acchiappasogni");
         s.add("item.reverie.paper_glider", "Paper Glider", "Aliante di Carta");
         s.add("item.reverie.sky_lantern", "Sky Lantern", "Lanterna Volante");
+        s.add("block.reverie.lantern_stand", "Lantern Stand", "Supporto per Lanterna");
         s.add("item.reverie.sky_lantern.desc", "Hold use to raise it: its hot air lifts you. Let go to stop.",
                 "Tieni premuto usa per alzarla: l'aria calda ti solleva. Lascia per fermarti.");
         s.add("item.reverie.paper_glider.desc", "Hold use in the air: drift down slowly, forward where you look.",
@@ -107,6 +108,13 @@ final class Lang {
         s.add("advancements.reverie.wide_awake.description", "Lie down in a bed inside a dream.", "Sdraiati in un letto dentro un sogno.");
         s.add("advancements.reverie.souvenir.title", "Souvenir", "Souvenir");
         s.add("advancements.reverie.souvenir.description", "Wake up still holding something from a dream.", "Svegliati stringendo ancora qualcosa di un sogno.");
+        s.add("advancements.reverie.inception.title", "Inception", "Inception");
+        s.add("advancements.reverie.inception.description", "Drink Concentrated Melatonia Extract inside a dream.",
+                "Bevi Estratto di Melatonia Concentrato dentro un sogno.");
+        s.add("reverie.inception", "A dream inside the dream. Everyone came to watch.", "Un sogno dentro il sogno. Sono venuti tutti a guardare.");
+        s.add("reverie.dream.too_awake", "Still too awake to dream (%ss).", "Ancora troppo sveglio per sognare (%ss).");
+        s.add("reverie.dream.first_lantern", "Your first Sky Lantern is waiting beside you: take it from its stand. Hold use to rise; the Paper Glider brings you down.",
+                "La tua prima Lanterna Volante ti aspetta qui accanto: prendila dal supporto. Tieni premuto usa per salire; l'Aliante di Carta ti riporta giu'.");
         s.add("advancements.reverie.gear_head.title", "Gear Head", "Testa d'Ingranaggio");
         s.add("advancements.reverie.gear_head.description", "Place a Tuff Gearshift.", "Piazza un Cambio di Tufo.");
         // Farmer's Delight dishes (keys are harmless without FD)

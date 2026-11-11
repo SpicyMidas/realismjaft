@@ -85,6 +85,7 @@ public final class Reverie {
         com.seba.reverie.dream.DreamManager.addListener(new com.seba.reverie.dreamland.MemoryIsland());
         com.seba.reverie.shade.ShadeCrowdManager.init();
         com.seba.reverie.dreamland.DreamWeather.init();
+        com.seba.reverie.dreamland.BiomeMechanics.initCommands();
         com.seba.reverie.dreamland.RecurringObjects.init();
         com.seba.reverie.dreamland.DreamFootsteps.init();
         com.seba.reverie.dream.DreamAdvancements.init();

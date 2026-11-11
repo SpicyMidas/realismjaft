@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lantern=false": {
+      "model": "reverie:block/lantern_stand_empty"
+    },
+    "lantern=true": {
+      "model": "reverie:block/lantern_stand"
+    }
+  }
+}

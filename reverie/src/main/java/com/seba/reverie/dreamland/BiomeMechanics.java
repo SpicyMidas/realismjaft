@@ -48,7 +48,11 @@ public final class BiomeMechanics {
     public static final int SWALLOW = 34;
     public static final int GLITCH = 35;
 
+    public static final int TILT = 41;
+
     public static final ResourceLocation SWIM = Reverie.id("skyreef_swim");
+    /** Under an upside-down island gravity points up at its underside. */
+    public static final ResourceLocation INVERT = Reverie.id("upside_down");
     private static final ResourceLocation SMALL = Reverie.id("nursery_small");
     private static final ResourceLocation HEAVY = Reverie.id("blackwood_heavy");
     /** In The Nursery you are a little under half your size: the toys are enormous. */
@@ -66,11 +70,29 @@ public final class BiomeMechanics {
         final Vec3[] trail = new Vec3[60];
         int trailIndex;
         long nextSkip;
+        long underId;
+        int sneak;
+        long releaseUntil;
+        long nextTilt;
     }
 
     private static final Map<UUID, State> STATES = new HashMap<>();
 
     private BiomeMechanics() {
+    }
+
+    /** /reverie debug tilt <player>: tilt that dreamer's dream now. */
+    public static void initCommands() {
+        com.seba.reverie.dream.DreamCommands.addExtension(root -> root.then(net.minecraft.commands.Commands.literal("debug")
+                .requires(src -> src.hasPermission(2))
+                .then(net.minecraft.commands.Commands.literal("tilt")
+                        .then(net.minecraft.commands.Commands.argument("player", net.minecraft.commands.arguments.EntityArgument.player())
+                                .executes(ctx -> {
+                                    ServerPlayer p = net.minecraft.commands.arguments.EntityArgument.getPlayer(ctx, "player");
+                                    State s = STATES.computeIfAbsent(p.getUUID(), k -> new State());
+                                    s.nextTilt = 1; // due at once
+                                    return 1;
+                                })))));
     }
 
     /** The region this dreamer is in (VOID until known). */
@@ -98,7 +120,11 @@ public final class BiomeMechanics {
         }
         boolean on = ReverieConfig.get(ReverieConfig.BIOME_MECHANICS);
         Kind r = on ? s.region : Kind.VOID;
-        modifier(p, Attributes.GRAVITY, SWIM, r == Kind.SKYREEF ? -1.0 : 0);
+        IslandField.Island under = on ? upsideDown(p, s, field, level.getGameTime()) : null;
+        modifier(p, Attributes.GRAVITY, SWIM, r == Kind.SKYREEF && under == null ? -1.0 : 0);
+        modifier(p, Attributes.GRAVITY, INVERT, under != null ? -2.0 : 0);
+        if (under != null) p.resetFallDistance();
+        tilt(p, s, session, r, under != null, level);
         modifier(p, Attributes.MOVEMENT_SPEED, HEAVY, r == Kind.BLACKWOOD ? -0.15 : 0);
         easeScale(p, level, r == Kind.THE_NURSERY ? SMALL_SCALE : 0);
         if (r == Kind.SKYREEF) p.resetFallDistance(); // you swim down, you do not fall
@@ -114,9 +140,60 @@ public final class BiomeMechanics {
         }
     }
 
+    /**
+     * The island whose underside holds you upside down, if any. Once held, the pull reaches a little further round
+     * the rim (so walking to the edge takes you round it, like a small planet); holding sneak for a second lets go.
+     */
+    private static IslandField.Island upsideDown(ServerPlayer p, State s, IslandField field, long now) {
+        if (now < s.releaseUntil || p.isSpectator() || p.getAbilities().flying) return send(p, s, null);
+        IslandField.Island is = field.upsideDownAt(p.getBlockX(), Mth.floor(p.getY()), p.getBlockZ(), s.underId == 0 ? 0.2 : 0.45);
+        if (is != null && p.isShiftKeyDown()) {
+            if (++s.sneak >= 20) {
+                s.sneak = 0;
+                s.releaseUntil = now + 80;
+                return send(p, s, null);
+            }
+        } else {
+            s.sneak = 0;
+        }
+        return send(p, s, is);
+    }
+
+    private static IslandField.Island send(ServerPlayer p, State s, IslandField.Island is) {
+        long id = is == null ? 0 : is.id;
+        if (id != s.underId) {
+            s.underId = id;
+            Net.send(p, is == null ? new com.seba.reverie.network.UpsideDownPayload(0, 0, 0)
+                    : new com.seba.reverie.network.UpsideDownPayload(is.cx, is.cz, is.radius));
+        }
+        return is;
+    }
+
+    /**
+     * Now and then the whole dream tilts for a few seconds and everything slides one way (the client slides you):
+     * crouch at an edge, or build something to stop against, or go over. Not in the lucid places.
+     */
+    private static void tilt(ServerPlayer p, State s, DreamSession session, Kind r, boolean upsideDown, ServerLevel level) {
+        if (!ReverieConfig.get(ReverieConfig.EVENT_TILT) || r == Kind.VOID || r.lucid() || upsideDown) return;
+        long now = level.getGameTime();
+        if (s.nextTilt != 1 && com.seba.reverie.dream.DreamManager.now(p.server) - session.startTime() < 1200) return;
+        var rng = p.getRandom();
+        if (s.nextTilt == 0) {
+            s.nextTilt = now + 400 + rng.nextInt(1600);
+            return;
+        }
+        if (now < s.nextTilt) return;
+        s.nextTilt = now + 2400 + rng.nextInt(3600);
+        int duration = 90 + rng.nextInt(60);
+        Net.send(p, new ShadeEventPayload(TILT, duration * 360 + rng.nextInt(360)));
+        p.playNotifySound(SoundEvents.ANVIL_LAND, SoundSource.AMBIENT, 0.3f, 0.35f);
+    }
+
     /** Takes every biome rule off (waking, logging out). */
     public static void clear(ServerPlayer p) {
-        for (var pair : new Object[][]{{Attributes.GRAVITY, SWIM}, {Attributes.MOVEMENT_SPEED, HEAVY}, {Attributes.SCALE, SMALL}}) {
+        Net.send(p, new com.seba.reverie.network.UpsideDownPayload(0, 0, 0));
+        for (var pair : new Object[][]{{Attributes.GRAVITY, SWIM}, {Attributes.GRAVITY, INVERT}, {Attributes.MOVEMENT_SPEED, HEAVY},
+                {Attributes.SCALE, SMALL}}) {
             @SuppressWarnings("unchecked")
             AttributeInstance a = p.getAttribute((Holder<Attribute>) pair[0]);
             if (a != null) a.removeModifier((ResourceLocation) pair[1]);

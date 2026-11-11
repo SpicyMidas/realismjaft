@@ -69,6 +69,11 @@ public final class DreamClient {
             public void shadeEvent(ShadeEventPayload payload) {
                 DreamEffectsClient.onEvent(payload);
             }
+
+            @Override
+            public void upsideDown(com.seba.reverie.network.UpsideDownPayload payload) {
+                com.seba.reverie.client.dreamland.DreamMovementClient.onUpsideDown(payload);
+            }
         };
         modBus.addListener(DreamClient::layers);
         NeoForge.EVENT_BUS.addListener(DreamClient::tick);

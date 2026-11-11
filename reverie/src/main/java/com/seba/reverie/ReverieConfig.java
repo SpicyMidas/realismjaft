@@ -51,6 +51,7 @@ public final class ReverieConfig {
     public static final ModConfigSpec.BooleanValue EVENT_BEHIND_YOU;
     public static final ModConfigSpec.BooleanValue EVENT_MIMIC;
     public static final ModConfigSpec.BooleanValue EVENT_RUSH;
+    public static final ModConfigSpec.BooleanValue EVENT_TILT;
     public static final ModConfigSpec.BooleanValue EVENT_COUNTING;
     public static final ModConfigSpec.BooleanValue EVENT_GRAVITY_HICCUP;
     public static final ModConfigSpec.BooleanValue EVENT_FAREWELL;
@@ -71,8 +72,8 @@ public final class ReverieConfig {
         b.push("dream");
         DREAM_LENGTH_TICKS = b.comment("Length of a dream in ticks (6000 = 5 minutes).")
                 .defineInRange("dreamLengthTicks", 6000, 600, 72000);
-        DREAM_COOLDOWN_TICKS = b.comment("After waking, Sleepyness does not let you dream again for this many ticks.")
-                .defineInRange("dreamCooldownTicks", 3000, 0, 72000);
+        DREAM_COOLDOWN_TICKS = b.comment("After waking, Sleepyness does not let you dream again for this many ticks (200 = 10 s).")
+                .defineInRange("cooldownAfterWakingTicks", 200, 0, 72000);
         KEEPSAKE_CHANCE = b.comment("Chance for each dream-inventory stack to survive waking up.")
                 .defineInRange("keepsakeChance", 0.05, 0.0, 1.0);
         LUCKY_KEEPSAKE_CHANCE = b.comment("Survival chance for stacks tagged #reverie:lucid_keepsakes.")
@@ -134,6 +135,8 @@ public final class ReverieConfig {
         EVENT_BEHIND_YOU = b.define("behindYou", true);
         EVENT_MIMIC = b.define("mimic", true);
         EVENT_RUSH = b.comment("The Rush: in the nightmare biomes a Shade now and then sprints straight at you and vanishes just before it hits.").define("rush", true);
+        EVENT_TILT = b.comment("Now and then the dream tilts and everything slides one way: crouch or build, or go over the edge.")
+                .define("tilt", true);
         EVENT_COUNTING = b.define("counting", true);
         EVENT_GRAVITY_HICCUP = b.define("gravityHiccup", true);
         EVENT_FAREWELL = b.define("farewell", true);

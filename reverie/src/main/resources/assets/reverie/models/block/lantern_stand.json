@@ -1,0 +1,357 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "sheet": "reverie:item/sky_lantern_sheet",
+    "particle": "reverie:item/sky_lantern_sheet"
+  },
+  "elements": [
+    {
+      "from": [
+        6,
+        0,
+        6
+      ],
+      "to": [
+        10,
+        1,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "down": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        }
+      },
+      "name": "foot"
+    },
+    {
+      "from": [
+        7.5,
+        1,
+        7.5
+      ],
+      "to": [
+        8.5,
+        10,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        }
+      },
+      "name": "post"
+    },
+    {
+      "from": [
+        5,
+        10,
+        5
+      ],
+      "to": [
+        11,
+        11,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            6,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            6,
+            11
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            6,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            6,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#sheet",
+          "uv": [
+            8,
+            6,
+            16,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#sheet",
+          "uv": [
+            8,
+            6,
+            16,
+            14
+          ]
+        }
+      },
+      "name": "frame"
+    },
+    {
+      "from": [
+        4.5,
+        11,
+        4.5
+      ],
+      "to": [
+        11.5,
+        15.5,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            2,
+            8,
+            10
+          ]
+        },
+        "south": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            2,
+            8,
+            10
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            2,
+            8,
+            10
+          ]
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            2,
+            8,
+            10
+          ]
+        },
+        "up": {
+          "texture": "#sheet",
+          "uv": [
+            8,
+            0,
+            14,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#sheet",
+          "uv": [
+            8,
+            6,
+            16,
+            14
+          ]
+        }
+      },
+      "name": "paper",
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "from": [
+        5.5,
+        15.5,
+        5.5
+      ],
+      "to": [
+        10.5,
+        16,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet",
+          "uv": [
+            8,
+            0,
+            14,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#sheet",
+          "uv": [
+            8,
+            0,
+            14,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            8,
+            0,
+            14,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            8,
+            0,
+            14,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#sheet",
+          "uv": [
+            8,
+            0,
+            14,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#sheet"
+        }
+      },
+      "name": "cap",
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ]
+}

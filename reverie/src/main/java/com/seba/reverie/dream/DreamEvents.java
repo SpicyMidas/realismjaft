@@ -34,6 +34,7 @@ public final class DreamEvents {
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, DreamEvents::death);
         NeoForge.EVENT_BUS.addListener(DreamEvents::fall);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, DreamEvents::bedInDream);
+        NeoForge.EVENT_BUS.addListener(DreamEvents::inception);
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent e) -> {
             if (e.getEntity() instanceof ServerPlayer p) DreamManager.onLogin(p);
         });
@@ -51,6 +52,11 @@ public final class DreamEvents {
         ServerPlayer player = event.getEntity();
         if (event.getProblem() == Player.BedSleepingProblem.NOT_POSSIBLE_NOW && DreamManager.canDream(player)) {
             event.setProblem(null);
+        }
+        // Sleepy but just back from a dream: say so, instead of a plain "you can only sleep at night".
+        if (com.seba.reverie.registry.ModEffects.sleepy(player) && DreamManager.onCooldown(player)) {
+            long left = Math.max(1, (DreamManager.cooldownLeft(player) + 19) / 20);
+            player.displayClientMessage(Component.translatable("reverie.dream.too_awake", left).withStyle(ChatFormatting.GRAY), true);
         }
     }
 
@@ -98,6 +104,19 @@ public final class DreamEvents {
 
     private static void fall(LivingFallEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && DreamManager.isDreaming(player)) event.setDamageMultiplier(0);
+    }
+
+    /**
+     * Inception: Concentrated Extract drunk inside the dream. The island you are on fills with Shades, all staring,
+     * and a few seconds later the dream inside the dream folds up and you wake.
+     */
+    private static void inception(net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent.Finish event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !DreamManager.isDreaming(player)) return;
+        if (!event.getItem().is(com.seba.reverie.registry.ModItems.CONCENTRATED_MELATONIA_EXTRACT.get())) return;
+        DreamAdvancements.award(player, DreamAdvancements.INCEPTION, "dreamed_in_a_dream");
+        com.seba.reverie.shade.ShadeCrowdManager.inception(player);
+        DreamManager.wakeLater(player, 150);
+        player.displayClientMessage(Component.translatable("reverie.inception").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
     }
 
     /** Dreaming inside a dream resolves to waking. Beds in Dreamland never set a respawn point. */

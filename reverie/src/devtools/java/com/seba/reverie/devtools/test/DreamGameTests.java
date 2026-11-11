@@ -104,7 +104,10 @@ public final class DreamGameTests {
             var inv = player.getInventory();
             h.assertTrue(inv.getItem(0).is(Items.DIAMOND_SWORD) && inv.getItem(0).has(ModComponents.DREAM_ORIGIN.get()),
                     "the held item is not in the dream hand");
-            for (int i = 1; i < inv.getContainerSize(); i++) h.assertTrue(inv.getItem(i).isEmpty(), "dream slot " + i + " not empty");
+            // Besides the held item, only the Paper Glider every dreamer arrives with (never a keepsake: marked as not from the dream).
+            h.assertTrue(inv.getItem(1).is(com.seba.reverie.registry.ModItems.PAPER_GLIDER.get()) && inv.getItem(1).has(ModComponents.DREAM_ORIGIN.get()),
+                    "no arrival glider in slot 1");
+            for (int i = 2; i < inv.getContainerSize(); i++) h.assertTrue(inv.getItem(i).isEmpty(), "dream slot " + i + " not empty");
             h.assertTrue(player.experienceLevel == 0 && player.getActiveEffects().isEmpty() && player.getHealth() == player.getMaxHealth(),
                     "dream rules not applied");
             h.assertTrue(player.getAttribute(Attributes.GRAVITY).getValue() < 0.07, "no dream gravity");

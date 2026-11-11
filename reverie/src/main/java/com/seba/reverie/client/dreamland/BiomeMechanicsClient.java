@@ -111,6 +111,7 @@ public final class BiomeMechanicsClient {
             }
             case BiomeMechanics.SWALLOW -> swallow = value;
             case BiomeMechanics.GLITCH -> glitch = value;
+            case BiomeMechanics.TILT -> DreamMovementClient.onTilt(value);
             default -> {
                 return false;
             }

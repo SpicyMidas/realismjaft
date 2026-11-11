@@ -52,6 +52,23 @@ public final class HomeIsland {
         return center.above();
     }
 
+    /** Puts the Lantern Stand a couple of steps from where the dreamer arrives. False if there was no room for it. */
+    public static boolean lanternStand(ServerLevel level, BlockPos arrival) {
+        int[][] around = {{2, 0}, {0, 2}, {-2, 0}, {0, -2}, {2, 2}, {-2, 2}, {2, -2}, {-2, -2}, {3, 1}, {1, 3}, {-3, -1}, {-1, -3}};
+        for (int dy = 0; dy <= 2; dy++) {
+            for (int[] o : around) {
+                for (int sign : new int[]{0, 1, -1}) {
+                    BlockPos p = arrival.offset(o[0], sign * dy, o[1]);
+                    if (!level.getBlockState(p).isAir() || !level.getBlockState(p.above()).isAir()) continue;
+                    if (!level.getBlockState(p.below()).isFaceSturdy(level, p.below(), net.minecraft.core.Direction.UP)) continue;
+                    level.setBlock(p, com.seba.reverie.registry.ModBlocks.LANTERN_STAND.get().defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static BlockPos findSafe(ServerLevel level, BlockPos column, int radius, int minY, int maxY) {
         for (int r = 0; r <= radius; r++) {
             for (int dx = -r; dx <= r; dx++) {

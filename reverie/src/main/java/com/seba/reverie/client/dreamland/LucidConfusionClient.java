@@ -94,7 +94,8 @@ public final class LucidConfusionClient {
 
     private static void start(Minecraft mc) {
         boolean calm = ReverieConfig.get(ReverieConfig.REDUCE_MOTION);
-        Slip[] all = calm ? new Slip[]{Slip.FOOTSTEPS, Slip.WHISPER} : Slip.values();
+        // The tilt is a real event now (the dream tilts and you slide, see DreamMovementClient): not a slip.
+        Slip[] all = calm ? new Slip[]{Slip.FOOTSTEPS, Slip.WHISPER} : new Slip[]{Slip.FOOTSTEPS, Slip.WHISPER, Slip.BREATHE};
         slip = all[RNG.nextInt(all.length)];
         slipTicks = 0;
         switch (slip) {

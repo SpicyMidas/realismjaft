@@ -23,7 +23,8 @@ import net.minecraft.world.phys.Vec3;
 /**
  * The skies of the new biomes, drawn over the twilight gradient and faded in and out by the region weights
  * (BiomeMechanicsClient), so walking from one biome into the next changes the sky slowly, as the Nether's
- * fog does. Everything is camera-relative: ceilings and surfaces hang at a fixed height above your head.
+ * fog does. Everything is camera-relative: ceilings and surfaces hang at a fixed height above your head. The
+ * Waiting Rooms have no sky at all, only the same stale haze in every direction.
  */
 final class BiomeSkies {
     private static final ResourceLocation MOON = Reverie.id("textures/environment/dream_moon.png");
@@ -137,8 +138,6 @@ final class BiomeSkies {
         if (reef > 0.01f) reef(m, time, reef);
         float geode = BiomeMechanicsClient.weight(Kind.LUCID_GEODES);
         if (geode > 0.01f) prisms(m, time, geode);
-        float office = BiomeMechanicsClient.weight(Kind.WAITING_ROOMS);
-        if (office > 0.01f) officeCeiling(m, time, office);
         float nursery = BiomeMechanicsClient.weight(Kind.THE_NURSERY);
         if (nursery > 0.01f) stickers(m, time, nursery);
         float maw = BiomeMechanicsClient.weight(Kind.THE_MAW);
@@ -396,29 +395,6 @@ final class BiomeSkies {
         RenderSystem.setShaderTexture(0, GRIN);
         BufferBuilder b = begin(DefaultVertexFormat.POSITION_TEX_COLOR);
         texQuad(b, m, dir(grinAz, Math.toRadians(24)), 11, 11, Mth.sin(time * 0.004f) * 0.06f, 1f, 1f, 1f, 0.9f * w);
-        draw(b);
-    }
-
-    // --- The Waiting Rooms: an endless office ceiling far above, every panel lit
-
-    private static void officeCeiling(Matrix4f m, float time, float w) {
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        BufferBuilder b = begin(DefaultVertexFormat.POSITION_COLOR);
-        float y = 70;
-        int flick = (int) (time / 7);
-        for (int i = -18; i <= 18; i++)
-            for (int j = -18; j <= 18; j++) {
-                float x = i * 14;
-                float z = j * 14;
-                double dist = Math.sqrt(x * x + z * z);
-                float a = (float) Mth.clamp(1 - (dist - 60) / 200, 0, 1) * 0.3f * w;
-                if (((i * 31 + j * 17 + flick) & 63) == 0) a *= 0.2f; // one flickers out now and then
-                if (a <= 0.003f) continue;
-                b.addVertex(m, x - 3, y, z - 1.5f).setColor(1f, 0.98f, 0.85f, a);
-                b.addVertex(m, x - 3, y, z + 1.5f).setColor(1f, 0.98f, 0.85f, a);
-                b.addVertex(m, x + 3, y, z + 1.5f).setColor(1f, 0.98f, 0.85f, a);
-                b.addVertex(m, x + 3, y, z - 1.5f).setColor(1f, 0.98f, 0.85f, a);
-            }
         draw(b);
     }
 

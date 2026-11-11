@@ -96,6 +96,7 @@ public final class ModItems {
             DREAM_BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(block));
         }
         for (var block : ModBlocks.biomeBlocks()) DREAM_BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(block));
+        DREAM_BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(ModBlocks.LANTERN_STAND));
     }
 
     public static final DeferredItem<net.minecraft.world.item.DoubleHighBlockItem> LONE_DOOR = ITEMS.register("lone_door",

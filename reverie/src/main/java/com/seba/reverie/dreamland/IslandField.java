@@ -51,14 +51,15 @@ public final class IslandField {
 
     public enum Mood { DREAM, LUCID, NIGHTMARE }
 
-    /** Biome mix per layer: Deep Sleep, Dreaming, Lucid (the cloud layer is always Cloudreach). Weights sum to 1. */
+    /**
+     * Biome mix per layer, strictly by mood: Deep Sleep holds only nightmares, Dreaming only the old dream, Lucid only
+     * the lucid biomes (the cloud layer is always Cloudreach). Weights sum to 1.
+     */
     private static final Object[][] LAYER_MIX = {
-            {Kind.BLACKWOOD, 0.19, Kind.WAITING_ROOMS, 0.15, Kind.THE_MAW, 0.15, Kind.SIGNAL_LOST, 0.14,
-                    Kind.HOLLOW_SPIRES, 0.14, Kind.EYE_MEADOW, 0.12, Kind.MIRROR_MARSH, 0.11},
-            {Kind.PILLOW_FIELDS, 0.24, Kind.MIRROR_MARSH, 0.12, Kind.SANDGLASS_DUNES, 0.12, Kind.UPSIDE_DOWN_TOWN, 0.12,
-                    Kind.THE_NURSERY, 0.10, Kind.LUCID_GEODES, 0.10, Kind.EYE_MEADOW, 0.08, Kind.HOLLOW_SPIRES, 0.06, Kind.BLACKWOOD, 0.06},
-            {Kind.FROSTLIGHT_TUNDRA, 0.24, Kind.SKYREEF, 0.22, Kind.LUCID_GEODES, 0.18, Kind.THE_NURSERY, 0.12,
-                    Kind.PILLOW_FIELDS, 0.14, Kind.SANDGLASS_DUNES, 0.10},
+            {Kind.BLACKWOOD, 0.19, Kind.WAITING_ROOMS, 0.17, Kind.THE_MAW, 0.17, Kind.SIGNAL_LOST, 0.15,
+                    Kind.HOLLOW_SPIRES, 0.17, Kind.EYE_MEADOW, 0.15},
+            {Kind.PILLOW_FIELDS, 0.34, Kind.MIRROR_MARSH, 0.22, Kind.SANDGLASS_DUNES, 0.22, Kind.UPSIDE_DOWN_TOWN, 0.22},
+            {Kind.FROSTLIGHT_TUNDRA, 0.28, Kind.SKYREEF, 0.26, Kind.LUCID_GEODES, 0.24, Kind.THE_NURSERY, 0.22},
     };
 
     record Layer(int centerY, int jitterY, double presence, int minR, int maxR) {
@@ -208,10 +209,16 @@ public final class IslandField {
      * first) in the nearest layer. What the sky and the biome rules follow, so they change as you cross the void.
      */
     public Kind regionAt(int x, int y, int z) {
+        if (nearestLayer(y) == LAYERS.length - 1) return Kind.CLOUDREACH;
+        Island is = nearestIsland(x, y, z);
+        return is == null ? Kind.VOID : is.kind;
+    }
+
+    /** The island a point is in, or else the one whose edge is nearest in the nearest layer (null in empty sky). */
+    public Island nearestIsland(int x, int y, int z) {
         int layer = nearestLayer(y);
-        if (layer == LAYERS.length - 1) return Kind.CLOUDREACH;
         Island in = islandAt(x, y, z, 6);
-        if (in != null) return in.kind;
+        if (in != null) return in;
         int cellX = Math.floorDiv(x, CELL);
         int cellZ = Math.floorDiv(z, CELL);
         Island best = null;
@@ -229,7 +236,40 @@ public final class IslandField {
                 }
             }
         }
-        return best == null ? Kind.VOID : best.kind;
+        return best;
+    }
+
+    /**
+     * Upside-down ground: the inverted islands' grassy undersides and the Upside-Down Town's underside, where the
+     * houses hang. Returns the island whose pull holds a point a little below (and around the rim of) that
+     * underside, or null. {@code rim} is how far past the edge (in island radii) the pull reaches.
+     */
+    public Island upsideDownAt(int x, int y, int z, double rim) {
+        for (Island is : islandsNear(x, z, x, z)) {
+            boolean inverted = is.shape == Shape.INVERTED;
+            boolean town = is.kind == Kind.UPSIDE_DOWN_TOWN && is.shape == Shape.PLATEAU;
+            if (!inverted && !town) continue;
+            double d = normDist(is, x, z);
+            if (d > 1 + rim) continue;
+            int under = underside(is, x, z);
+            if (y < under + 2 && y >= under - 26) return is;
+        }
+        return null;
+    }
+
+    /** The lowest block of an upside-down island at (x, z) (its rim height outside the footprint). */
+    public int underside(Island is, int x, int z) {
+        if (is.shape == Shape.INVERTED) return is.cy - 2;
+        int bottom = plateauBottom(is, x, z);
+        return bottom == Integer.MAX_VALUE ? is.cy - is.topThick : bottom;
+    }
+
+    /**
+     * How crowded an island is with Shades: a few are packed with them, most are nearly empty, the rest in between.
+     */
+    public static double crowdFactor(Island is) {
+        double r = unit(mix(is.seed ^ 0xC40DL));
+        return r < 0.16 ? 2.2 : r < 0.62 ? 0.3 : 0.8;
     }
 
     public static int layerY(int layer) {

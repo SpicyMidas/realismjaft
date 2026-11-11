@@ -810,12 +810,32 @@ def dreamland_textures():
                 bricks.putpixel((x, y), rgba(LUCID[0]))
     save(bricks, "block/lucid_stone_bricks")
 
+    # Like vanilla's ores: small gem flecks on the stone, lit from the top left, a dark edge below and to the right.
     ore = stone.copy()
-    rnd = random.Random(1514)
-    for _ in range(4):
-        cx, cy = rnd.randint(2, 13), rnd.randint(2, 13)
-        for (dx, dy, c) in ((0, 0, (226, 252, 250)), (1, 0, (120, 214, 212)), (0, 1, (76, 168, 176)), (-1, 0, (168, 236, 232)), (0, -1, (54, 128, 140))):
-            ore.putpixel((cx + dx, cy + dy), rgba(c))
+    flecks = [
+        "................",
+        "..hl.......lh...",
+        ".lmmo.....lmmo..",
+        "..moo......moo..",
+        "................",
+        "....hl..........",
+        "...hlmo.....lh..",
+        "...lmmo....lmmo.",
+        "....moo.....moo.",
+        "................",
+        ".hl.............",
+        ".lmo.....hl.....",
+        "..o.....hlmo....",
+        "........lmmo..h.",
+        ".........moo.lmo",
+        "..............o.",
+    ]
+    tones = {'h': (226, 252, 250), 'l': (132, 216, 214), 'm': (70, 166, 176), 'o': (32, 88, 98)}
+    for y, row in enumerate(flecks):
+        assert len(row) == 16, row
+        for x, ch in enumerate(row):
+            if ch in tones:
+                ore.putpixel((x, y), rgba(tones[ch]))
     save(ore, "block/lucid_crystal_ore")
 
     bark = [(64, 64, 72), (86, 86, 96), (108, 108, 118), (128, 126, 134)]

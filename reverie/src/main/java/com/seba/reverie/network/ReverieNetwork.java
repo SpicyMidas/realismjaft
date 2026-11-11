@@ -17,6 +17,9 @@ public final class ReverieNetwork {
 
         default void shadeEvent(ShadeEventPayload payload) {
         }
+
+        default void upsideDown(UpsideDownPayload payload) {
+        }
     }
 
     public static volatile ClientHandlers client = new ClientHandlers() {
@@ -26,9 +29,10 @@ public final class ReverieNetwork {
     }
 
     public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar r = event.registrar(Reverie.MOD_ID).versioned("1");
+        PayloadRegistrar r = event.registrar(Reverie.MOD_ID).versioned("2");
         r.playToClient(DreamTransitionPayload.TYPE, DreamTransitionPayload.CODEC, (p, ctx) -> ctx.enqueueWork(() -> client.transition(p)));
         r.playToClient(DreamStatePayload.TYPE, DreamStatePayload.CODEC, (p, ctx) -> ctx.enqueueWork(() -> client.state(p)));
         r.playToClient(ShadeEventPayload.TYPE, ShadeEventPayload.CODEC, (p, ctx) -> ctx.enqueueWork(() -> client.shadeEvent(p)));
+        r.playToClient(UpsideDownPayload.TYPE, UpsideDownPayload.CODEC, (p, ctx) -> ctx.enqueueWork(() -> client.upsideDown(p)));
     }
 }

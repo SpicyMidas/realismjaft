@@ -154,6 +154,15 @@ final class ShadeModel {
         }
     }
 
+    /** A person's slow walk laid over the variant's pose: {@code amount} 0 (standing) .. 1 (walking). */
+    void walk(float swing, float amount) {
+        if (amount <= 0.01f) return;
+        rightLeg.xRot += Mth.cos(swing) * 0.9f * amount;
+        leftLeg.xRot += Mth.cos(swing + Mth.PI) * 0.9f * amount;
+        rightArm.xRot += Mth.cos(swing + Mth.PI) * 0.55f * amount;
+        leftArm.xRot += Mth.cos(swing) * 0.55f * amount;
+    }
+
     /**
      * The Rush: bent hard forward, arms flung out ahead and reaching, legs pounding. Replaces the variant's own pose
      * (the Tall One stays tall, the Headless stays headless).

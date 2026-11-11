@@ -1,0 +1,52 @@
+newworld v02_check flat 4242
+wait 40
+cmd reverie dream Dev
+wait 220
+cmd gamemode survival
+camera THIRD_PERSON_BACK
+look 0 40
+wait 10
+screenshot v2_arrival
+look 90 40
+wait 4
+screenshot v2_arrival2
+camera FIRST_PERSON
+look 0 0
+holdkey forward on
+holdkey jump on
+wait 4
+holdkey jump off
+wait 3
+holdkey jump on
+wait 7
+screenshot v2_dash
+holdkey jump off
+holdkey forward off
+wait 40
+cmd reverie debug tilt Dev
+wait 45
+screenshot v2_tilt
+wait 120
+tpshape INVERTED 0 -9
+wait 90
+look 30 20
+wait 10
+screenshot v2_upside_first
+camera THIRD_PERSON_FRONT
+wait 5
+screenshot v2_upside_third
+camera FIRST_PERSON
+cmd tp @s ~ ~-40 ~
+wait 60
+cmd reverie home Dev
+wait 80
+cmd item replace entity @s weapon.mainhand with reverie:concentrated_melatonia_extract
+look 0 10
+holdkey use on
+wait 45
+holdkey use off
+wait 30
+screenshot v2_inception
+wait 170
+screenshot v2_woke
+stop

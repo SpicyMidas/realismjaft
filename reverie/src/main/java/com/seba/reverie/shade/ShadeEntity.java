@@ -15,7 +15,8 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * A Shade: a flat black silhouette that watches the dreamer from just too far away. Harmless, untargetable,
- * unhittable, invulnerable, never saved, no physics, no AI. Everything it does is decided by the crowd manager.
+ * unhittable, invulnerable, never saved, no physics. Most walk about their island like people and stop to stare;
+ * everything else they do is decided by the crowd manager.
  */
 public class ShadeEntity extends Entity {
     public enum Variant {
@@ -37,6 +38,7 @@ public class ShadeEntity extends Entity {
     public static final int TURNS = 2;   // Everyone Turns: away while looked at, toward when not
     public static final int FIXED = 3;   // Counting: everyone points the same way
     public static final int RUSH = 4;    // The Rush: sprinting straight at the dreamer
+    public static final int WANDER = 5;  // walking about its island like a person; stops to stare at the dreamer
 
     private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(ShadeEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> OWNER = SynchedEntityData.defineId(ShadeEntity.class, EntityDataSerializers.INT);
@@ -47,6 +49,8 @@ public class ShadeEntity extends Entity {
 
     /** Fade-out length (the crowd manager's clean-up waits on it); fading in is a little quicker. */
     public static final int FADE_TICKS = 28;
+    /** A walking Shade never steps closer to its dreamer than this. */
+    private static final double KEEP_AWAY = 24;
     public static final int FADE_IN_TICKS = 16;
 
     /** Set by the crowd manager; a shade without it (loaded from somewhere) removes itself. */
@@ -55,6 +59,11 @@ public class ShadeEntity extends Entity {
     /** Level time when the fade started, so the crowd manager can clean up a shade that is not ticking. */
     long fadeGameTime;
     private Vec3 drift = Vec3.ZERO;
+    /** The mode it goes back to after an event (WANDER or FACE). */
+    private int baseMode = FACE;
+    private Vec3 home;
+    private Vec3 target;
+    private int idle;
     /** Client: distance walked, for the Mimic's limb swing. */
     public float walkDist;
     public float walkSpeed;
@@ -135,6 +144,21 @@ public class ShadeEntity extends Entity {
         drift = v;
     }
 
+    public int baseMode() {
+        return baseMode;
+    }
+
+    public void setBaseMode(int mode) {
+        baseMode = mode;
+        setMode(mode);
+    }
+
+    /** Forget where it was walking (it was moved). */
+    public void resetWander() {
+        home = null;
+        target = null;
+    }
+
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
@@ -177,10 +201,85 @@ public class ShadeEntity extends Entity {
             return;
         }
         if (!drift.equals(Vec3.ZERO)) setPos(getX() + drift.x, getY() + drift.y, getZ() + drift.z);
+        if (mode() == WANDER && !fading()) wander();
+        // The upside-down ones float off toward the sky and are gone.
+        if (variant() == Variant.HANGING && !fading() && tickCount > 500) fadeOut();
         if (fading() && tickCount - fadeStartTick > FADE_TICKS + 2) discard();
         if (fading() && tickCount - fadeStartTick == 1 && level() instanceof ServerLevel server) {
             server.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE, getX(), getY() + 1.0, getZ(), 3, 0.15, 0.4, 0.15, 0.003);
         }
+    }
+
+    /**
+     * Walks about like a person: to a spot near where it started, a pause, another spot. Never off an edge, never
+     * through a wall. When the dreamer is near it stops more often and for longer (the client turns it to stare).
+     */
+    private void wander() {
+        if (home == null) home = position();
+        if (idle > 0) {
+            idle--;
+            return;
+        }
+        Entity owner = level().getEntity(ownerId());
+        boolean watched = owner != null && owner.distanceToSqr(this) < 40 * 40;
+        if (target == null) {
+            target = pickTarget();
+            if (target == null) {
+                idle = 40;
+                return;
+            }
+        }
+        double dx = target.x - getX();
+        double dz = target.z - getZ();
+        double d = Math.hypot(dx, dz);
+        if (d < 0.35) {
+            target = null;
+            idle = (watched ? 50 : 20) + random.nextInt(watched ? 160 : 90);
+            return;
+        }
+        double speed = variant() == Variant.TALL_ONE ? 0.04 : variant() == Variant.STOOPED_ONE ? 0.05 : 0.07;
+        double nx = getX() + dx / d * Math.min(speed, d);
+        double nz = getZ() + dz / d * Math.min(speed, d);
+        double ny = ground(nx, nz);
+        // Never walking up to you: they keep their distance, and only vanish if you come to them.
+        if (Double.isNaN(ny) || owner != null && owner.distanceToSqr(nx, ny, nz) < KEEP_AWAY * KEEP_AWAY) {
+            target = null;
+            idle = 20;
+            return;
+        }
+        setPos(nx, ny, nz);
+    }
+
+    private Vec3 pickTarget() {
+        Entity owner = level().getEntity(ownerId());
+        for (int i = 0; i < 6; i++) {
+            double a = random.nextDouble() * Math.PI * 2;
+            double r = 3 + random.nextDouble() * 9;
+            double x = home.x + Math.cos(a) * r;
+            double z = home.z + Math.sin(a) * r;
+            double y = ground(x, z);
+            if (Double.isNaN(y) || owner != null && owner.distanceToSqr(x, y, z) < KEEP_AWAY * KEEP_AWAY) continue;
+            return new Vec3(x, y, z);
+        }
+        return null;
+    }
+
+    /** Standing height at (x, z) within a step of its own height, or NaN where there is no floor (or no room). */
+    private double ground(double x, double z) {
+        int bx = Mth.floor(x);
+        int bz = Mth.floor(z);
+        int y0 = Mth.floor(getY());
+        if (!level().isLoaded(new net.minecraft.core.BlockPos(bx, y0, bz))) return Double.NaN;
+        for (int y = y0 + 1; y >= y0 - 2; y--) {
+            var below = new net.minecraft.core.BlockPos(bx, y - 1, bz);
+            var feet = below.above();
+            if (level().getBlockState(below).isFaceSturdy(level(), below, net.minecraft.core.Direction.UP)
+                    && level().getBlockState(feet).getCollisionShape(level(), feet).isEmpty()
+                    && level().getBlockState(feet.above()).getCollisionShape(level(), feet.above()).isEmpty()) {
+                return y;
+            }
+        }
+        return Double.NaN;
     }
 
     private void clientTurn() {
@@ -189,6 +288,11 @@ public class ShadeEntity extends Entity {
         int mode = mode();
         if (mode == FIXED) {
             target = fixedYaw();
+        } else if (mode == WANDER && walkSpeed > 0.15f) {
+            // Walking: it looks where it goes.
+            double mx = getX() - xo;
+            double mz = getZ() - zo;
+            if (mx * mx + mz * mz > 1e-6) target = (float) (Mth.atan2(mz, mx) * (180 / Math.PI)) - 90f;
         } else if (owner != null) {
             double dx = owner.getX() - getX();
             double dz = owner.getZ() - getZ();

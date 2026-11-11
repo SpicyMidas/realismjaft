@@ -52,7 +52,7 @@ final class TagGen {
                     ModBlocks.TIDE_CORAL.get(), ModBlocks.DUSK_CORAL.get(), ModBlocks.BUBBLE_VENT.get(), ModBlocks.GEODE_SHELL.get(),
                     ModBlocks.LILAC_CALCITE.get(), ModBlocks.RESONANT_CRYSTAL.get(), ModBlocks.NIGHT_LIGHT.get(), ModBlocks.CEILING_TILE.get(),
                     ModBlocks.FLICKER_LIGHT.get(), ModBlocks.ENAMEL.get(), ModBlocks.STATIC_BLOCK.get(), ModBlocks.DEAD_PIXEL.get(), ModBlocks.TEST_CARD.get());
-            tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.BLACKWOOD_LOG.get(), ModBlocks.TOY_BLOCK_RED.get(), ModBlocks.TOY_BLOCK_YELLOW.get(),
+            tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LANTERN_STAND.get(), ModBlocks.BLACKWOOD_LOG.get(), ModBlocks.TOY_BLOCK_RED.get(), ModBlocks.TOY_BLOCK_YELLOW.get(),
                     ModBlocks.TOY_BLOCK_BLUE.get(), ModBlocks.TOY_BLOCK_GREEN.get(), ModBlocks.WATCHING_WINDOW.get(), ModBlocks.YELLOWED_WALLPAPER.get());
             tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.DREAMSNOW.get(), ModBlocks.VIOLET_MOSS.get(), ModBlocks.ASHEN_SOIL.get(),
                     ModBlocks.STUFFING.get(), ModBlocks.NURSERY_RUG.get(), ModBlocks.STALE_CARPET.get());

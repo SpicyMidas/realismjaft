@@ -99,12 +99,17 @@ public final class IslandSearch {
      * ring (up to ~1500 blocks). Null if none could be stood on.
      */
     public static BlockPos nightmareSpot(ServerLevel level, BlockPos column) {
+        return nightmareSpot(level, column, true);
+    }
+
+    /** {@code preferNew}: look for the four true nightmares first; otherwise simply the nearest nightmare island. */
+    public static BlockPos nightmareSpot(ServerLevel level, BlockPos column, boolean preferNew) {
         IslandField field = field(level);
         if (field == null) return null;
         int cx = Math.floorDiv(column.getX(), IslandField.CELL);
         int cz = Math.floorDiv(column.getZ(), IslandField.CELL);
         // The true nightmares first; the older uneasy biomes (Eye Meadow, Hollow Spires) only if none is near.
-        for (boolean deepOnly : new boolean[]{true, false}) {
+        for (boolean deepOnly : preferNew ? new boolean[]{true, false} : new boolean[]{false}) {
             for (int r = 0; r <= 16; r++) {
                 for (int dx = -r; dx <= r; dx++) {
                     for (int dz = -r; dz <= r; dz++) {

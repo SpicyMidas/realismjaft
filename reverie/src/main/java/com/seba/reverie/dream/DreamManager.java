@@ -53,7 +53,7 @@ public final class DreamManager {
     private static final net.minecraft.resources.ResourceLocation SAFE_FALL_ID = Reverie.id("dream_safe_fall");
     private static final int SNAPSHOT_MAX_BLOCKS = 500;
 
-    public enum Reason { TIMEOUT, BED, DEATH, VOID, COMMAND, LOGIN_EXPIRED, LEFT_DREAMLAND, ERROR }
+    public enum Reason { TIMEOUT, BED, DEATH, VOID, COMMAND, LOGIN_EXPIRED, LEFT_DREAMLAND, ERROR, INCEPTION }
 
     /** Held-item snapshot taken when the player lay down. */
     private record Held(int slot, ItemStack stack) {
@@ -110,6 +110,10 @@ public final class DreamManager {
         return now(player.server) < data(player).cooldownUntil;
     }
 
+    public static long cooldownLeft(ServerPlayer player) {
+        return Math.max(0, data(player).cooldownUntil - now(player.server));
+    }
+
     /** Sleepyness lets this player dream right now (otherwise Sleepyness only helps day sleeping if... it doesn't). */
     public static boolean canDream(ServerPlayer player) {
         return ModEffects.sleepy(player) && !onCooldown(player) && !isDreaming(player)
@@ -127,6 +131,7 @@ public final class DreamManager {
     }
 
     public static void forget(UUID id) {
+        LATE_WAKES.remove(id);
         com.seba.reverie.dreamland.FallLoop.forget(id);
         HELD_AT_BED.remove(id);
         WAKE_POSE.remove(id);
@@ -140,6 +145,13 @@ public final class DreamManager {
         WAKE_POSE.clear();
         OUTSIDE_TICKS.clear();
         WAKING.clear();
+    }
+
+    private static final Map<UUID, Integer> LATE_WAKES = new HashMap<>();
+
+    /** Wakes the dreamer after {@code ticks} (Inception: the dream inside the dream folds up first). */
+    public static void wakeLater(ServerPlayer player, int ticks) {
+        LATE_WAKES.put(player.getUUID(), ticks);
     }
 
     public static void scheduleWake(ServerPlayer player, Reason reason) {
@@ -222,7 +234,12 @@ public final class DreamManager {
             applyDreamAttributes(player);
             Net.send(player, new DreamTransitionPayload(DreamTransitionPayload.ENTER));
 
+            giveGlider(player, heldSlot);
             BlockPos home = arrival(dream, player.getUUID(), nightmare);
+            if (!nightmare && !data.firstLantern && HomeIsland.lanternStand(dream, home)) {
+                data.firstLantern = true;
+                player.sendSystemMessage(Component.translatable("reverie.dream.first_lantern").withStyle(ChatFormatting.GOLD));
+            }
             teleporter.teleport(player, dream, Vec3.atBottomCenterOf(home), player.getYRot(), 0);
             syncState(player);
             player.inventoryMenu.broadcastChanges();
@@ -233,6 +250,23 @@ public final class DreamManager {
             Reverie.LOGGER.error("Starting the dream failed for {}; restoring everything", player.getName().getString(), e);
             emergencyRestore(player, session);
             return false;
+        }
+    }
+
+    /**
+     * Every dreamer arrives with a Paper Glider (marked as not from this dream, so it never comes back as a keepsake),
+     * unless they brought their own.
+     */
+    private static void giveGlider(ServerPlayer player, int heldSlot) {
+        Inventory inv = player.getInventory();
+        if (heldSlot >= 0 && inv.getItem(heldSlot).is(com.seba.reverie.registry.ModItems.PAPER_GLIDER.get())) return;
+        ItemStack glider = new ItemStack(com.seba.reverie.registry.ModItems.PAPER_GLIDER.get());
+        glider.set(ModComponents.DREAM_ORIGIN.get(), Unit.INSTANCE);
+        for (int i = 0; i < 9; i++) {
+            if (i != heldSlot && inv.getItem(i).isEmpty()) {
+                inv.setItem(i, glider);
+                return;
+            }
         }
     }
 
@@ -313,6 +347,15 @@ public final class DreamManager {
                 }
             } else {
                 WAKE_POSE.put(id, pose - 1);
+            }
+        }
+        Integer late = LATE_WAKES.get(id);
+        if (late != null) {
+            if (late <= 0) {
+                LATE_WAKES.remove(id);
+                PENDING_WAKES.put(id, Reason.INCEPTION);
+            } else {
+                LATE_WAKES.put(id, late - 1);
             }
         }
         Reason pending = PENDING_WAKES.remove(id);

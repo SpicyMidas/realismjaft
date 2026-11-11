@@ -1,0 +1,148 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "sheet": "reverie:item/sky_lantern_sheet",
+    "particle": "reverie:item/sky_lantern_sheet"
+  },
+  "elements": [
+    {
+      "from": [
+        6,
+        0,
+        6
+      ],
+      "to": [
+        10,
+        1,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        },
+        "down": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            10,
+            4,
+            11
+          ]
+        }
+      },
+      "name": "foot"
+    },
+    {
+      "from": [
+        7.5,
+        1,
+        7.5
+      ],
+      "to": [
+        8.5,
+        10,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#sheet",
+          "uv": [
+            0,
+            11,
+            1,
+            16
+          ]
+        }
+      },
+      "name": "post"
+    }
+  ]
+}

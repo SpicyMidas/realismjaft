@@ -11,6 +11,7 @@ public final class DreamAdvancements implements DreamManager.Listener {
     public static final ResourceLocation COUNTING_SHEEP = Reverie.id("counting_sheep");
     public static final ResourceLocation WIDE_AWAKE = Reverie.id("wide_awake");
     public static final ResourceLocation SOUVENIR = Reverie.id("souvenir");
+    public static final ResourceLocation INCEPTION = Reverie.id("inception");
 
     public static void init() {
         DreamManager.addListener(new DreamAdvancements());

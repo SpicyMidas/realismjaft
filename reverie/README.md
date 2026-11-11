@@ -19,8 +19,8 @@ Without them Reverie works on its own. Their content simply does not exist, and 
 
 ## Playing
 
-1. **Find Wild Melatonia** in forests, plains and meadows (pale violet flowers). Break it for seeds (and sometimes a
-   petal), then plant the seeds on farmland. It grows faster at night and in the dark, and slower in full sun.
+1. **Find Wild Melatonia** in forests, plains and meadows (pale violet flowers). Break it for one or two seeds (and
+   now and then a petal), then plant the seeds on farmland. It grows faster at night and in the dark, and slower in full sun.
 2. **Melatonia Extract**: 3 Petals + a Glass Bottle. Drinking it makes you Dizzy for 40 s. Dizziness is a real
    nuisance: the horizon bends and doubles, you walk slower (and sometimes much slower), and now and then your
    controls flip for a few seconds.
@@ -28,11 +28,12 @@ Without them Reverie works on its own. Their content simply does not exist, and 
    **Sleepyness** for 4 minutes.
 4. While Sleepy your eyes keep closing and the world dims. Sometimes, when your eyes open again, Shades are standing
    at the edge of sight. Only you can see them, and they fade away when you look straight at one or come close. **Sleep in any bed, at any time**. Whatever you hold goes with you into the dream. Everything else
-   stays behind, safe (see *Your items are safe* below).
+   stays behind, safe (see *Your items are safe* below). Just after waking you are too awake to dream for a few
+   seconds (you are told so if you try).
 5. A dream lasts 5 minutes. It ends when the time runs out, when you die, or when you lie down in a bed inside the
    dream (the Great Bed islands are the kind way out). Falling never wakes you: near the bottom of the dream your fall
-   slows into a pale mist, and you drift down out of it onto the spot you fell from. You
-   wake in your bed with your own inventory back. Each stack you picked up in the dream has a small chance to come
+   slows into a pale mist, and you drift down out of it into the nightmares (or, if you fell from the nightmares, onto
+   the spot you fell from). You wake in your bed with your own inventory back. Each stack you picked up in the dream has a small chance to come
    back with you.
 
 Food: any food can be **laced** with an Extract in the crafting grid (strongly with a Concentrated one). Nobody can
@@ -58,11 +59,21 @@ other plain recipes.
 
 ### Dreamland
 
-The islands float in three depths of sleep, one above the other. **Deep Sleep** (the lowest layer) is where the
-nightmares are, **Dreaming** (the middle, where you arrive) is the old dream, **Lucid** (high up) is clear and
-beautiful, and Cloudreach is above it all. Every island is its own biome (a dream is short: you see many of them),
-drawn from its depth's mix. Every biome has its own sky, and crossing from one island to the next fades the sky,
-fog, light and air over a few seconds, the way the Nether's biomes do.
+The islands float in three levels of sleep, one above the other: the **lucid** dream on top (clear and beautiful),
+the **dream** in the middle (where you arrive), the **nightmares** at the bottom, and Cloudreach above it all. Every
+island is its own biome, drawn from its level's (a dream is short: you see many of them). Every biome has its own sky,
+and crossing from one island to the next fades the sky, fog, light and air over a few seconds, the way the Nether's
+biomes do. The fog is short and round, so the levels above and below stay hidden until you are on your way.
+
+- **Getting around.** You arrive with a Paper Glider every time, and the first time your first Sky Lantern waits on a
+  stand beside you. Go up with the lantern to reach the lucid dream; jump or fall down to reach the nightmares. In the
+  dream and lucid biomes a **second jump in mid-air** is a long dash, enough to jump between near islands; in the
+  nightmares there is none.
+- **The tilt.** Now and then (not in the lucid biomes) the whole dream leans for a few seconds and everything slides
+  one way: crouch at the edge, or put a block in the way, or go over.
+- **Upside down.** Under an upside-down island (and under the Upside-Down Town, where the houses hang) gravity points
+  up at its underside: you fall up onto it, the view turns over, and you walk there upside down among the hanging
+  houses. Walk to its rim and it pulls you round and back under, like a small planet. Hold sneak for a second to let go.
 
 - The dream biomes: Pillow Fields, Mirror Marsh, Sandglass Dunes, Upside-Down Town, Cloudreach, the uneasy Hollow
   Spires and Eye Meadow, and the Void Between.
@@ -109,15 +120,19 @@ fog, light and air over a few seconds, the way the Nether's biomes do.
   snoring; **Lucid Moths** circle the Floating Lanterns. Both drop Dream Dust.
 - Dream weather: Starfall (sometimes a star lands and leaves a Lucid Shard), Petal Drift, Fog Tide, Upward Rain,
   and The Long Silence.
-- **Shades**: a crowd of harmless silhouettes always 28 to 52 blocks away, watching. Walk toward one and it is gone.
-  Now and then the whole crowd does something stranger, and once in a while one of them is shaped like you. There
-  are more of them in the nightmares (and they creep closer even while you walk), half as many in the lucid biomes.
+- **Shades**: harmless silhouettes, 28 to 52 blocks away. Most walk about their island like people, stop, and turn
+  to look at you; walk toward one and it is gone. Some islands are thronged with them, most nearly empty. Now and then
+  the whole crowd does something stranger, and once in a while one of them is shaped like you. There are more in the
+  nightmares (and they creep closer even while you walk), fewer in the lucid biomes; the rare upside-down ones float
+  off into the sky.
+- **Inception**: drink Concentrated Melatonia Extract inside a dream (bring it in your hand) and the island fills with
+  Shades, all watching, and a few seconds later you wake. An advancement, too.
 - **The Rush**, the nightmares' jumpscare: in a nightmare biome one of them breaks into a sprint straight at you and
   vanishes just before it hits. Every 20 to 50 seconds in a nightmare dream (Evil Sleepyness); in an ordinary dream
   that wanders into a nightmare biome, every few minutes at most. Never in the other biomes.
 - It is a lucid dream, not a calm one: dusky light, muted slate, moss and umber instead of pastels, no music, and now
-  and then reality slips (the horizon tilts, footsteps follow right behind you, a whisper scrambles itself over the
-  hotbar, the view breathes in and out).
+  and then reality slips (footsteps follow right behind you, a whisper scrambles itself over the hotbar, the view
+  breathes in and out).
 - Odd subtitles from nowhere (turn subtitles on), hums, drones and far bells per biome, and one recurring object that
   the dream keeps returning to.
 
@@ -191,7 +206,7 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | Option | Default | |
 |---|---|---|
 | `dream.dreamLengthTicks` | 6000 | Length of a dream (6000 = 5 min) |
-| `dream.dreamCooldownTicks` | 3000 | After waking, no new dream for this long |
+| `dream.cooldownAfterWakingTicks` | 200 | After waking, no new dream for this long (10 s) |
 | `dream.keepsakeChance` | 0.05 | Chance for each dream stack to survive waking |
 | `dream.luckyKeepsakeChance` | 0.35 | The same, for `#reverie:lucid_keepsakes` |
 | `dream.maxKeepsakes` | 1 | Most stacks brought back from one dream |
@@ -218,6 +233,7 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `dreamland.events.hush` / `everyoneTurns` / `behindYou` / `counting` / `gravityHiccup` / `farewell` | true | Each Shade event |
 | `dreamland.events.mimic` | true | Mimic: your own silhouette copies you, three seconds late |
 | `dreamland.events.rush` | true | The Rush: a Shade sprints at you and vanishes just before it hits |
+| `dreamland.events.tilt` | true | The tilt: the dream leans and everything slides one way |
 
 `config/reverie-client.toml`:
 
@@ -229,12 +245,13 @@ All `/reverie` commands need permission level 2, except `/reverie wake` on yours
 | `customSky` | true | The Dreamland sky (off = plain vanilla sky) |
 | `eyelidOverlay` | true | Heavy eyelids, and the Shades you half-see, while Sleepy |
 | `shadeGlow` | true | Pale eyes on the Shades (brighter on one you stare at) |
-| `reduceMotion` | false | Halves camera roll and FOV wobble (and skips the tilting and breathing reality slips) |
+| `reduceMotion` | false | Halves camera roll and FOV wobble, leans less in a tilt, and skips the breathing reality slip |
 | `lucidConfusion` | true | Reality slips while dreaming (tilt, footsteps behind you, whispers, a breathing view) |
 
 ## Known limitations
 
-- **Older worlds.** Dreamland chunks that were already generated keep their old look; the new biomes appear in the
+- **Older worlds.** 0.2 changes which biome each island gets. Dreamland chunks that were already generated keep their
+  old look; the new biomes appear in the
   parts not visited yet, with a seam at the border. To see the new Dreamland everywhere, delete
   `<world>/dimensions/reverie/dreamland` while nobody is dreaming. Homes rebuild themselves, and the dream backups are
   in `<world>/reverie_backups`, not in that folder.

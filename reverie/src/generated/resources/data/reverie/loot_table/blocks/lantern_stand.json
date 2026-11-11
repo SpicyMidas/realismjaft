@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "reverie:lantern_stand"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "reverie:lantern_stand",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "lantern": "true"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "reverie:sky_lantern"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "reverie:blocks/lantern_stand"
+}

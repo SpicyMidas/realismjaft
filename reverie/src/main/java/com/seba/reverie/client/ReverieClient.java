@@ -24,6 +24,7 @@ public final class ReverieClient {
         com.seba.reverie.client.dreamland.DreamlandClient.init(modBus);
         com.seba.reverie.client.dreamland.LucidConfusionClient.init(modBus);
         com.seba.reverie.client.dreamland.BiomeMechanicsClient.init(modBus);
+        com.seba.reverie.client.dreamland.DreamMovementClient.init();
         com.seba.reverie.client.glider.GliderClient.init(modBus);
         com.seba.reverie.client.glider.SkyLanternClient.init(modBus);
         modBus.addListener((net.neoforged.fml.event.lifecycle.FMLClientSetupEvent e) -> e.enqueueWork(() ->

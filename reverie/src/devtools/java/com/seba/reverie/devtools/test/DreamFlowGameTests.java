@@ -100,7 +100,9 @@ public final class DreamFlowGameTests {
                     p[0] = join(h);
                     h.assertTrue(DreamManager.isDreaming(p[0]), "dream lost across relog");
                     h.assertTrue(p[0].level().dimension().equals(DreamManager.DREAMLAND), "relogged outside Dreamland");
-                    h.assertTrue(p[0].getInventory().getItem(1).isEmpty(), "dream inventory not kept across relog");
+                    // Slot 1 holds the dream's own glider, not what was there awake.
+                    h.assertTrue(p[0].getInventory().getItem(1).is(com.seba.reverie.registry.ModItems.PAPER_GLIDER.get()),
+                            "dream inventory not kept across relog");
                 })
                 .thenExecute(() -> {
                     // Falling out of the bottom never wakes you: it loops you back above where you fell from.
